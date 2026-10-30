@@ -1,7 +1,8 @@
 class_name Board
 extends Node2D
 ## The 5x9 game board.
-## It draws the grid and converts between cells and pixels.
+## It draws the grid, converts between cells and pixels,
+## and knows which cells are occupied by a defender.
 ## Game logic always talks in cells (lane, column); pixels are only for drawing.
 ## The node's position is the top-left corner of the grid.
 
@@ -22,6 +23,9 @@ const COLOR_HIGHLIGHT := Color("ffd43b")
 
 ## Cell currently highlighted. x = column, y = lane. (-1, -1) means none.
 var highlighted_cell := Vector2i(-1, -1)
+
+## Occupied cells. Key: Vector2i(column, lane). Value: the defender standing there.
+var occupied_cells: Dictionary[Vector2i, Defender] = {}
 
 
 ## Returns the center of a cell in global (screen) pixels.
@@ -47,6 +51,29 @@ func is_inside(lane: int, column: int) -> bool:
 func highlight_cell(lane: int, column: int) -> void:
 	highlighted_cell = Vector2i(column, lane)
 	queue_redraw()  # asks Godot to call _draw() again
+
+
+func clear_highlight() -> void:
+	highlighted_cell = Vector2i(-1, -1)
+	queue_redraw()
+
+
+func is_occupied(lane: int, column: int) -> bool:
+	return occupied_cells.has(Vector2i(column, lane))
+
+
+func is_empty() -> bool:
+	return occupied_cells.is_empty()
+
+
+## Registers a defender in a cell. Game calls it right after placing one.
+func occupy_cell(lane: int, column: int, defender: Defender) -> void:
+	occupied_cells[Vector2i(column, lane)] = defender
+
+
+## Frees a cell (for example, when its defender dies).
+func free_cell(lane: int, column: int) -> void:
+	occupied_cells.erase(Vector2i(column, lane))
 
 
 func _unhandled_input(event: InputEvent) -> void:
