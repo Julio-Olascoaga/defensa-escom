@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="DefenderType" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_type"]
+[ext_resource type="PackedScene" path="res://scenes/entities/generator_defender.tscn" id="2_behavior"]
+
+[resource]
+script = ExtResource("1_type")
+display_name = "Café"
+cost = 50
+health = 300.0
+cooldown = 7.5
+color = Color(0.784, 0.514, 0.29, 1)
+behavior_scene = ExtResource("2_behavior")
+energy_per_orb = 25
+orb_interval = 10.0
