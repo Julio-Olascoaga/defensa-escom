@@ -1,9 +1,21 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/engine/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/game/board.tscn" id="2_board"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/notice.tscn" id="5_notice"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.051, 0.039, 0.122, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
@@ -11,9 +23,27 @@ script = ExtResource("1_game")
 [node name="Board" parent="." instance=ExtResource("2_board")]
 position = Vector2(80, 110)
 
+[node name="Defenders" type="Node2D" parent="."]
+
+[node name="Orbs" type="Node2D" parent="."]
+
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="HUD" parent="UI" instance=ExtResource("3_hud")]
+
+[node name="Hint" type="Label" parent="UI"]
+offset_left = 170.0
+offset_top = 376.0
+offset_right = 1070.0
+offset_bottom = 444.0
+theme_override_colors/font_color = Color(1, 0.831, 0.231, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_hint")
+text = "Toca una tarjeta y luego una casilla libre para colocar un defensor"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Notice" parent="UI" instance=ExtResource("5_notice")]
 
 [node name="PauseMenu" parent="UI" instance=ExtResource("4_pause")]
 visible = false
