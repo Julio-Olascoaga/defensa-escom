@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WorldData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1_ihysp"]
+[ext_resource type="Resource" path="res://data/worlds/levels/level_1.tres" id="2_m1nri"]
+[ext_resource type="Resource" path="res://data/worlds/levels/level_2.tres" id="3_lq5rn"]
+[ext_resource type="Resource" path="res://data/worlds/levels/level_3.tres" id="4_jgpdt"]
+[ext_resource type="Resource" path="res://data/worlds/levels/level_4.tres" id="5_aw842"]
+[ext_resource type="Script" path="res://scripts/data/world_data.gd" id="6_ey6yf"]
+
+[resource]
+script = ExtResource("6_ey6yf")
+display_name = "Mundo 1"
+levels = Array[ExtResource("1_ihysp")]([ExtResource("2_m1nri"), ExtResource("3_lq5rn"), ExtResource("4_jgpdt"), ExtResource("5_aw842")])

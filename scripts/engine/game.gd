@@ -2,40 +2,21 @@ extends Node2D
 ## Root of the game scene.
 ## It owns the energy and the phase of the match (playing, victory, defeat),
 ## connects the signals between entities and UI, places defenders,
-## spawns the test wave, and handles play time and pause.
+## spawns the enemies WaveManager asks for, and handles play time and pause.
+## The level it plays comes from the ProgressRepository Autoload.
 
 const MAIN_MENU_SCENE := "res://scenes/ui/main_menu.tscn"
-## Energy at the start of the level. In Block 4 it will come from LevelData.start_energy.
-const START_ENERGY := 50
-
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
-const BASIC := preload("res://data/enemies/tarea_infinita.tres")
-const FAST := preload("res://data/enemies/examen_sorpresa.tres")
-const TOUGH := preload("res://data/enemies/diapositivas.tres")
-
-## Test wave written in code: [second, lane, enemy type], sorted by second.
-## In Block 4 it moves to WaveData / LevelData resources read by WaveManager.
-const TEST_WAVE := [
-	[40.0, 2, BASIC],
-	[60.0, 0, BASIC],
-	[75.0, 4, BASIC],
-	[90.0, 1, FAST],
-	[100.0, 3, BASIC],
-	[110.0, 2, TOUGH],
-	[120.0, 0, FAST],
-	[130.0, 4, TOUGH],
-	[140.0, 2, BASIC],
-]
 
 enum Phase { PLAYING, VICTORY, DEFEAT }
 
+## Data of the level being played (name, start energy, defenders and waves).
+var level: LevelData
 ## Seconds of play. It stops while the game is paused because this node
 ## uses the default process mode (Inherit -> Pausable).
 var elapsed_time := 0.0
-var energy := START_ENERGY
+var energy := 0
 var phase := Phase.PLAYING
-## Index of the next TEST_WAVE entry to spawn.
-var next_spawn := 0
 
 @onready var board: Board = $Board
 @onready var defenders: Node2D = $Defenders
@@ -45,12 +26,18 @@ var next_spawn := 0
 @onready var hud: Hud = $UI/HUD
 @onready var hint: Label = $UI/Hint
 @onready var notice: Notice = $UI/Notice
-@onready var wave_banner: Label = $UI/WaveBanner
 @onready var pause_menu: PauseMenu = $UI/PauseMenu
 @onready var defeat_panel: DefeatPanel = $UI/DefeatPanel
+@onready var victory_panel: VictoryPanel = $UI/VictoryPanel
+@onready var wave_manager: WaveManager = $WaveManager
 
 
 func _ready() -> void:
+	level = ProgressRepository.get_current_level()
+	energy = level.start_energy
+	hud.set_level_name(ProgressRepository.get_current_level_number(), level.display_name)
+	hud.create_cards(level.defenders)  # one card per defender available in this level
+
 	board.cell_tapped.connect(_on_board_cell_tapped)
 	hud.pause_pressed.connect(pause_game)
 	hud.card_pressed.connect(_on_card_pressed)
@@ -59,15 +46,20 @@ func _ready() -> void:
 	pause_menu.exit_requested.connect(_on_exit_requested)
 	defeat_panel.retry_requested.connect(_on_restart_requested)
 	defeat_panel.home_requested.connect(_on_exit_requested)
+	victory_panel.next_requested.connect(_on_next_level_requested)
+	victory_panel.home_requested.connect(_on_exit_requested)
+	wave_manager.spawn_requested.connect(spawn_enemy)
+	wave_manager.wave_started.connect(hud.set_wave)
+	wave_manager.wave_progress.connect(hud.set_wave_progress)
+	wave_manager.all_waves_cleared.connect(_on_all_waves_cleared)
 	hud.set_energy(energy)
 	_update_hint()
+	wave_manager.start(level.waves)
 
 
 func _process(delta: float) -> void:
 	elapsed_time += delta
 	hud.set_time(elapsed_time)
-	_spawn_due_enemies()
-	_check_victory()
 
 
 # --- Energy ---
@@ -165,16 +157,9 @@ func _on_shot_fired(projectile: Projectile) -> void:
 	projectiles.add_child(projectile)
 
 
-# --- Enemies and test wave ---
+# --- Enemies and waves ---
 
-## Spawns every TEST_WAVE entry whose second has arrived.
-func _spawn_due_enemies() -> void:
-	while next_spawn < TEST_WAVE.size() and elapsed_time >= TEST_WAVE[next_spawn][0]:
-		var entry: Array = TEST_WAVE[next_spawn]
-		spawn_enemy(entry[2], entry[1])
-		next_spawn += 1
-
-
+## WaveManager asks for each enemy through its spawn_requested signal.
 func spawn_enemy(type: EnemyType, lane: int) -> void:
 	var enemy: Enemy = ENEMY_SCENE.instantiate()
 	enemy.setup(type, lane, board)
@@ -182,11 +167,19 @@ func spawn_enemy(type: EnemyType, lane: int) -> void:
 	enemies.add_child(enemy)
 
 
-## Victory: the whole wave has appeared and no enemy is left alive.
-func _check_victory() -> void:
-	if phase == Phase.PLAYING and next_spawn == TEST_WAVE.size() and enemies.get_child_count() == 0:
-		phase = Phase.VICTORY
-		wave_banner.show()  # the full Victory panel arrives in Block 4
+## Victory: every wave has appeared and no enemy is left alive (WaveManager checks it).
+func _on_all_waves_cleared() -> void:
+	if phase != Phase.PLAYING:
+		return
+	phase = Phase.VICTORY
+	get_tree().paused = true  # freezes the board behind the panel
+	var level_number := ProgressRepository.get_current_level_number()
+	var has_next := ProgressRepository.has_next_level()
+	ProgressRepository.complete_level()  # the progress moves on right away
+	if has_next:
+		victory_panel.show_level_cleared(level_number, level.display_name)
+	else:
+		victory_panel.show_world_cleared(ProgressRepository.get_world().display_name)
 
 
 func _on_enemy_reached_safe_zone(_enemy: Enemy) -> void:
@@ -214,6 +207,13 @@ func _on_restart_requested() -> void:
 	get_tree().reload_current_scene()
 
 
+## ProgressRepository already points to the next level,
+## so reloading the scene starts it.
+func _on_next_level_requested() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+
 func _on_exit_requested() -> void:
 	get_tree().paused = false
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
@@ -225,9 +225,9 @@ func _notification(what: int) -> void:
 		# The app went to the background (call, home button...): pause it.
 		if not get_tree().paused:
 			pause_game()
-	elif what == NOTIFICATION_WM_GO_BACK_REQUEST and phase != Phase.DEFEAT:
+	elif what == NOTIFICATION_WM_GO_BACK_REQUEST and phase == Phase.PLAYING:
 		# Android back button: opens or closes the pause menu
-		# (not after a defeat: the defeat panel must stay on screen).
+		# (not after a victory or a defeat: their panel must stay on screen).
 		if get_tree().paused:
 			resume_game()
 		else:

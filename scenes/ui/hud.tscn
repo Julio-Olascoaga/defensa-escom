@@ -1,10 +1,6 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
-[ext_resource type="PackedScene" path="res://scenes/ui/defender_card.tscn" id="2_card"]
-[ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="3_cafe"]
-[ext_resource type="Resource" path="res://data/defenders/laptop.tres" id="4_laptop"]
-[ext_resource type="Resource" path="res://data/defenders/firewall.tres" id="5_firewall"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar"]
 content_margin_left = 12.0
@@ -47,47 +43,43 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="CafeCard" parent="Row/Cards" instance=ExtResource("2_card")]
-layout_mode = 2
-text = "Café
-50"
-defender_type = ExtResource("3_cafe")
-
-[node name="LaptopCard" parent="Row/Cards" instance=ExtResource("2_card")]
-layout_mode = 2
-text = "Laptop
-100"
-defender_type = ExtResource("4_laptop")
-
-[node name="FirewallCard" parent="Row/Cards" instance=ExtResource("2_card")]
-layout_mode = 2
-text = "Firewall
-75"
-defender_type = ExtResource("5_firewall")
-
 [node name="Spacer" type="Control" parent="Row"]
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="WaveBox" type="VBoxContainer" parent="Row"]
-custom_minimum_size = Vector2(340, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
+theme_override_constants/separation = 2
 alignment = 1
 
+[node name="LevelLabel" type="Label" parent="Row/WaveBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.831, 0.231, 1)
+theme_override_font_sizes/font_size = 18
+text = "Nivel 1 · Inicio de semestre"
+
 [node name="WaveLabel" type="Label" parent="Row/WaveBox"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Oleada 1 de 2"
 
 [node name="WaveBar" type="ProgressBar" parent="Row/WaveBox"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
-max_value = 100.0
+max_value = 1.0
+step = 1.0
 show_percentage = false
 
-[node name="TimeLabel" type="Label" parent="Row/WaveBox"]
+[node name="TimeLabel" type="Label" parent="Row"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.957, 0.949, 1, 0.6)
 theme_override_font_sizes/font_size = 18
-text = "Tiempo: 0.0 s"
+text = "Tiempo: 0 s"
+horizontal_alignment = 2
+vertical_alignment = 1
