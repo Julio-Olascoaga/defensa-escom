@@ -43,7 +43,7 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, CIRCLE_RADIUS, defender_type.color)
 
 
-## Enemies will call this in Block 3.
+## Enemies call this every frame while they bite the defender.
 func take_damage(amount: float) -> void:
 	if health <= 0.0:
 		return  # already dead, ignore extra hits in the same frame

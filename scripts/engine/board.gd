@@ -71,6 +71,11 @@ func occupy_cell(lane: int, column: int, defender: Defender) -> void:
 	occupied_cells[Vector2i(column, lane)] = defender
 
 
+## Returns the defender standing in a cell, or null if the cell is free or off the board.
+func get_defender(lane: int, column: int) -> Defender:
+	return occupied_cells.get(Vector2i(column, lane))
+
+
 ## Frees a cell (for example, when its defender dies).
 func free_cell(lane: int, column: int) -> void:
 	occupied_cells.erase(Vector2i(column, lane))

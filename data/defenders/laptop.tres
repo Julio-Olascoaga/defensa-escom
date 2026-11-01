@@ -11,3 +11,5 @@ health = 300.0
 cooldown = 7.5
 color = Color(0.302, 0.671, 0.969, 1)
 behavior_scene = ExtResource("2_behavior")
+fire_interval = 1.5
+projectile_damage = 20.0

@@ -25,3 +25,9 @@ extends Resource
 @export var energy_per_orb: int = 25
 ## Seconds between two orbs. Only generator defenders use it.
 @export var orb_interval: float = 10.0
+
+@export_group("Shooter")
+## Seconds between two shots. Only shooter defenders use it.
+@export var fire_interval: float = 1.5
+## Damage of each projectile. Only shooter defenders use it.
+@export var projectile_damage: float = 20.0
