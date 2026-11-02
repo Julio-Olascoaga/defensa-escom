@@ -3,9 +3,11 @@ extends Node2D
 ## It owns the energy and the phase of the match (playing, victory, defeat),
 ## connects the signals between entities and UI, places defenders,
 ## spawns the enemies WaveManager asks for, and handles play time and pause.
-## The level it plays comes from the ProgressRepository Autoload.
+## The level it plays comes from the ProgressRepository Autoload, which also
+## saves the progress when the level is won.
 
 const MAIN_MENU_SCENE := "res://scenes/ui/main_menu.tscn"
+const LOADING_SCENE := "res://scenes/ui/loading_screen.tscn"
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
 
 enum Phase { PLAYING, VICTORY, DEFEAT }
@@ -29,6 +31,7 @@ var phase := Phase.PLAYING
 @onready var pause_menu: PauseMenu = $UI/PauseMenu
 @onready var defeat_panel: DefeatPanel = $UI/DefeatPanel
 @onready var victory_panel: VictoryPanel = $UI/VictoryPanel
+@onready var save_error_panel: SaveErrorPanel = $UI/SaveErrorPanel
 @onready var wave_manager: WaveManager = $WaveManager
 
 
@@ -48,6 +51,7 @@ func _ready() -> void:
 	defeat_panel.home_requested.connect(_on_exit_requested)
 	victory_panel.next_requested.connect(_on_next_level_requested)
 	victory_panel.home_requested.connect(_on_exit_requested)
+	save_error_panel.retry_requested.connect(_on_save_retry_requested)
 	wave_manager.spawn_requested.connect(spawn_enemy)
 	wave_manager.wave_started.connect(hud.set_wave)
 	wave_manager.wave_progress.connect(hud.set_wave_progress)
@@ -175,11 +179,22 @@ func _on_all_waves_cleared() -> void:
 	get_tree().paused = true  # freezes the board behind the panel
 	var level_number := ProgressRepository.get_current_level_number()
 	var has_next := ProgressRepository.has_next_level()
-	ProgressRepository.complete_level()  # the progress moves on right away
+	# The progress moves on and is saved right away.
+	var save_error := ProgressRepository.complete_level()
 	if has_next:
 		victory_panel.show_level_cleared(level_number, level.display_name)
 	else:
 		victory_panel.show_world_cleared(ProgressRepository.get_world().display_name)
+	if save_error != OK:
+		save_error_panel.show_error()  # drawn on top of the Victory panel
+
+
+## "Reintentar" on the save error notice.
+func _on_save_retry_requested() -> void:
+	if ProgressRepository.save_progress() == OK:
+		save_error_panel.hide()
+	else:
+		save_error_panel.show_retry_failed()
 
 
 func _on_enemy_reached_safe_zone(_enemy: Enemy) -> void:
@@ -208,10 +223,10 @@ func _on_restart_requested() -> void:
 
 
 ## ProgressRepository already points to the next level,
-## so reloading the scene starts it.
+## so the loading screen loads it.
 func _on_next_level_requested() -> void:
 	get_tree().paused = false
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file(LOADING_SCENE)
 
 
 func _on_exit_requested() -> void:

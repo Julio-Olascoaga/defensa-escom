@@ -9,5 +9,6 @@
 
 [resource]
 script = ExtResource("6_ey6yf")
+id = "world_1"
 display_name = "Mundo 1"
 levels = Array[ExtResource("1_ihysp")]([ExtResource("2_m1nri"), ExtResource("3_lq5rn"), ExtResource("4_jgpdt"), ExtResource("5_aw842")])
