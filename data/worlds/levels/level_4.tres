@@ -1,0 +1,168 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_bbm8a"]
+[ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="2_6xjqd"]
+[ext_resource type="Resource" path="res://data/defenders/laptop.tres" id="3_pbtq7"]
+[ext_resource type="Resource" path="res://data/defenders/firewall.tres" id="4_o2qwt"]
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="5_cudq1"]
+[ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="6_51ihj"]
+[ext_resource type="Script" path="res://scripts/data/spawn_event.gd" id="7_ryvxq"]
+[ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="8_ycqp2"]
+[ext_resource type="Resource" path="res://data/enemies/examen_sorpresa.tres" id="9_kb3rf"]
+[ext_resource type="Resource" path="res://data/enemies/diapositivas.tres" id="10_0vw72"]
+
+[sub_resource type="Resource" id="Resource_eniug"]
+script = ExtResource("7_ryvxq")
+lane = 2
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_iefv4"]
+script = ExtResource("7_ryvxq")
+time = 12.0
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_0mxw3"]
+script = ExtResource("7_ryvxq")
+time = 24.0
+lane = 4
+enemy_type = ExtResource("9_kb3rf")
+
+[sub_resource type="Resource" id="Resource_q74wj"]
+script = ExtResource("7_ryvxq")
+time = 36.0
+lane = 1
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_1mip8"]
+script = ExtResource("7_ryvxq")
+time = 48.0
+lane = 3
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_2ex6b"]
+script = ExtResource("7_ryvxq")
+time = 58.0
+lane = 2
+enemy_type = ExtResource("9_kb3rf")
+
+[sub_resource type="Resource" id="Resource_2cgyp"]
+script = ExtResource("6_51ihj")
+start_delay = 30.0
+events = Array[ExtResource("7_ryvxq")]([SubResource("Resource_eniug"), SubResource("Resource_iefv4"), SubResource("Resource_0mxw3"), SubResource("Resource_q74wj"), SubResource("Resource_1mip8"), SubResource("Resource_2ex6b")])
+
+[sub_resource type="Resource" id="Resource_0xivj"]
+script = ExtResource("7_ryvxq")
+lane = 1
+enemy_type = ExtResource("10_0vw72")
+
+[sub_resource type="Resource" id="Resource_ovo56"]
+script = ExtResource("7_ryvxq")
+time = 8.0
+lane = 3
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_7msbk"]
+script = ExtResource("7_ryvxq")
+time = 16.0
+enemy_type = ExtResource("9_kb3rf")
+
+[sub_resource type="Resource" id="Resource_b7s7g"]
+script = ExtResource("7_ryvxq")
+time = 24.0
+lane = 4
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_o2g3g"]
+script = ExtResource("7_ryvxq")
+time = 32.0
+lane = 2
+enemy_type = ExtResource("10_0vw72")
+
+[sub_resource type="Resource" id="Resource_1wsc3"]
+script = ExtResource("7_ryvxq")
+time = 40.0
+lane = 1
+enemy_type = ExtResource("9_kb3rf")
+
+[sub_resource type="Resource" id="Resource_0qjwa"]
+script = ExtResource("7_ryvxq")
+time = 48.0
+lane = 3
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_7u3so"]
+script = ExtResource("7_ryvxq")
+time = 56.0
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_etvhk"]
+script = ExtResource("6_51ihj")
+events = Array[ExtResource("7_ryvxq")]([SubResource("Resource_0xivj"), SubResource("Resource_ovo56"), SubResource("Resource_7msbk"), SubResource("Resource_b7s7g"), SubResource("Resource_o2g3g"), SubResource("Resource_1wsc3"), SubResource("Resource_0qjwa"), SubResource("Resource_7u3so")])
+
+[sub_resource type="Resource" id="Resource_g4yv1"]
+script = ExtResource("7_ryvxq")
+lane = 2
+enemy_type = ExtResource("10_0vw72")
+
+[sub_resource type="Resource" id="Resource_s6rob"]
+script = ExtResource("7_ryvxq")
+time = 6.0
+lane = 4
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_4k1x5"]
+script = ExtResource("7_ryvxq")
+time = 12.0
+enemy_type = ExtResource("9_kb3rf")
+
+[sub_resource type="Resource" id="Resource_6i0f0"]
+script = ExtResource("7_ryvxq")
+time = 18.0
+lane = 1
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_5j0vw"]
+script = ExtResource("7_ryvxq")
+time = 24.0
+lane = 3
+enemy_type = ExtResource("10_0vw72")
+
+[sub_resource type="Resource" id="Resource_yfkuj"]
+script = ExtResource("7_ryvxq")
+time = 30.0
+lane = 2
+enemy_type = ExtResource("9_kb3rf")
+
+[sub_resource type="Resource" id="Resource_fib5y"]
+script = ExtResource("7_ryvxq")
+time = 36.0
+lane = 4
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_j4lry"]
+script = ExtResource("7_ryvxq")
+time = 42.0
+enemy_type = ExtResource("10_0vw72")
+
+[sub_resource type="Resource" id="Resource_5auqf"]
+script = ExtResource("7_ryvxq")
+time = 48.0
+lane = 1
+enemy_type = ExtResource("9_kb3rf")
+
+[sub_resource type="Resource" id="Resource_82ork"]
+script = ExtResource("7_ryvxq")
+time = 54.0
+lane = 3
+enemy_type = ExtResource("8_ycqp2")
+
+[sub_resource type="Resource" id="Resource_w4fg0"]
+script = ExtResource("6_51ihj")
+events = Array[ExtResource("7_ryvxq")]([SubResource("Resource_g4yv1"), SubResource("Resource_s6rob"), SubResource("Resource_4k1x5"), SubResource("Resource_6i0f0"), SubResource("Resource_5j0vw"), SubResource("Resource_yfkuj"), SubResource("Resource_fib5y"), SubResource("Resource_j4lry"), SubResource("Resource_5auqf"), SubResource("Resource_82ork")])
+
+[resource]
+script = ExtResource("5_cudq1")
+display_name = "Tercer parcial"
+start_energy = 100
+defenders = Array[ExtResource("1_bbm8a")]([ExtResource("2_6xjqd"), ExtResource("3_pbtq7"), ExtResource("4_o2qwt")])
+waves = Array[ExtResource("6_51ihj")]([SubResource("Resource_2cgyp"), SubResource("Resource_etvhk"), SubResource("Resource_w4fg0")])

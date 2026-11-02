@@ -1,0 +1,83 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_trgcx"]
+[ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="2_xsscg"]
+[ext_resource type="Resource" path="res://data/defenders/laptop.tres" id="3_6ekkr"]
+[ext_resource type="Resource" path="res://data/defenders/firewall.tres" id="4_nvrtm"]
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="5_o3at3"]
+[ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="6_4imvw"]
+[ext_resource type="Script" path="res://scripts/data/spawn_event.gd" id="7_r5i1b"]
+[ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="8_wgacn"]
+[ext_resource type="Resource" path="res://data/enemies/examen_sorpresa.tres" id="9_7nudi"]
+
+[sub_resource type="Resource" id="Resource_e7ooe"]
+script = ExtResource("7_r5i1b")
+lane = 2
+enemy_type = ExtResource("8_wgacn")
+
+[sub_resource type="Resource" id="Resource_mfkaw"]
+script = ExtResource("7_r5i1b")
+time = 20.0
+lane = 1
+enemy_type = ExtResource("8_wgacn")
+
+[sub_resource type="Resource" id="Resource_jvv5e"]
+script = ExtResource("7_r5i1b")
+time = 35.0
+lane = 3
+enemy_type = ExtResource("9_7nudi")
+
+[sub_resource type="Resource" id="Resource_42pdr"]
+script = ExtResource("7_r5i1b")
+time = 50.0
+enemy_type = ExtResource("8_wgacn")
+
+[sub_resource type="Resource" id="Resource_pepnx"]
+script = ExtResource("6_4imvw")
+start_delay = 35.0
+events = Array[ExtResource("7_r5i1b")]([SubResource("Resource_e7ooe"), SubResource("Resource_mfkaw"), SubResource("Resource_jvv5e"), SubResource("Resource_42pdr")])
+
+[sub_resource type="Resource" id="Resource_n8yia"]
+script = ExtResource("7_r5i1b")
+lane = 4
+enemy_type = ExtResource("8_wgacn")
+
+[sub_resource type="Resource" id="Resource_3hqsn"]
+script = ExtResource("7_r5i1b")
+time = 10.0
+lane = 2
+enemy_type = ExtResource("9_7nudi")
+
+[sub_resource type="Resource" id="Resource_q7yi7"]
+script = ExtResource("7_r5i1b")
+time = 25.0
+lane = 1
+enemy_type = ExtResource("8_wgacn")
+
+[sub_resource type="Resource" id="Resource_mjj1n"]
+script = ExtResource("7_r5i1b")
+time = 35.0
+lane = 3
+enemy_type = ExtResource("8_wgacn")
+
+[sub_resource type="Resource" id="Resource_retnh"]
+script = ExtResource("7_r5i1b")
+time = 45.0
+enemy_type = ExtResource("9_7nudi")
+
+[sub_resource type="Resource" id="Resource_5abja"]
+script = ExtResource("7_r5i1b")
+time = 55.0
+lane = 2
+enemy_type = ExtResource("8_wgacn")
+
+[sub_resource type="Resource" id="Resource_0e372"]
+script = ExtResource("6_4imvw")
+events = Array[ExtResource("7_r5i1b")]([SubResource("Resource_n8yia"), SubResource("Resource_3hqsn"), SubResource("Resource_q7yi7"), SubResource("Resource_mjj1n"), SubResource("Resource_retnh"), SubResource("Resource_5abja")])
+
+[resource]
+script = ExtResource("5_o3at3")
+display_name = "Primer parcial"
+start_energy = 75
+defenders = Array[ExtResource("1_trgcx")]([ExtResource("2_xsscg"), ExtResource("3_6ekkr"), ExtResource("4_nvrtm")])
+waves = Array[ExtResource("6_4imvw")]([SubResource("Resource_pepnx"), SubResource("Resource_0e372")])

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/engine/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/game/board.tscn" id="2_board"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" path="res://scenes/ui/notice.tscn" id="5_notice"]
 [ext_resource type="PackedScene" path="res://scenes/ui/defeat_panel.tscn" id="6_defeat"]
+[ext_resource type="Script" path="res://scripts/engine/wave_manager.gd" id="7_waves"]
+[ext_resource type="PackedScene" path="res://scenes/ui/victory_panel.tscn" id="8_victory"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
 content_margin_left = 24.0
@@ -17,22 +19,6 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_banner"]
-content_margin_left = 40.0
-content_margin_top = 20.0
-content_margin_right = 40.0
-content_margin_bottom = 20.0
-bg_color = Color(0.051, 0.039, 0.122, 0.9)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.224, 0.898, 0.549, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
@@ -47,6 +33,9 @@ position = Vector2(80, 110)
 [node name="Projectiles" type="Node2D" parent="."]
 
 [node name="Orbs" type="Node2D" parent="."]
+
+[node name="WaveManager" type="Node" parent="."]
+script = ExtResource("7_waves")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -66,21 +55,11 @@ vertical_alignment = 1
 
 [node name="Notice" parent="UI" instance=ExtResource("5_notice")]
 
-[node name="WaveBanner" type="Label" parent="UI"]
-visible = false
-offset_left = 340.0
-offset_top = 330.0
-offset_right = 940.0
-offset_bottom = 450.0
-theme_override_colors/font_color = Color(0.224, 0.898, 0.549, 1)
-theme_override_font_sizes/font_size = 52
-theme_override_styles/normal = SubResource("StyleBoxFlat_banner")
-text = "¡Oleada superada!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="PauseMenu" parent="UI" instance=ExtResource("4_pause")]
 visible = false
 
 [node name="DefeatPanel" parent="UI" instance=ExtResource("6_defeat")]
+visible = false
+
+[node name="VictoryPanel" parent="UI" instance=ExtResource("8_victory")]
 visible = false

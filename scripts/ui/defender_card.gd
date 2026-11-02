@@ -9,7 +9,7 @@ extends Button
 
 const DIMMED := Color(1, 1, 1, 0.45)
 
-## The defender this card places. Assigned in the Inspector (hud.tscn).
+## The defender this card places. Hud assigns it when it creates the card from LevelData.defenders.
 @export var defender_type: DefenderType
 
 ## Energy the player still needs to afford this defender. 0 = affordable.

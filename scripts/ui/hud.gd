@@ -1,11 +1,14 @@
 class_name Hud
 extends PanelContainer
-## Top bar of the game screen: pause button, energy, defender cards and play time.
+## Top bar of the game screen: pause button, energy, defender cards,
+## level name, wave progress ("Oleada X de Y") and play time.
 ## It shows data and reports taps; Game decides what to do with them.
 
 signal pause_pressed
 ## Emitted when the player taps a defender card.
 signal card_pressed(card: DefenderCard)
+
+const DEFENDER_CARD_SCENE := preload("res://scenes/ui/defender_card.tscn")
 
 ## Card chosen by the player. null = no card selected.
 var selected_card: DefenderCard = null
@@ -13,12 +16,22 @@ var selected_card: DefenderCard = null
 @onready var pause_button: Button = %PauseButton
 @onready var energy_label: Label = %EnergyLabel
 @onready var cards_box: HBoxContainer = %Cards
+@onready var level_label: Label = %LevelLabel
+@onready var wave_label: Label = %WaveLabel
+@onready var wave_bar: ProgressBar = %WaveBar
 @onready var time_label: Label = %TimeLabel
 
 
 func _ready() -> void:
 	pause_button.pressed.connect(_on_pause_button_pressed)
-	for card: DefenderCard in cards_box.get_children():
+
+
+## Creates one card for each defender of the level (LevelData.defenders), in order.
+func create_cards(defender_types: Array[DefenderType]) -> void:
+	for type in defender_types:
+		var card: DefenderCard = DEFENDER_CARD_SCENE.instantiate()
+		card.defender_type = type  # before add_child, so the card's _ready() has its data
+		cards_box.add_child(card)
 		# bind() adds the card as an argument, so one function serves every card.
 		card.pressed.connect(_on_card_pressed.bind(card))
 
@@ -30,7 +43,22 @@ func set_energy(energy: int) -> void:
 
 
 func set_time(seconds: float) -> void:
-	time_label.text = "Tiempo: %.1f s" % seconds
+	time_label.text = "Tiempo: %d s" % seconds
+
+
+func set_level_name(level_number: int, level_name: String) -> void:
+	level_label.text = "Nivel %d · %s" % [level_number, level_name]
+
+
+## WaveManager emits wave_started(wave_number, wave_count) and Game connects it here.
+func set_wave(wave_number: int, wave_count: int) -> void:
+	wave_label.text = "Oleada %d de %d" % [wave_number, wave_count]
+
+
+## The bar fills as the enemies of the current wave appear, and starts empty in each wave.
+func set_wave_progress(spawned: int, total: int) -> void:
+	wave_bar.max_value = maxi(total, 1)  # never 0, so the bar can be drawn
+	wave_bar.value = spawned
 
 
 func select_card(card: DefenderCard) -> void:
