@@ -2,7 +2,7 @@ class_name EnemyType
 extends Resource
 ## Data of one enemy: WHAT it is (numbers and image).
 ## There is only ONE enemy scene (enemy.tscn); it reads all its stats from this resource.
-## The three archetypes are three files of this same type (data/enemies/*.tres).
+## The three archetypes and the final boss are files of this same type (data/enemies/*.tres).
 
 ## Name of the archetype (for the docs and the Inspector).
 @export var display_name: String = ""
@@ -18,3 +18,14 @@ extends Resource
 @export var texture: Texture2D
 ## Color of the placeholder box behind the text.
 @export var color: Color = Color("f3d9e4")
+## Width of the image on the board, in pixels (a cell is 120 px). The boss is bigger.
+@export var sprite_size: float = 110.0
+## Only the boss: Game shows its health bar at the bottom of the screen.
+@export var is_boss: bool = false
+
+@export_group("Summon")
+## Enemy it calls every summon_interval seconds: one in the lane above and one
+## in the lane below, at its own column. Empty = it never summons (normal enemies).
+@export var summon_type: EnemyType
+## Seconds between two summons.
+@export var summon_interval: float = 10.0

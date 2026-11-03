@@ -28,6 +28,10 @@ var phase := Phase.PLAYING
 @onready var hud: Hud = $UI/HUD
 @onready var hint: Label = $UI/Hint
 @onready var notice: Notice = $UI/Notice
+@onready var wave_banner: Notice = $UI/WaveBanner
+@onready var boss_bar: PanelContainer = $UI/BossBar
+@onready var boss_name_label: Label = %BossName
+@onready var boss_health_bar: ProgressBar = %BossHealth
 @onready var pause_menu: PauseMenu = $UI/PauseMenu
 @onready var defeat_panel: DefeatPanel = $UI/DefeatPanel
 @onready var victory_panel: VictoryPanel = $UI/VictoryPanel
@@ -53,6 +57,7 @@ func _ready() -> void:
 	victory_panel.home_requested.connect(_on_exit_requested)
 	save_error_panel.retry_requested.connect(_on_save_retry_requested)
 	wave_manager.spawn_requested.connect(spawn_enemy)
+	wave_manager.wave_warning.connect(wave_banner.show_message)
 	wave_manager.wave_started.connect(hud.set_wave)
 	wave_manager.wave_progress.connect(hud.set_wave_progress)
 	wave_manager.all_waves_cleared.connect(_on_all_waves_cleared)
@@ -163,12 +168,36 @@ func _on_shot_fired(projectile: Projectile) -> void:
 
 # --- Enemies and waves ---
 
-## WaveManager asks for each enemy through its spawn_requested signal.
-func spawn_enemy(type: EnemyType, lane: int) -> void:
+## WaveManager asks for each enemy through its spawn_requested signal (they enter
+## at Enemy.SPAWN_COLUMN). The boss asks for its summons with summon_requested,
+## which also sends the column where they must appear.
+func spawn_enemy(type: EnemyType, lane: int, column: float = Enemy.SPAWN_COLUMN) -> void:
 	var enemy: Enemy = ENEMY_SCENE.instantiate()
-	enemy.setup(type, lane, board)
+	enemy.setup(type, lane, board, column)
 	enemy.reached_safe_zone.connect(_on_enemy_reached_safe_zone)
+	enemy.summon_requested.connect(spawn_enemy)
 	enemies.add_child(enemy)
+	if type.is_boss:
+		_show_boss_bar(enemy)
+
+
+# --- Boss health bar ---
+
+func _show_boss_bar(boss: Enemy) -> void:
+	boss_name_label.text = boss.enemy_type.display_name
+	boss_health_bar.max_value = boss.enemy_type.health
+	boss_health_bar.value = boss.health
+	boss.damaged.connect(_on_boss_damaged)
+	boss.died.connect(_on_boss_died)
+	boss_bar.show()
+
+
+func _on_boss_damaged(boss: Enemy) -> void:
+	boss_health_bar.value = boss.health
+
+
+func _on_boss_died(_boss: Enemy) -> void:
+	boss_bar.hide()
 
 
 ## Victory: every wave has appeared and no enemy is left alive (WaveManager checks it).
