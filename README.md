@@ -6,15 +6,19 @@ The player places defenders (Café, Laptop, Firewall) on a 5×9 board to stop ca
 Course project for *Desarrollo de Aplicaciones Móviles Nativas* (group 7CV4, ESCOM-IPN).
 Team: Cruz Villa Miguel Angel, Hernández Alonso Diego Raymundo, Martinez Martinez Carlos Daniel, Reyes Olascoaga Julio Cesar.
 
-## Current version: v0.4 (Block 4: Data-driven levels and world flow)
+## Current version: v0.5 (Block 5: Save, load and error states)
 
 What works now:
 
+- **The progress is saved** in `user://progress.cfg` (`ConfigFile`) every time a level is won, and survives closing the app. The home screen shows it (**"Mundo 1 · Nivel 3"**) and its button changes from *Jugar* to **Continuar**.
+- **Loading screen** ("Cargando…", the level name and a progress bar) every time a level is entered. If the level data is invalid it shows an error with *Volver al inicio* instead of crashing.
+- **Save error notice** "No se pudo guardar tu progreso" with *Reintentar* and *Ahora no* when saving fails. The game keeps the progress in memory until the app is closed.
+- **Missing or damaged save file:** the game starts from level 1 without closing, and the home screen says that the progress could not be read.
+- **Hidden debug option** (debug builds only): tap the title 5 times to open a panel that deletes the progress or simulates a save failure.
 - **World 1 with levels 1 to 4**, described only as data (`LevelData` / `WorldData` Custom Resources) and played one after another without closing the app: *Inicio de semestre*, *Primer parcial*, *Segundo parcial* and *Tercer parcial*. Each level has its own starting energy, available defenders and waves.
 - **Waves** read by `WaveManager`: each wave starts with a calm time, its enemies appear at the second, lane and type set in the level file, and the next wave starts only when the previous one has been cleared. The top bar shows the level name, **"Oleada X de Y"** and a bar with the progress of the current wave.
 - **Victory panel** when every wave is defeated: *Siguiente nivel* and *Volver al inicio*. After the last level it shows **"¡Mundo 1 superado!"**.
-- `ProgressRepository` (Autoload) remembers the current level while the app is open: *Jugar* continues from it, and *Reintentar* / *Reiniciar nivel* repeat it.
-- Home screen with a **Play** button that opens the current level.
+- `ProgressRepository` (Autoload) remembers the current level: *Continuar* opens it, and *Reintentar* / *Reiniciar nivel* repeat it.
 - A 5×9 board with a safe zone on the left. A tap or click is converted to a (lane, column) cell; the same code works with mouse on PC and touch on mobile.
 - **Defender cards** in the top bar, created from the defenders of the level (Café 50, Laptop 100, Firewall 75): tap to select, tap again to cancel. Without enough energy a card is dimmed and shows "faltan X". After placing a defender its card recharges for a few seconds ("espera N s").
 - **Placing defenders:** select a card, then tap a free cell. The defender appears there (shown as a letter: C, L, F), the cell is registered as occupied and its cost is subtracted.
@@ -49,7 +53,7 @@ What works now:
 
 - **Nodes and scenes:** every screen and every game entity is a reusable scene.
 - **Data separated from the engine:** each defender is a `DefenderType` Custom Resource (`data/defenders/*.tres`) with its name, cost, health, cooldown, image and the **behavior scene** it uses. Café, Laptop and Firewall are three files of the same type, not three different scripts. Each enemy is an `EnemyType` resource (`data/enemies/*.tres`) read by the single `enemy.tscn` scene. Each level is a `LevelData` resource (`data/worlds/levels/*.tres`) whose waves are `WaveData` lists of `SpawnEvent`s (second, lane, enemy type), and `world_1.tres` (`WorldData`) holds the ordered list of levels.
-- **Progress:** the `ProgressRepository` Autoload is the only piece that knows which level is being played (in memory for now; saved to `user://` in Block 5). `Game` asks it for the current `LevelData` when the scene starts, and *Siguiente nivel* reloads the scene after it moves forward.
+- **Progress:** the `ProgressRepository` Autoload is the only piece that knows which level is being played and the only one that reads and writes in `user://`. It loads `user://progress.cfg` when the app starts and saves it on every victory, with one section per world (`WorldData.id`) holding `current_level` and `unlocked_level`. A missing, damaged or invalid file means "start from level 1". `Game` asks it for the current `LevelData` when the scene starts, and *Siguiente nivel* opens the loading screen after it moves forward.
 - **Behaviors by inheritance:** `Defender` (health, damage, death) is the base script; `GeneratorDefender`, `ShooterDefender` and `BlockerDefender` inherit from it.
 - **Cell-based logic:** game logic works in board cells (lane, column, with decimals like column 6.4). Only `Board.cell_to_pixel()` / `Board.pixel_to_cell()` convert to and from screen pixels. `Board` also knows which cells are occupied. Enemy speed is in cells per second, and hits are distance checks in columns.
 - **Signals:** nodes communicate through signals (`Board.cell_tapped`, `Hud.card_pressed`, `GeneratorDefender.orb_produced`, `EnergyOrb.collected`, `ShooterDefender.shot_fired`, `Enemy.reached_safe_zone`, `Defender.died`, `WaveManager.spawn_requested`, `WaveManager.all_waves_cleared`...). The `Game` node owns the energy and the phase of the match (playing, victory, defeat), applies the rules and connects everything.
@@ -72,15 +76,15 @@ What works now:
 ```
 res://
 ├── scenes/
-│   ├── ui/          main_menu, hud, pause_menu, defender_card, notice, defeat_panel,
-│   │                victory_panel (.tscn), ui_theme.tres
+│   ├── ui/          main_menu, loading_screen, hud, pause_menu, defender_card, notice,
+│   │                defeat_panel, victory_panel, save_error_panel (.tscn), ui_theme.tres
 │   ├── game/        game.tscn, board.tscn
 │   └── entities/    generator_defender, shooter_defender, blocker_defender, energy_orb,
 │                    enemy, projectile (.tscn)
 ├── scripts/
 │   ├── engine/      game.gd, board.gd, wave_manager.gd
-│   ├── ui/          main_menu.gd, hud.gd, pause_menu.gd, defender_card.gd, notice.gd,
-│   │                defeat_panel.gd, victory_panel.gd
+│   ├── ui/          main_menu.gd, loading_screen.gd, hud.gd, pause_menu.gd, defender_card.gd,
+│   │                notice.gd, defeat_panel.gd, victory_panel.gd, save_error_panel.gd
 │   ├── entities/    defender.gd, generator_defender.gd, shooter_defender.gd,
 │   │                blocker_defender.gd, energy_orb.gd, enemy.gd, projectile.gd
 │   ├── data/        defender_type.gd, enemy_type.gd, spawn_event.gd, wave_data.gd,
@@ -96,6 +100,7 @@ res://
 
 ## Screenshots
 
+![v0.5 home screen with saved progress](docs/img/v0.5-continue.png)
 ![v0.4 level 3](docs/img/v0.4-level3.png)
 
 ## Roadmap
@@ -106,5 +111,5 @@ res://
 | 2 | v0.2 | Defenders and energy economy | ✅ Done |
 | 3 | v0.3 | Enemies and combat | ✅ Done |
 | 4 | v0.4 | Data-driven levels and world flow | ✅ Done |
-| 5 | v0.5 | Save system and error states | Pending |
+| 5 | v0.5 | Save system and error states | ✅ Done |
 | 6 | v1.0 | Final boss, art and polish | Pending |
