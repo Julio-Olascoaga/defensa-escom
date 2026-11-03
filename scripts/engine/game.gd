@@ -240,10 +240,14 @@ func _notification(what: int) -> void:
 		# The app went to the background (call, home button...): pause it.
 		if not get_tree().paused:
 			pause_game()
-	elif what == NOTIFICATION_WM_GO_BACK_REQUEST and phase == Phase.PLAYING:
-		# Android back button: opens or closes the pause menu
-		# (not after a victory or a defeat: their panel must stay on screen).
-		if get_tree().paused:
-			resume_game()
+	elif what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if phase == Phase.PLAYING:
+			# Android back button: opens or closes the pause menu.
+			if get_tree().paused:
+				resume_game()
+			else:
+				pause_game()
 		else:
-			pause_game()
+			# After a victory or a defeat it works like "Volver al inicio".
+			# The progress was already saved (or kept in memory) when the level was won.
+			_on_exit_requested()

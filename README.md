@@ -6,7 +6,9 @@ The player places defenders (Café, Laptop, Firewall) on a 5×9 board to stop ca
 Course project for *Desarrollo de Aplicaciones Móviles Nativas* (group 7CV4, ESCOM-IPN).
 Team: Cruz Villa Miguel Angel, Hernández Alonso Diego Raymundo, Martinez Martinez Carlos Daniel, Reyes Olascoaga Julio Cesar.
 
-## Current version: v0.5 (Block 5: Save, load and error states)
+## Current version: v0.5.1 (Block 5: Save, load and error states + review fixes)
+
+v0.5.1 fixes the problems found in the review of v0.5 (see `docs/tech-note-v0.5.1.md`): the home screen no longer keeps the "progress could not be read" warning after a later save, projectiles cannot skip an enemy in a slow frame, the Android back button works like *Volver al inicio* on the Victory and Defeat panels, the loading screen retries a failed background load once, the version label is read from Project Settings, and the `docs/` folder is no longer imported into the game.
 
 What works now:
 
@@ -24,10 +26,10 @@ What works now:
 - **Placing defenders:** select a card, then tap a free cell. The defender appears there (shown as a letter: C, L, F), the cell is registered as occupied and its cost is subtracted.
 - **Energy:** the level sets the starting energy (50 to 100). Each Café produces a "+25" energy orb every 10 s; tap it to collect it. Orbs nobody taps disappear after 8 s.
 - **Enemies:** three archetypes from one single enemy scene: the basic *tarea infinita* (T∞), the fast *examen sorpresa* (!) and the tough *200 diapositivas* (200). They walk along their lane, stop at the first defender and bite it until it dies.
-- **Combat:** the Laptop shoots only when an enemy is in its lane; hits are a simple distance check per lane. The Firewall holds enemies back thanks to its high health.
+- **Combat:** the Laptop shoots only when an enemy is in its lane; hits are a simple distance check per lane, over the whole stretch the projectile flew in each frame. The Firewall holds enemies back thanks to its high health.
 - If an enemy reaches the safe zone, the **Defeat panel** appears with *Reintentar* and *Volver al inicio*.
 - **Notices** for invalid moves, without spending energy, and an **empty-board hint** at the start of the level.
-- Pause menu (Resume, Restart level, Exit to home) using `get_tree().paused`; everything freezes while paused. The game pauses automatically when the app goes to the background, and the Android back button opens/closes the pause menu.
+- Pause menu (Resume, Restart level, Exit to home) using `get_tree().paused`; everything freezes while paused. The game pauses automatically when the app goes to the background, and the Android back button opens/closes the pause menu (on the Victory and Defeat panels it returns to the home screen).
 
 ## Requirements
 
@@ -95,7 +97,7 @@ res://
 │   ├── enemies/     tarea_infinita.tres, examen_sorpresa.tres, diapositivas.tres
 │   └── worlds/      world_1.tres, levels/level_1.tres … level_4.tres
 ├── art/             (Block 6)
-└── docs/            technical notes and screenshots per block
+└── docs/            technical notes and screenshots per block (.gdignore: not imported by Godot)
 ```
 
 ## Screenshots
@@ -112,4 +114,5 @@ res://
 | 3 | v0.3 | Enemies and combat | ✅ Done |
 | 4 | v0.4 | Data-driven levels and world flow | ✅ Done |
 | 5 | v0.5 | Save system and error states | ✅ Done |
+| 5 | v0.5.1 | Review fixes for Block 5 | ✅ Done |
 | 6 | v1.0 | Final boss, art and polish | Pending |
