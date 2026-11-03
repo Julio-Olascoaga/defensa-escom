@@ -11,8 +11,9 @@ const SPEED := 5.0
 const HIT_DISTANCE := 0.3
 ## Past this column the projectile has left the screen.
 const MAX_COLUMN := 9.5
-const RADIUS := 10.0
-const COLOR := Color("39e58c")
+## Small blue sparks where it hits.
+const HIT_SPARK_COLOR := Color("7fe3ff")
+const HIT_SPARKS := 6
 
 var lane := 0
 var column := 0.0
@@ -38,6 +39,7 @@ func _process(delta: float) -> void:
 	var target := _nearest_enemy_between(previous_column - HIT_DISTANCE, column + HIT_DISTANCE)
 	if target:
 		target.take_damage(damage)
+		SparkBurst.spawn(self, global_position, HIT_SPARK_COLOR, HIT_SPARKS, 160.0)
 		queue_free()
 		return
 	if column > MAX_COLUMN:
@@ -60,7 +62,3 @@ func _nearest_enemy_between(from_column: float, to_column: float) -> Enemy:
 
 func _update_position() -> void:
 	global_position = board.cell_to_pixel(lane, column)
-
-
-func _draw() -> void:
-	draw_circle(Vector2.ZERO, RADIUS, COLOR)

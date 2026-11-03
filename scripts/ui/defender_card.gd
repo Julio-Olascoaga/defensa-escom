@@ -21,6 +21,8 @@ var cooldown_left := 0.0
 
 
 func _ready() -> void:
+	# The picture of the defender, next to the text (no picture if the resource has none).
+	icon = defender_type.texture
 	_refresh()
 
 

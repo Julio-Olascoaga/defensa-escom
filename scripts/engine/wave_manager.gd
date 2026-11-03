@@ -4,19 +4,25 @@ extends Node
 ## It does not create enemies itself: it emits spawn_requested and Game spawns them.
 ##
 ## How a wave works:
-##   1. Calm: start_delay seconds with no enemies.
+##   1. Calm: start_delay seconds with no enemies. WARNING_TIME seconds before
+##      the end of the calm it emits wave_warning ("¡Se acerca una oleada!").
 ##   2. Each SpawnEvent fires when its time (counted after the calm) arrives.
 ##   3. When every event has fired AND no enemy is left alive, the next wave starts.
 ## Time is counted with delta in _process, so everything freezes during pause.
 
 ## An enemy must appear now in this lane.
 signal spawn_requested(enemy_type: EnemyType, lane: int)
+## The first enemy of the wave arrives in WARNING_TIME seconds. Game shows the text.
+signal wave_warning(text: String)
 ## A new wave begins (wave_number starts at 1). The HUD shows "Oleada X de Y".
 signal wave_started(wave_number: int, wave_count: int)
 ## Another enemy of the current wave has appeared. The HUD fills its bar.
 signal wave_progress(spawned: int, total: int)
 ## The last wave has fully appeared and no enemy is alive: the level is won.
 signal all_waves_cleared
+
+## Seconds the warning appears before the first enemy of each wave.
+const WARNING_TIME := 2.0
 
 var waves: Array[WaveData] = []
 ## Position of the current wave in the list. Equal to waves.size() = finished.
@@ -27,6 +33,8 @@ var events: Array[SpawnEvent] = []
 var next_event := 0
 ## Seconds since the current wave began (its calm included).
 var wave_time := 0.0
+## true once the warning of the current wave was shown.
+var warned := false
 
 
 ## Game calls this once, with the waves of the level.
@@ -46,6 +54,9 @@ func _process(delta: float) -> void:
 		# The wave is still appearing.
 		wave_time += delta
 		var wave := waves[wave_index]
+		if not warned and wave_time >= wave.start_delay - WARNING_TIME:
+			warned = true
+			wave_warning.emit(wave.warning_text)
 		while next_event < events.size() and wave_time >= wave.start_delay + events[next_event].time:
 			_fire(events[next_event])
 			next_event += 1
@@ -59,6 +70,7 @@ func _start_wave(index: int) -> void:
 	wave_index = index
 	next_event = 0
 	wave_time = 0.0
+	warned = false
 	if is_finished():
 		all_waves_cleared.emit()
 		return

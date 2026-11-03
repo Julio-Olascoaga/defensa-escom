@@ -1,30 +1,24 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/entities/energy_orb.gd" id="1_orb"]
+[ext_resource type="Texture2D" path="res://art/items/energy_orb.png" id="2_texture"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_orb"]
-bg_color = Color(1, 0.831, 0.231, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(1, 0.953, 0.749, 1)
-corner_radius_top_left = 32
-corner_radius_top_right = 32
-corner_radius_bottom_right = 32
-corner_radius_bottom_left = 32
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_orb"]
+texture = ExtResource("2_texture")
 
 [node name="EnergyOrb" type="Button"]
 offset_right = 64.0
 offset_bottom = 64.0
 focus_mode = 0
-theme_override_colors/font_color = Color(0.0784, 0.0627, 0.1686, 1)
-theme_override_colors/font_hover_color = Color(0.0784, 0.0627, 0.1686, 1)
-theme_override_colors/font_pressed_color = Color(0.0784, 0.0627, 0.1686, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.169, 0.106, 0.18, 1)
+theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 22
-theme_override_styles/normal = SubResource("StyleBoxFlat_orb")
-theme_override_styles/hover = SubResource("StyleBoxFlat_orb")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_orb")
+theme_override_styles/normal = SubResource("StyleBoxTexture_orb")
+theme_override_styles/hover = SubResource("StyleBoxTexture_orb")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_orb")
 script = ExtResource("1_orb")
 text = "+25"
 

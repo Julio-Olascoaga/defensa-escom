@@ -9,6 +9,9 @@ signal collected(amount: int)
 
 ## Seconds before an orb that nobody tapped disappears.
 const LIFETIME := 8.0
+## Floating: pixels it goes up and down, and seconds of each half.
+const FLOAT_PIXELS := 6.0
+const FLOAT_TIME := 0.6
 
 var amount := 25
 ## Position in board cells (decimals allowed). Game converts it to pixels.
@@ -30,6 +33,14 @@ func _ready() -> void:
 	pressed.connect(_on_pressed)
 	life_timer.timeout.connect(queue_free)  # not collected in time: it disappears
 	life_timer.start(LIFETIME)
+	_start_floating()
+
+
+## as_relative() moves it FROM wherever it is, so it works after Game places it.
+func _start_floating() -> void:
+	var tween := create_tween().set_loops()
+	tween.tween_property(self, "position:y", -FLOAT_PIXELS, FLOAT_TIME).as_relative().set_trans(Tween.TRANS_SINE)
+	tween.tween_property(self, "position:y", FLOAT_PIXELS, FLOAT_TIME).as_relative().set_trans(Tween.TRANS_SINE)
 
 
 func _on_pressed() -> void:

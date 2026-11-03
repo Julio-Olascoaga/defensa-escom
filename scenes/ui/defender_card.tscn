@@ -15,9 +15,10 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [node name="DefenderCard" type="Button"]
-custom_minimum_size = Vector2(130, 80)
+custom_minimum_size = Vector2(160, 80)
 focus_mode = 0
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 20
+expand_icon = true
 script = ExtResource("1_card")
 
 [node name="SelectedFrame" type="Panel" parent="."]

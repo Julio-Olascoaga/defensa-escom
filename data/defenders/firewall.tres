@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="DefenderType" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="DefenderType" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_type"]
 [ext_resource type="PackedScene" path="res://scenes/entities/blocker_defender.tscn" id="2_behavior"]
+[ext_resource type="Texture2D" path="res://art/defenders/firewall.png" id="3_texture"]
 
 [resource]
 script = ExtResource("1_type")
@@ -9,5 +10,6 @@ display_name = "Firewall"
 cost = 75
 health = 1500.0
 cooldown = 20.0
+texture = ExtResource("3_texture")
 color = Color(1, 0.42, 0.42, 1)
 behavior_scene = ExtResource("2_behavior")

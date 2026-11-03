@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/engine/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/game/board.tscn" id="2_board"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/engine/wave_manager.gd" id="7_waves"]
 [ext_resource type="PackedScene" path="res://scenes/ui/victory_panel.tscn" id="8_victory"]
 [ext_resource type="PackedScene" path="res://scenes/ui/save_error_panel.tscn" id="9_save_error"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/game_bg.jpg" id="10_background"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
 content_margin_left = 24.0
@@ -21,8 +22,54 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_banner"]
+content_margin_left = 32.0
+content_margin_top = 12.0
+content_margin_right = 32.0
+content_margin_bottom = 12.0
+bg_color = Color(0.424, 0.114, 0.271, 0.92)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.949, 0.702, 0.239, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_panel"]
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 16.0
+content_margin_bottom = 6.0
+bg_color = Color(0.051, 0.039, 0.122, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_back"]
+bg_color = Color(0.2, 0.18, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss_fill"]
+bg_color = Color(0.851, 0.204, 0.251, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
+
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("10_background")
+centered = false
 
 [node name="Board" parent="." instance=ExtResource("2_board")]
 position = Vector2(80, 110)
@@ -34,6 +81,8 @@ position = Vector2(80, 110)
 [node name="Projectiles" type="Node2D" parent="."]
 
 [node name="Orbs" type="Node2D" parent="."]
+
+[node name="Effects" type="Node2D" parent="." groups=["effects"]]
 
 [node name="WaveManager" type="Node" parent="."]
 script = ExtResource("7_waves")
@@ -55,6 +104,63 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Notice" parent="UI" instance=ExtResource("5_notice")]
+
+[node name="WaveBanner" parent="UI" instance=ExtResource("5_notice")]
+anchors_preset = 5
+anchor_top = 0.0
+anchor_bottom = 0.0
+offset_left = -420.0
+offset_top = 150.0
+offset_right = 420.0
+offset_bottom = 240.0
+grow_vertical = 1
+theme_override_colors/font_color = Color(1, 0.831, 0.231, 1)
+theme_override_colors/font_outline_color = Color(0.169, 0.106, 0.18, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxFlat_banner")
+
+[node name="BossBar" type="PanelContainer" parent="UI"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -330.0
+offset_top = -48.0
+offset_right = 330.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_boss_panel")
+
+[node name="Row" type="HBoxContainer" parent="UI/BossBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="BossName" type="Label" parent="UI/BossBar/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.831, 0.231, 1)
+theme_override_font_sizes/font_size = 22
+text = "El examen final"
+vertical_alignment = 1
+
+[node name="BossHealth" type="ProgressBar" parent="UI/BossBar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_boss_back")
+theme_override_styles/fill = SubResource("StyleBoxFlat_boss_fill")
+max_value = 2000.0
+value = 2000.0
+show_percentage = false
 
 [node name="PauseMenu" parent="UI" instance=ExtResource("4_pause")]
 visible = false
