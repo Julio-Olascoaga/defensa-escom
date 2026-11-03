@@ -18,6 +18,7 @@ var _last_tap_time := 0.0
 @onready var subtitle_label: Label = %Subtitle
 @onready var play_button: Button = %PlayButton
 @onready var load_error_label: Label = %LoadErrorLabel
+@onready var version_label: Label = $VersionLabel
 @onready var debug_panel: Control = %DebugPanel
 @onready var reset_button: Button = %ResetButton
 @onready var fail_save_button: Button = %FailSaveButton
@@ -31,6 +32,8 @@ func _ready() -> void:
 	fail_save_button.pressed.connect(_on_fail_save_button_pressed)
 	close_debug_button.pressed.connect(debug_panel.hide)
 	debug_panel.hide()
+	# The version is written only once, in Project Settings (application/config/version).
+	version_label.text = "v%s" % ProjectSettings.get_setting("application/config/version")
 	_show_progress()
 
 

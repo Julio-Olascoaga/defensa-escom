@@ -2,7 +2,8 @@ extends Control
 ## Loading screen shown every time a level is entered (from Inicio and from
 ## "Siguiente nivel"). It loads game.tscn in a background thread with
 ## ResourceLoader and fills the bar with the loading progress.
-## If the level data or the scene cannot be loaded, it shows an error
+## If the background load fails it tries once more the normal way, and if the
+## level data or the scene still cannot be loaded, it shows an error
 ## with "Volver al inicio" instead of crashing.
 
 const GAME_SCENE := "res://scenes/game/game.tscn"
@@ -43,7 +44,17 @@ func _process(delta: float) -> void:
 				set_process(false)
 				get_tree().change_scene_to_packed(ResourceLoader.load_threaded_get(GAME_SCENE))
 		_:  # THREAD_LOAD_FAILED or THREAD_LOAD_INVALID_RESOURCE
-			_show_error("No se pudo cargar el nivel")
+			_load_without_thread()
+
+
+## Plan B: load the scene on the main thread (the screen freezes for a moment).
+func _load_without_thread() -> void:
+	set_process(false)
+	var scene := load(GAME_SCENE) as PackedScene
+	if scene:
+		get_tree().change_scene_to_packed(scene)
+	else:
+		_show_error("No se pudo cargar el nivel")
 
 
 func _show_error(message: String) -> void:

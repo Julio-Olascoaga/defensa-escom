@@ -80,6 +80,8 @@ func save_progress() -> Error:
 	var error := config.save(SAVE_PATH)
 	if error != OK:
 		push_warning("Could not save %s (error %d)" % [SAVE_PATH, error])
+	else:
+		load_error = OK  # the file now holds good data, so Home stops showing the warning
 	return error
 
 
