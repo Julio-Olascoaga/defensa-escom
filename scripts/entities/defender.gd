@@ -11,11 +11,17 @@ signal died(defender: Defender)
 const CIRCLE_RADIUS := 46.0
 ## Width of the final image on the board, in pixels (a cell is 120 px).
 const SPRITE_SIZE := 110.0
+## Shake when an enemy bites it: pixels to each side, seconds of each move,
+## and a short rest before the next shake (bites arrive every frame).
+const SHAKE_PIXELS := 4.0
+const SHAKE_STEP := 0.05
+const SHAKE_REST := 0.25
 
 var defender_type: DefenderType
 var lane := 0
 var column := 0
 var health := 0.0
+var shake_tween: Tween
 
 @onready var sprite: Sprite2D = $Sprite
 @onready var letter_label: Label = $Letter
@@ -52,6 +58,19 @@ func take_damage(amount: float) -> void:
 	if health <= 0.0:
 		return  # already dead, ignore extra hits in the same frame
 	health -= amount
+	_shake()
 	if health <= 0.0:
 		died.emit(self)
 		queue_free()
+
+
+## Small shake to the sides; it does nothing if the last shake has not finished.
+func _shake() -> void:
+	if shake_tween and shake_tween.is_running():
+		return
+	var center_x := position.x  # the center of its cell, in pixels
+	shake_tween = create_tween()
+	shake_tween.tween_property(self, "position:x", center_x + SHAKE_PIXELS, SHAKE_STEP)
+	shake_tween.tween_property(self, "position:x", center_x - SHAKE_PIXELS, SHAKE_STEP)
+	shake_tween.tween_property(self, "position:x", center_x, SHAKE_STEP)
+	shake_tween.tween_interval(SHAKE_REST)

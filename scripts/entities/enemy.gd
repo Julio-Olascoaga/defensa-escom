@@ -24,6 +24,16 @@ const BITE_DISTANCE := 0.7
 ## Size of the placeholder box, in pixels (a cell is 120 px).
 const BOX_SIZE := Vector2(92, 92)
 const BORDER_COLOR := Color("7a1f45")
+## Hit flash: color values above 1 make the image brighter, almost white.
+const FLASH_COLOR := Color(3, 3, 3)
+## Seconds the flash takes to go back to the normal colors.
+const FLASH_TIME := 0.1
+## Walking sway: degrees to each side and seconds of each swing.
+const SWAY_DEGREES := 4.0
+const SWAY_TIME := 0.35
+## Sparks when it dies. A normal enemy (110 px) gets DEATH_SPARKS; the boss, more.
+const DEATH_SPARK_COLOR := Color("f2b33d")
+const DEATH_SPARKS := 16
 
 var enemy_type: EnemyType
 var lane := 0
@@ -34,6 +44,9 @@ var health := 0.0
 var summon_time := 0.0
 ## The Board, used to find defenders and to convert cells to pixels.
 var board: Board
+## Animations made with Tween (created in code, they stop when the game is paused).
+var flash_tween: Tween
+var sway_tween: Tween
 
 @onready var sprite: Sprite2D = $Sprite
 @onready var text_label: Label = $Text
@@ -59,6 +72,7 @@ func _ready() -> void:
 		text_label.hide()
 	else:
 		text_label.text = enemy_type.label_text
+	_start_sway()
 	_update_position()
 
 
@@ -66,8 +80,10 @@ func _process(delta: float) -> void:
 	var defender := _defender_in_front()
 	if defender:
 		defender.take_damage(enemy_type.damage_per_second * delta)  # bite
+		sway_tween.pause()  # stands still while biting
 	else:
 		column -= enemy_type.speed * delta  # walk left (cells per second)
+		sway_tween.play()
 	_update_summon(delta)
 
 	if column <= SAFE_ZONE_COLUMN:
@@ -103,9 +119,28 @@ func take_damage(amount: float) -> void:
 		return  # already dead, ignore extra hits in the same frame
 	health -= amount
 	damaged.emit(self)
+	_flash()
 	if health <= 0.0:
+		var size_factor := enemy_type.sprite_size / 110.0  # the boss explodes bigger
+		SparkBurst.spawn(self, global_position, DEATH_SPARK_COLOR, roundi(DEATH_SPARKS * size_factor), 260.0 * size_factor)
 		died.emit(self)
 		queue_free()
+
+
+## Hit flash: the enemy turns white and goes back to its colors in FLASH_TIME seconds.
+func _flash() -> void:
+	if flash_tween:
+		flash_tween.kill()  # a new hit restarts the flash
+	modulate = FLASH_COLOR
+	flash_tween = create_tween()
+	flash_tween.tween_property(self, "modulate", Color.WHITE, FLASH_TIME)
+
+
+## Walking sway: the image tilts left and right forever (set_loops with no number).
+func _start_sway() -> void:
+	sway_tween = create_tween().set_loops()
+	sway_tween.tween_property(sprite, "rotation_degrees", SWAY_DEGREES, SWAY_TIME).set_trans(Tween.TRANS_SINE)
+	sway_tween.tween_property(sprite, "rotation_degrees", -SWAY_DEGREES, SWAY_TIME).set_trans(Tween.TRANS_SINE)
 
 
 ## Cells -> pixels, only to draw the node on screen.
