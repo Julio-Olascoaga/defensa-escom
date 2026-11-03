@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LevelData" load_steps=23 format=3]
+[gd_resource type="Resource" script_class="LevelData" format=3]
 
 [ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_defender"]
 [ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="2_cafe"]
@@ -14,14 +14,12 @@
 
 [sub_resource type="Resource" id="Resource_w1_1"]
 script = ExtResource("7_event")
-time = 0.0
 lane = 2
 enemy_type = ExtResource("8_tarea")
 
 [sub_resource type="Resource" id="Resource_w1_2"]
 script = ExtResource("7_event")
 time = 8.0
-lane = 0
 enemy_type = ExtResource("9_sorpresa")
 
 [sub_resource type="Resource" id="Resource_w1_3"]
@@ -51,7 +49,6 @@ enemy_type = ExtResource("8_tarea")
 [sub_resource type="Resource" id="Resource_w1_7"]
 script = ExtResource("7_event")
 time = 48.0
-lane = 0
 enemy_type = ExtResource("10_diapos")
 
 [sub_resource type="Resource" id="Resource_w1_8"]
@@ -60,10 +57,57 @@ time = 56.0
 lane = 4
 enemy_type = ExtResource("9_sorpresa")
 
+[sub_resource type="Resource" id="Resource_plka4"]
+script = ExtResource("7_event")
+time = 40.0
+lane = 1
+enemy_type = ExtResource("8_tarea")
+
+[sub_resource type="Resource" id="Resource_f7sh2"]
+script = ExtResource("7_event")
+time = 46.0
+lane = 3
+enemy_type = ExtResource("9_sorpresa")
+
+[sub_resource type="Resource" id="Resource_fibd6"]
+script = ExtResource("7_event")
+time = 54.0
+lane = 2
+enemy_type = ExtResource("10_diapos")
+
+[sub_resource type="Resource" id="Resource_mrhnb"]
+script = ExtResource("7_event")
+time = 62.0
+enemy_type = ExtResource("8_tarea")
+
+[sub_resource type="Resource" id="Resource_gpgy8"]
+script = ExtResource("7_event")
+time = 66.0
+lane = 4
+enemy_type = ExtResource("10_diapos")
+
+[sub_resource type="Resource" id="Resource_rtryf"]
+script = ExtResource("7_event")
+time = 70.0
+lane = 1
+enemy_type = ExtResource("9_sorpresa")
+
+[sub_resource type="Resource" id="Resource_hlfhw"]
+script = ExtResource("7_event")
+time = 74.0
+lane = 3
+enemy_type = ExtResource("8_tarea")
+
+[sub_resource type="Resource" id="Resource_vo3cr"]
+script = ExtResource("7_event")
+time = 78.0
+lane = 2
+enemy_type = ExtResource("10_diapos")
+
 [sub_resource type="Resource" id="Resource_wave_1"]
 script = ExtResource("6_wave")
-start_delay = 30.0
-events = Array[ExtResource("7_event")]([SubResource("Resource_w1_1"), SubResource("Resource_w1_2"), SubResource("Resource_w1_3"), SubResource("Resource_w1_4"), SubResource("Resource_w1_5"), SubResource("Resource_w1_6"), SubResource("Resource_w1_7"), SubResource("Resource_w1_8")])
+start_delay = 40.0
+events = Array[ExtResource("7_event")]([SubResource("Resource_w1_1"), SubResource("Resource_w1_2"), SubResource("Resource_w1_3"), SubResource("Resource_w1_4"), SubResource("Resource_w1_5"), SubResource("Resource_w1_6"), SubResource("Resource_w1_7"), SubResource("Resource_w1_8"), SubResource("Resource_plka4"), SubResource("Resource_f7sh2"), SubResource("Resource_fibd6"), SubResource("Resource_mrhnb"), SubResource("Resource_gpgy8"), SubResource("Resource_rtryf"), SubResource("Resource_hlfhw"), SubResource("Resource_vo3cr")])
 
 [sub_resource type="Resource" id="Resource_boss_event"]
 script = ExtResource("7_event")
@@ -72,13 +116,12 @@ enemy_type = ExtResource("11_boss")
 
 [sub_resource type="Resource" id="Resource_wave_2"]
 script = ExtResource("6_wave")
-start_delay = 15.0
 warning_text = "¡Llegó El examen final!"
 events = Array[ExtResource("7_event")]([SubResource("Resource_boss_event")])
 
 [resource]
 script = ExtResource("5_level")
 display_name = "El examen final"
-start_energy = 150
+start_energy = 200
 defenders = Array[ExtResource("1_defender")]([ExtResource("2_cafe"), ExtResource("3_laptop"), ExtResource("4_firewall")])
 waves = Array[ExtResource("6_wave")]([SubResource("Resource_wave_1"), SubResource("Resource_wave_2")])

@@ -109,9 +109,56 @@ script = ExtResource("7_1kq2h")
 time = 55.0
 enemy_type = ExtResource("8_s3pdc")
 
+[sub_resource type="Resource" id="Resource_3ksfh"]
+script = ExtResource("7_1kq2h")
+time = 10.0
+lane = 4
+enemy_type = ExtResource("10_nnuw2")
+
+[sub_resource type="Resource" id="Resource_ma2gn"]
+script = ExtResource("7_1kq2h")
+time = 20.0
+lane = 1
+enemy_type = ExtResource("8_s3pdc")
+
+[sub_resource type="Resource" id="Resource_f8acn"]
+script = ExtResource("7_1kq2h")
+time = 20.0
+lane = 3
+enemy_type = ExtResource("8_s3pdc")
+
+[sub_resource type="Resource" id="Resource_qn6xx"]
+script = ExtResource("7_1kq2h")
+time = 35.0
+enemy_type = ExtResource("10_nnuw2")
+
+[sub_resource type="Resource" id="Resource_4yy4m"]
+script = ExtResource("7_1kq2h")
+time = 45.0
+lane = 2
+enemy_type = ExtResource("9_vgs8p")
+
+[sub_resource type="Resource" id="Resource_qqhj4"]
+script = ExtResource("7_1kq2h")
+time = 45.0
+lane = 4
+enemy_type = ExtResource("9_vgs8p")
+
+[sub_resource type="Resource" id="Resource_1kq2h"]
+script = ExtResource("7_1kq2h")
+time = 60.0
+lane = 1
+enemy_type = ExtResource("10_nnuw2")
+
+[sub_resource type="Resource" id="Resource_s3pdc"]
+script = ExtResource("7_1kq2h")
+time = 60.0
+lane = 3
+enemy_type = ExtResource("8_s3pdc")
+
 [sub_resource type="Resource" id="Resource_t53ei"]
 script = ExtResource("6_qqhj4")
-events = Array[ExtResource("7_1kq2h")]([SubResource("Resource_rsj1p"), SubResource("Resource_l0v2u"), SubResource("Resource_q5ujm"), SubResource("Resource_wq62f"), SubResource("Resource_q7pkf"), SubResource("Resource_2id04"), SubResource("Resource_en6ns")])
+events = Array[ExtResource("7_1kq2h")]([SubResource("Resource_rsj1p"), SubResource("Resource_l0v2u"), SubResource("Resource_q5ujm"), SubResource("Resource_wq62f"), SubResource("Resource_q7pkf"), SubResource("Resource_2id04"), SubResource("Resource_en6ns"), SubResource("Resource_3ksfh"), SubResource("Resource_ma2gn"), SubResource("Resource_f8acn"), SubResource("Resource_qn6xx"), SubResource("Resource_4yy4m"), SubResource("Resource_qqhj4"), SubResource("Resource_1kq2h"), SubResource("Resource_s3pdc")])
 
 [resource]
 script = ExtResource("5_4yy4m")

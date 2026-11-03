@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DefenderType" format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/entities/blocker_defender.tscn" id="1_daxxu"]
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="2_jbkq6"]
+
+[resource]
+script = ExtResource("2_jbkq6")
+display_name = "USB"
+cost = 25
+health = 600.0
+cooldown = 10.0
+color = Color(0.38, 0.62, 0.95, 1)
+behavior_scene = ExtResource("1_daxxu")

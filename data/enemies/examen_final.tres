@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyType" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="EnemyType" format=3]
 
 [ext_resource type="Script" path="res://scripts/data/enemy_type.gd" id="1_type"]
 [ext_resource type="Texture2D" path="res://art/enemies/examen_final.png" id="2_texture"]
@@ -8,7 +8,7 @@
 script = ExtResource("1_type")
 display_name = "El examen final"
 label_text = "EF"
-health = 2000.0
+health = 3000.0
 speed = 0.12
 damage_per_second = 50.0
 texture = ExtResource("2_texture")
@@ -16,4 +16,3 @@ color = Color(0.424, 0.114, 0.271, 1)
 sprite_size = 200.0
 is_boss = true
 summon_type = ExtResource("3_summon")
-summon_interval = 10.0
