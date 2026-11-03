@@ -19,6 +19,8 @@ const BITE_DISTANCE := 0.7
 ## Size of the placeholder box, in pixels (a cell is 120 px).
 const BOX_SIZE := Vector2(92, 92)
 const BORDER_COLOR := Color("7a1f45")
+## Width of the final image on the board, in pixels (a cell is 120 px).
+const SPRITE_SIZE := 110.0
 
 var enemy_type: EnemyType
 var lane := 0
@@ -45,6 +47,8 @@ func _ready() -> void:
 	add_to_group("enemies")
 	if enemy_type.texture:
 		sprite.texture = enemy_type.texture
+		# The PNG is bigger (256 px) so it looks sharp on phones; scale it to fit the cell.
+		sprite.scale = Vector2.ONE * SPRITE_SIZE / enemy_type.texture.get_width()
 		text_label.hide()
 	else:
 		text_label.text = enemy_type.label_text

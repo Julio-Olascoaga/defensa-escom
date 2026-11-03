@@ -12,12 +12,11 @@ signal cell_tapped(lane: int, column: int)
 const LANES := 5          # rows, counted from top (0) to bottom (4)
 const COLUMNS := 9        # counted from left (0) to right (8)
 const CELL_SIZE := 120.0  # size of one square cell, in pixels
-const SAFE_ZONE_WIDTH := 80.0  # strip on the left that enemies must not reach
 
-const COLOR_CELL_A := Color("1f1a3d")
-const COLOR_CELL_B := Color("262049")
-const COLOR_GRID_LINE := Color("3a3366")
-const COLOR_SAFE_ZONE := Color("6d3fe0", 0.35)
+# Almost transparent, so the grass of the background shows through.
+const COLOR_CELL_A := Color(0, 0, 0, 0.07)
+const COLOR_CELL_B := Color(1, 1, 1, 0.07)
+const COLOR_GRID_LINE := Color(1, 1, 1, 0.25)
 const COLOR_ENTRY_LINE := Color("f4f2ff", 0.4)
 const COLOR_HIGHLIGHT := Color("ffd43b")
 
@@ -95,9 +94,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func _draw() -> void:
 	var board_width := COLUMNS * CELL_SIZE
 	var board_height := LANES * CELL_SIZE
-
-	# Safe zone on the left of the grid.
-	draw_rect(Rect2(-SAFE_ZONE_WIDTH, 0, SAFE_ZONE_WIDTH, board_height), COLOR_SAFE_ZONE)
 
 	# Cells in a checkerboard pattern, so the player can tell them apart.
 	for lane in LANES:

@@ -9,6 +9,8 @@ signal died(defender: Defender)
 
 ## Size of the placeholder circle, in pixels (a cell is 120 px).
 const CIRCLE_RADIUS := 46.0
+## Width of the final image on the board, in pixels (a cell is 120 px).
+const SPRITE_SIZE := 110.0
 
 var defender_type: DefenderType
 var lane := 0
@@ -32,6 +34,8 @@ func _ready() -> void:
 	if defender_type.texture:
 		# Final art (Block 6): show the image and hide the letter.
 		sprite.texture = defender_type.texture
+		# The PNG is bigger (256 px) so it looks sharp on phones; scale it to fit the cell.
+		sprite.scale = Vector2.ONE * SPRITE_SIZE / defender_type.texture.get_width()
 		letter_label.hide()
 	else:
 		# Placeholder: the first letter of the name (C, L, F) over a colored circle.

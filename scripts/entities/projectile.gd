@@ -11,8 +11,6 @@ const SPEED := 5.0
 const HIT_DISTANCE := 0.3
 ## Past this column the projectile has left the screen.
 const MAX_COLUMN := 9.5
-const RADIUS := 10.0
-const COLOR := Color("39e58c")
 
 var lane := 0
 var column := 0.0
@@ -60,7 +58,3 @@ func _nearest_enemy_between(from_column: float, to_column: float) -> Enemy:
 
 func _update_position() -> void:
 	global_position = board.cell_to_pixel(lane, column)
-
-
-func _draw() -> void:
-	draw_circle(Vector2.ZERO, RADIUS, COLOR)

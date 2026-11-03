@@ -3,18 +3,18 @@ extends Control
 ## button says "Jugar" the first time and "Continuar" afterwards. The button
 ## opens the loading screen, which loads the current level.
 ##
-## Hidden debug option (debug builds only): tap the title DEBUG_TAPS times
+## Hidden debug option (debug builds only): tap the logo DEBUG_TAPS times
 ## in a row to open a panel that deletes the progress or simulates a save failure.
 
 const LOADING_SCENE := "res://scenes/ui/loading_screen.tscn"
 const DEBUG_TAPS := 5
-## Maximum seconds between two taps on the title to keep counting.
+## Maximum seconds between two taps on the logo to keep counting.
 const DEBUG_TAP_WINDOW := 1.0
 
 var _debug_taps := 0
 var _last_tap_time := 0.0
 
-@onready var title_label: Label = %Title
+@onready var logo: TextureRect = %Logo
 @onready var subtitle_label: Label = %Subtitle
 @onready var play_button: Button = %PlayButton
 @onready var load_error_label: Label = %LoadErrorLabel
@@ -27,7 +27,7 @@ var _last_tap_time := 0.0
 
 func _ready() -> void:
 	play_button.pressed.connect(_on_play_button_pressed)
-	title_label.gui_input.connect(_on_title_gui_input)
+	logo.gui_input.connect(_on_logo_gui_input)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	fail_save_button.pressed.connect(_on_fail_save_button_pressed)
 	close_debug_button.pressed.connect(debug_panel.hide)
@@ -58,7 +58,7 @@ func _on_play_button_pressed() -> void:
 
 # --- Hidden debug panel ---
 
-func _on_title_gui_input(event: InputEvent) -> void:
+func _on_logo_gui_input(event: InputEvent) -> void:
 	if not OS.is_debug_build():
 		return  # the option does not exist in a release APK
 	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
