@@ -9,6 +9,8 @@
 [ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l6.tres" id="7_l6"]
 [ext_resource type="Script" path="res://scripts/data/world_data.gd" id="8_world"]
 [ext_resource type="Texture2D" path="res://art/backgrounds/game_bg.jpg" id="9_background"]
+[ext_resource type="Resource" path="res://data/dialogues/w1_intro.tres" id="100_b9_intro_dialogue"]
+[ext_resource type="Resource" path="res://data/dialogues/w1_outro.tres" id="101_b9_outro_dialogue"]
 
 [resource]
 script = ExtResource("8_world")
@@ -18,3 +20,5 @@ levels = Array[ExtResource("1_level")]([ExtResource("2_l1"), ExtResource("3_l2")
 semester = 1
 location_name = "Escuela Superior de Cómputo"
 background = ExtResource("9_background")
+intro_dialogue = ExtResource("100_b9_intro_dialogue")
+outro_dialogue = ExtResource("101_b9_outro_dialogue")

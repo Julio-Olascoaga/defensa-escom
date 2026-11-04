@@ -15,3 +15,4 @@ color = Color(0.784, 0.514, 0.29, 1)
 behavior_scene = ExtResource("2_behavior")
 energy_per_orb = 25
 orb_interval = 10.0
+description = "La taza favorita de Her Mosso. No ataca, pero prepara orbes de energía. Sin café no hay ingeniero."

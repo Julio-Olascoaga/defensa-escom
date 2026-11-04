@@ -1,0 +1,70 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/engine/tutorial.gd" id="1_tutorial"]
+[ext_resource type="Texture2D" path="res://art/director/feliz.png" id="2_face"]
+[ext_resource type="PackedScene" path="res://scenes/ui/tutorial_pointer.tscn" id="3_pointer"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bubble"]
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.149, 0.125, 0.286, 0.94)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.831, 0.231, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[node name="Tutorial" type="Node"]
+script = ExtResource("1_tutorial")
+
+[node name="Layer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="Bubble" type="PanelContainer" parent="Layer"]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -480.0
+offset_top = 116.0
+offset_right = -16.0
+offset_bottom = 236.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bubble")
+
+[node name="Row" type="HBoxContainer" parent="Layer/Bubble"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Face" type="TextureRect" parent="Layer/Bubble/Row"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("2_face")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BubbleText" type="Label" parent="Layer/Bubble/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "Toca la carta del Café."
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Pointer" parent="Layer" instance=ExtResource("3_pointer")]
+unique_name_in_owner = true
+
+[node name="HideTimer" type="Timer" parent="."]
+one_shot = true

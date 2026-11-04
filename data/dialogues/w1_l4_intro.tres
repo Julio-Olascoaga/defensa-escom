@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/enemies/diapositivas.tres" id="3_diapositivas"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+text = "Segundo parcial. ¿Dormiste? Yo tampoco."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Ese es el de las 200 diapositivas. Dijo que eran «nada más unas cuantas». Todas con letra tamaño 8."
+show_enemy = ExtResource("3_diapositivas")
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Es lento, pero tarda muchísimo en caer. Junta varias Laptops en su carril."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Y pon un Firewall delante, para que no se acerque a leerte la diapositiva 147."
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l4_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

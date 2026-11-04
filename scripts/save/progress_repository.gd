@@ -10,8 +10,10 @@ extends Node
 ##     unlocked_level=4       <- highest level the player can enter
 ##     completed=true         <- the last level of the world was won
 ##     grade_w1_l1=10         <- best grade of each level, named with LevelData.id
-##     [seen]
-##     dialogues=["w1_intro"] <- conversations already shown (Block 9)
+##     [seen]                 <- Block 9
+##     dialogues=["w1_intro"] <- conversations (and the tutorial) already shown
+##     cards=["cafe"]         <- cards and enemies met, shown in the Expediente
+##     enemies=["tarea_infinita"]
 ##     [settings]
 ##     music_volume=0.8
 ##     sfx_volume=1.0
@@ -130,6 +132,37 @@ func mark_dialogue_seen(dialogue_id: String) -> Error:
 	return save_progress()
 
 
+# --- Expediente (Block 9) ---
+
+## True once the player has met this card (kind "cards") or enemy (kind "enemies").
+func is_known(kind: String, type: Resource) -> bool:
+	return _known_id(type) in _config.get_value("seen", kind, [])
+
+
+## Remembers that the player met these cards or enemies: a card when it is in
+## the bar of a level or the Director presents it, an enemy when it enters the
+## board or the Director presents it. It saves only if something is new.
+func mark_known(kind: String, types: Array) -> Error:
+	var known: Array = _config.get_value("seen", kind, [])
+	var changed := false
+	for type: Resource in types:
+		if type and not _known_id(type) in known:
+			known.append(_known_id(type))
+			changed = true
+	if not changed:
+		return OK
+	_config.set_value("seen", kind, known)
+	return save_progress()
+
+
+## Name saved for a card or an enemy: the name of its file ("cafe" for
+## data/defenders/cafe.tres). A resource made in code (tests) uses its display_name.
+func _known_id(type: Resource) -> String:
+	if type.resource_path != "":
+		return type.resource_path.get_file().get_basename()
+	return str(type.get("display_name"))
+
+
 # --- Settings ---
 
 ## Reads one of DEFAULT_SETTINGS ("music_volume", "sfx_volume" or "vibration").
@@ -198,7 +231,7 @@ func load_progress() -> void:
 
 
 ## Debug option (and the "Borrar progreso" button of Block 8): forgets the
-## levels, grades and dialogues, but keeps the settings.
+## levels, grades, dialogues and the Expediente, but keeps the settings.
 func reset_progress() -> Error:
 	for section in _config.get_sections():
 		if section != "meta" and section != "settings":

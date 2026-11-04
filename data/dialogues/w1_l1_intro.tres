@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="3_cafe"]
+[ext_resource type="Resource" path="res://data/defenders/laptop.tres" id="4_laptop"]
+[ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="5_tarea"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+text = "Este es tu salón: cinco carriles. Los pendientes entran por la derecha y caminan hacia tu lado, a la izquierda."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Primero, lo esencial: mi taza de Café. No ataca, pero produce energía. Sin café no hay ingeniero."
+show_card = ExtResource("3_cafe")
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+text = "También te presto mi Laptop. Tiene más años que tú, pero compila y dispara código a todo lo que avance por su carril."
+show_card = ExtResource("4_laptop")
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Ahí viene el de la tarea infinita. Nació un viernes, cuando alguien dijo «para el lunes»."
+show_enemy = ExtResource("5_tarea")
+
+[sub_resource type="Resource" id="Resource_line5"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Tranquilo, vamos paso a paso. Sigue la flecha amarilla."
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l1_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4"), SubResource("Resource_line5")])

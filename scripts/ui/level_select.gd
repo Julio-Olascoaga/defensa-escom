@@ -5,6 +5,8 @@ extends Control
 ## added to world_N.tres in the Inspector appears here without touching scripts.
 ## A tap on an open level plays it; a tap on a locked one says why.
 ## Back (button or Android) returns to the career map.
+## Block 9: the first time a world is entered, the Director welcomes the
+## player to the semester (WorldData.intro_dialogue).
 
 var level_buttons: Array[LevelButton] = []
 
@@ -14,6 +16,7 @@ var level_buttons: Array[LevelButton] = []
 @onready var average_label: Label = %Average
 @onready var grid: GridContainer = %Grid
 @onready var notice: Notice = %Notice
+@onready var dialogue_box: DialogueBox = $DialogueBox
 
 
 func _ready() -> void:
@@ -25,6 +28,7 @@ func _ready() -> void:
 	average_label.text = "Promedio: %.1f" % average
 	average_label.visible = average > 0.0
 	_create_buttons(world)
+	dialogue_box.play_once(world.intro_dialogue)  # only the first time
 
 
 func _create_buttons(world: WorldData) -> void:
@@ -52,4 +56,7 @@ func _go_back() -> void:
 func _notification(what: int) -> void:
 	# Android back button: back to the career map.
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not SceneTransition.is_changing:
-		_go_back()
+		if dialogue_box.is_open():
+			dialogue_box.finish()  # back = "Saltar"
+		else:
+			_go_back()

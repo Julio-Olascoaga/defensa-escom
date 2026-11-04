@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+text = "Inicio de semestre: los pendientes ya llegan por varios carriles."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "¿Ves los íconos a la izquierda de cada carril? Son tus Extraordinarios: tu último salvavidas."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+text = "Si un pendiente llega a tu salón, el extraordinario de ese carril lo barre… pero solo una vez."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Cada extraordinario que uses te baja un punto. Nadie quiere ir a extraordinario. Ni el extraordinario."
+
+[sub_resource type="Resource" id="Resource_line5"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "¡A defender el semestre!"
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l2_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4"), SubResource("Resource_line5")])

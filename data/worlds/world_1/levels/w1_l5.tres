@@ -10,6 +10,7 @@
 [ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="8_ycqp2"]
 [ext_resource type="Resource" path="res://data/enemies/examen_sorpresa.tres" id="9_kb3rf"]
 [ext_resource type="Resource" path="res://data/enemies/diapositivas.tres" id="10_0vw72"]
+[ext_resource type="Resource" path="res://data/dialogues/w1_l5_intro.tres" id="100_b9_intro_dialogue"]
 
 [sub_resource type="Resource" id="Resource_eniug"]
 script = ExtResource("7_ryvxq")
@@ -238,3 +239,4 @@ start_energy = 150
 defenders = Array[ExtResource("1_bbm8a")]([ExtResource("2_6xjqd"), ExtResource("3_pbtq7"), ExtResource("4_o2qwt")])
 waves = Array[ExtResource("6_51ihj")]([SubResource("Resource_2cgyp"), SubResource("Resource_etvhk"), SubResource("Resource_w4fg0")])
 use_extraordinarios = true
+intro_dialogue = ExtResource("100_b9_intro_dialogue")

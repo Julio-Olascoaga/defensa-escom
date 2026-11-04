@@ -6,11 +6,20 @@ The player places defenders (Café, Laptop, Firewall) on a 5×9 board to stop ca
 Course project for *Desarrollo de Aplicaciones Móviles Nativas* (group 7CV4, ESCOM-IPN).
 Team: Cruz Villa Miguel Angel, Hernández Alonso Diego Raymundo, Martinez Martinez Carlos Daniel, Reyes Olascoaga Julio Cesar.
 
-## Current version: v1.2 (Block 8: Career map, levels and grades)
+## Current version: v1.3 (Block 9: The Director, tutorial and Expediente)
 
-Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 8 lets the player choose the semester and the level, and grades every victory (see `docs/tech-note-v1.2.md`):
+Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 9 makes the game explain itself (see `docs/tech-note-v1.3.md`):
 
-- **New flow:** Inicio (*Jugar*/*Continuar*, *Expediente* (Block 9, disabled), *Ajustes*, *Créditos*) → **Mapa de la carrera** → **Selección de nivel** → game → Victory → *Siguiente nivel* or *Selección de nivel*. Pause and Defeat exit to the level select. The Android back button goes back one screen everywhere and asks "¿Salir del juego?" on Inicio.
+- **A story with school humor:** every semester, the homework nobody delivered wakes up in the **Archivo Muerto** and marches to the classrooms. Her Mosso guides the player through World 1, a small mystery that ends with *El Examen Final* and a clue that leads to World 2.
+- **The Director, Her Mosso:** a dialogue box (`DialogueBox`, a `CanvasLayer` that pauses the game while it talks) with his portrait in 6 expressions, typewriter text (tap to complete, tap to continue) and a *Saltar* button. He welcomes the player to the semester (`WorldData.intro_dialogue`), talks before the first wave (`LevelData.intro_dialogue`) and after the last one (`outro_dialogue`), and congratulates the player on *Semestre aprobado*. Each conversation is a `DialogueData` file in `data/dialogues/` and is shown **only once** (`[seen] dialogues`).
+- **Presentations:** a line with `show_card` shows the big card under **"¡Nueva carta!"**; with `show_enemy`, the enemy under **"Nuevo en tu expediente"**. The Firewall is presented at the start of *Primer parcial* (it is the `reward_card` of *Inicio de semestre*).
+- **Guided tutorial** in *Primer día* (`LevelData.is_tutorial`): an animated arrow and a speech bubble lead the player through choosing the Café, placing it, collecting an orb and placing a Laptop in the lane of the tasks. The waves start when the steps are done; replaying the level skips it.
+- **Expediente** (Inicio → *Expediente*): tabs *Cartas* and *Enemigos*, built from the levels of `campaign.tres`. What the player has not met yet is a black silhouette (*???*); a tap shows the file with the picture, description and stats in words. Known cards and enemies are saved in `[seen] cards` / `enemies`.
+- **World 2 scripts** for Block 12 in `docs/dialogues-world-2.md`.
+
+Block 8 (v1.2) career map, levels and grades, still in place:
+
+- **New flow:** Inicio (*Jugar*/*Continuar*, *Expediente*, *Ajustes*, *Créditos*) → **Mapa de la carrera** → **Selección de nivel** → game → Victory → *Siguiente nivel* or *Selección de nivel*. Pause and Defeat exit to the level select. The Android back button goes back one screen everywhere and asks "¿Salir del juego?" on Inicio.
 - **Career map:** the 8 semesters in a horizontal scroll joined by a path, built in code from `data/campaign.tres`: locked (padlock, *Próximamente* for unavailable worlds), available (pulses) or passed (shows the average). A world opens when the last level of the previous one is won.
 - **Level select:** a 4 × 2 grid with the levels of the world (number, name, best grade or padlock). Tapping something locked says why.
 - **Extraordinarios** (levels 2–6 of World 1, `LevelData.use_extraordinarios`): one per lane. The first enemy that reaches the school in a lane makes it run along the lane removing every enemy; the second one is a defeat.
@@ -56,7 +65,7 @@ Everything from v1.0 still works:
 | Stretch | `canvas_items`, aspect `keep` |
 | Touch | *Emulate Mouse From Touch* enabled |
 | Back button | `quit_on_go_back = false` (handled by the game) |
-| Version | `application/config/version = "1.2"` (shown on the home screen). Android preset (not in the repo): version/name `1.2`, version/code `3`, permission *Vibrate* |
+| Version | `application/config/version = "1.3"` (shown on the home screen). Android preset (not in the repo): version/name `1.3`, version/code `4`, permission *Vibrate* |
 | Screen | `keep_screen_on = false`; the game screen keeps it on while playing |
 | Audio buses | `default_bus_layout.tres`: `Music` and `SFX` |
 | Autoloads | `GameSession`, `ProgressRepository`, `AudioManager`, `SceneTransition` (in this order) |
@@ -72,6 +81,7 @@ Everything from v1.0 still works:
 - **Behaviors by inheritance:** `Defender` (health, damage, shake, death) is the base script; `GeneratorDefender`, `ShooterDefender` and `BlockerDefender` inherit from it.
 - **Cell-based logic:** game logic works in board cells (lane, column, with decimals like column 6.4). Only `Board.cell_to_pixel()` / `Board.pixel_to_cell()` convert to and from screen pixels. Enemy speed is in cells per second, and hits are distance checks in columns.
 - **Signals:** nodes communicate through signals (`Board.cell_tapped`, `Hud.card_pressed`, `GeneratorDefender.orb_produced`, `EnergyOrb.collected`, `ShooterDefender.shot_fired`, `Enemy.reached_safe_zone`, `Enemy.damaged`, `Enemy.summon_requested`, `Defender.died`, `WaveManager.spawn_requested`, `WaveManager.wave_warning`, `WaveManager.all_waves_cleared`...). The `Game` node owns the energy and the phase of the match, applies the rules and creates every enemy, including the boss's summons.
+- **Story as data:** a conversation is a `DialogueData` with `DialogueLine`s (speaker, expression, text, optional card or enemy to present). Worlds and levels point to their conversations; `DialogueBox.play_once()` shows each one once. The tutorial is a list of steps in `tutorial.gd` that waits for Game signals (`card_selected`, `defender_placed`, `orb_collected`).
 - **Effects:** animations are Tweens created by each node (`create_tween()`), so they stop with the pause and disappear with their node. Sparks are one-shot `CPUParticles2D` (`SparkBurst`) added to the `Effects` node of the game scene.
 
 ### Adding a level (no scripts)
@@ -95,6 +105,12 @@ Everything from v1.0 still works:
 
 Example: `data/defenders/usb.tres` (*USB*, a cheap wall: `BlockerDefender`, cost 25, 600 health) was made this way without writing any script. No level uses it yet. The top bar fits up to 6 cards (with 4 or more they switch to a compact size).
 
+### Adding a conversation of the Director (no scripts)
+
+1. Right-click `data/dialogues/` → *New Resource…* → `DialogueData`. Give it a unique `id` (for example `w1_l4_outro`).
+2. In `lines`, add one *New DialogueLine* per line: `expression`, `text` and, if the line presents something, `show_card` (a `DefenderType`) or `show_enemy` (an `EnemyType`). `speaker` is "Her Mosso" by default.
+3. Drag the file to `intro_dialogue` / `outro_dialogue` of a `LevelData` or a `WorldData`.
+
 ### Adding an enemy or a boss
 
 Create an `EnemyType` in `data/enemies/` with its health, speed, damage and texture. For a boss, enable `is_boss` (health bar), raise `sprite_size` and choose a `summon_type` and `summon_interval`. Then use it in the `SpawnEvent`s of a level.
@@ -110,19 +126,23 @@ res://
 │   ├── fx/          spark.png
 │   ├── backgrounds/ game_bg.jpg, menu_bg.jpg
 │   ├── icon/        icon.png
+│   ├── director/    the Director in 6 expressions: normal, feliz, serio, sorprendido,
+│   │                preocupado, orgulloso (.png)
 │   └── ui/          logo.png; placeholders of v1.2: semester_locked/available/passed, padlock,
 │                    grade_stamp, extraordinario, eraser (.png)
 ├── scenes/
 │   ├── ui/          main_menu, career_map, level_select, world_complete, settings, credits,
+│   │                expediente, dialogue_box, tutorial_pointer,
 │   │                loading_screen, hud, pause_menu, defender_card, notice,
 │   │                defeat_panel, victory_panel, save_error_panel (.tscn), ui_theme.tres
-│   ├── game/        game.tscn, board.tscn, extraordinario.tscn
+│   ├── game/        game.tscn, board.tscn, extraordinario.tscn, tutorial.tscn
 │   ├── entities/    generator_defender, shooter_defender, blocker_defender, energy_orb,
 │   │                enemy, projectile (.tscn)
 │   └── fx/          spark_burst.tscn
 ├── scripts/
-│   ├── engine/      game.gd, board.gd, wave_manager.gd, extraordinario.gd
+│   ├── engine/      game.gd, board.gd, wave_manager.gd, extraordinario.gd, tutorial.gd
 │   ├── ui/          main_menu.gd, career_map.gd, semester_button.gd, level_select.gd,
+│   │                expediente.gd, dialogue_box.gd, tutorial_pointer.gd,
 │   │                level_button.gd, world_complete.gd, settings.gd, credits.gd,
 │   │                loading_screen.gd, hud.gd, pause_menu.gd, defender_card.gd,
 │   │                notice.gd, defeat_panel.gd, victory_panel.gd, save_error_panel.gd
@@ -138,7 +158,7 @@ res://
 │   ├── defenders/   cafe.tres, laptop.tres, firewall.tres, usb.tres (test defender)
 │   ├── enemies/     tarea_infinita.tres, examen_sorpresa.tres, diapositivas.tres, examen_final.tres
 │   ├── campaign.tres  the 8 worlds in order
-│   ├── dialogues/   conversations of the Director (Block 9)
+│   ├── dialogues/   conversations of the Director: w1_intro, w1_l1_intro … w1_outro (.tres)
 │   └── worlds/      world_1/ (world_1.tres, levels/w1_l1.tres … w1_l6.tres), world_2/ … world_8/
 ├── default_bus_layout.tres  audio buses Music and SFX
 └── docs/            technical notes and screenshots per block (.gdignore: not imported by Godot)
@@ -146,6 +166,10 @@ res://
 
 ## Screenshots
 
+![v1.3 the Director welcomes the player](docs/img/v1.3-world-intro.png)
+![v1.3 new card](docs/img/v1.3-new-card.png)
+![v1.3 guided tutorial](docs/img/v1.3-tutorial-lane.png)
+![v1.3 Expediente](docs/img/v1.3-expediente-cards.png)
 ![v1.2 career map](docs/img/v1.2-map.png)
 ![v1.2 level select](docs/img/v1.2-level-select.png)
 ![v1.2 victory with the grade](docs/img/v1.2-victory.png)
@@ -169,7 +193,7 @@ res://
 | 6 | v1.0 | Final boss, art and polish | ✅ Done |
 | 7 | v1.1 | Foundations 2.0: campaign data, save v2, transitions, audio buses, Android behavior | ✅ Done (Play Console and signed AAB pending, in class) |
 | 8 | v1.2 | Career map, level select, grades, Extraordinarios, settings | ✅ Done (placeholder art) |
-| 9 | v1.3 | The Director: dialogues, tutorial, Expediente | Next |
+| 9 | v1.3 | The Director: dialogues, tutorial, Expediente | ✅ Done |
 | 10 | v1.4 | Cut-out animation and 3-stage damage | Planned |
 | 11 | v1.5 | IPN locations and audio | Planned |
 | 12 | v1.6 | World 1 with 6 levels and World 2 | Planned |
