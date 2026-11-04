@@ -167,3 +167,4 @@ display_name = "Segundo parcial"
 start_energy = 75
 defenders = Array[ExtResource("1_3ksfh")]([ExtResource("2_ma2gn"), ExtResource("3_f8acn"), ExtResource("4_qn6xx")])
 waves = Array[ExtResource("6_qqhj4")]([SubResource("Resource_k7qkl"), SubResource("Resource_r6wko"), SubResource("Resource_t53ei")])
+use_extraordinarios = true

@@ -67,3 +67,4 @@ id = "w1_l2"
 display_name = "Inicio de semestre"
 defenders = Array[ExtResource("1_teyxd")]([ExtResource("2_e8cxq"), ExtResource("3_tn1c4")])
 waves = Array[ExtResource("5_5qux5")]([SubResource("Resource_3hqv6"), SubResource("Resource_drahd")])
+use_extraordinarios = true
