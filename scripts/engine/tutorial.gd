@@ -18,6 +18,8 @@ const ENEMY_LANE := 2
 ## Seconds the last message stays on screen after the tutorial ends.
 const LAST_MESSAGE_TIME := 5.0
 const LAST_TEXT := "¡Listo! En unos segundos llega la tarea. Mientras, junta energía y pon más defensores."
+## v1.4 fix: said when the only Café was erased while the tutorial waited for its orb.
+const RETRY_TEXT := "¡Sin Café no hay energía! Te presto para otro: toca su carta cuando se recargue."
 
 ## The steps, in order. "wait" is the event that completes the step:
 ##   "card"  -> the player selects the card of "type"
@@ -84,6 +86,21 @@ func _start_step(index: int) -> void:
 	bubble.show()
 
 
+## v1.4 fix (soft-lock): in the orb step, if there is no Café left on the board
+## (the player erased it) and no orb to collect, no orb will ever come. The
+## tutorial goes back to the Café card and the Director lends the energy.
+func _recover_if_no_generator() -> void:
+	if steps[step_index].wait != "orb" or game.orbs.get_child_count() > 0:
+		return
+	for defender in game.defenders.get_children():
+		if defender is GeneratorDefender and not defender.is_queued_for_deletion():
+			return
+	if game.energy < CAFE.cost:
+		game.add_energy(CAFE.cost - game.energy)
+	_start_step(0)
+	bubble_text.text = RETRY_TEXT
+
+
 func _end() -> void:
 	pointer.hide()
 	bubble_text.text = LAST_TEXT
@@ -126,6 +143,7 @@ func _complete_if(event: String, type: DefenderType) -> void:
 func _process(_delta: float) -> void:
 	if not is_running():
 		return
+	_recover_if_no_generator()
 	var step := steps[step_index]
 	match step.wait:
 		"card":
