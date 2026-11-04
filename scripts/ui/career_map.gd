@@ -23,6 +23,7 @@ var semester_buttons: Array[SemesterButton] = []
 func _ready() -> void:
 	back_button.pressed.connect(_go_back)
 	track.draw.connect(_draw_path)
+	semesters_box.sort_children.connect(track.queue_redraw)  # the path follows the buttons
 	_create_buttons()
 	# Wait for the containers to place the buttons, then show the latest open semester.
 	await get_tree().process_frame
