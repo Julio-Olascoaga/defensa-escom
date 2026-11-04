@@ -1,6 +1,6 @@
 extends Control
 ## Loading screen shown every time a level is entered (from Inicio and from
-## "Siguiente nivel"). It loads game.tscn in a background thread with
+## "Siguiente nivel"). GameSession says which level; it loads game.tscn in a background thread with
 ## ResourceLoader and fills the bar with the loading progress.
 ## If the background load fails it tries once more the normal way, and if the
 ## level data or the scene still cannot be loaded, it shows an error
@@ -22,11 +22,11 @@ var elapsed_time := 0.0
 func _ready() -> void:
 	home_button.pressed.connect(_on_home_button_pressed)
 	home_button.hide()
-	var level := ProgressRepository.get_current_level()
+	var level := GameSession.current_level()
 	if level == null or level.waves.is_empty():
-		_show_error("Los datos del nivel %d no son válidos" % ProgressRepository.get_current_level_number())
+		_show_error("Los datos del nivel %d no son válidos" % GameSession.current_level_number())
 		return
-	level_label.text = "Nivel %d · %s" % [ProgressRepository.get_current_level_number(), level.display_name]
+	level_label.text = "Nivel %d · %s" % [GameSession.current_level_number(), level.display_name]
 	if ResourceLoader.load_threaded_request(GAME_SCENE) != OK:
 		_show_error("No se pudo cargar el nivel")
 
@@ -42,7 +42,7 @@ func _process(delta: float) -> void:
 			bar.value = 100.0
 			if elapsed_time >= MIN_TIME:
 				set_process(false)
-				get_tree().change_scene_to_packed(ResourceLoader.load_threaded_get(GAME_SCENE))
+				SceneTransition.change_scene_to_packed(ResourceLoader.load_threaded_get(GAME_SCENE))
 		_:  # THREAD_LOAD_FAILED or THREAD_LOAD_INVALID_RESOURCE
 			_load_without_thread()
 
@@ -52,7 +52,7 @@ func _load_without_thread() -> void:
 	set_process(false)
 	var scene := load(GAME_SCENE) as PackedScene
 	if scene:
-		get_tree().change_scene_to_packed(scene)
+		SceneTransition.change_scene_to_packed(scene)
 	else:
 		_show_error("No se pudo cargar el nivel")
 
@@ -67,7 +67,7 @@ func _show_error(message: String) -> void:
 
 
 func _on_home_button_pressed() -> void:
-	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+	SceneTransition.change_scene(MAIN_MENU_SCENE)
 
 
 func _notification(what: int) -> void:

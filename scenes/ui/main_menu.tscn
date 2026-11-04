@@ -105,7 +105,7 @@ theme_override_colors/font_color = Color(0.957, 0.949, 1, 1)
 theme_override_colors/font_outline_color = Color(0.169, 0.106, 0.18, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 30
-text = "Mundo 1"
+text = "Primer semestre"
 horizontal_alignment = 1
 
 [node name="PlayButton" type="Button" parent="Center/Content"]
@@ -133,7 +133,7 @@ theme_override_colors/font_color = Color(1, 0.42, 0.42, 1)
 theme_override_colors/font_outline_color = Color(0.169, 0.106, 0.18, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 22
-text = "No se pudo leer tu progreso guardado. Empiezas desde el nivel 1."
+text = "No se pudo leer tu progreso guardado. Empiezas desde cero."
 horizontal_alignment = 1
 
 [node name="VersionLabel" type="Label" parent="."]
@@ -153,7 +153,7 @@ theme_override_colors/font_color = Color(0.957, 0.949, 1, 0.85)
 theme_override_colors/font_outline_color = Color(0.169, 0.106, 0.18, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 20
-text = "v1.0"
+text = "v1.1"
 horizontal_alignment = 2
 
 [node name="DebugPanel" type="Control" parent="."]
@@ -218,3 +218,69 @@ custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 focus_mode = 0
 text = "Cerrar"
+
+[node name="QuitPanel" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="QuitPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Center" type="CenterContainer" parent="QuitPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="QuitPanel/Center"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug")
+
+[node name="Content" type="VBoxContainer" parent="QuitPanel/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="QuitPanel/Center/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.831, 0.231, 1)
+text = "¿Salir del juego?"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="QuitPanel/Center/Panel/Content"]
+layout_mode = 2
+text = "Tu progreso ya está guardado."
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="QuitPanel/Center/Panel/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="QuitNoButton" type="Button" parent="QuitPanel/Center/Panel/Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 64)
+layout_mode = 2
+focus_mode = 0
+text = "Seguir jugando"
+
+[node name="QuitYesButton" type="Button" parent="QuitPanel/Center/Panel/Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 64)
+layout_mode = 2
+focus_mode = 0
+text = "Salir"

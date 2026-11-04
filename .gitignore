@@ -12,6 +12,7 @@ export_credentials.cfg
 *.apk
 *.aab
 *.keystore
+*.jks
 
 # OS files
 .DS_Store

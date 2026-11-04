@@ -1,12 +1,12 @@
 extends Control
-## Home screen. Shows the saved progress ("Mundo 1 · Nivel 3") and its main
-## button says "Jugar" the first time and "Continuar" afterwards. The button
-## opens the loading screen, which loads the current level.
+## Home screen. Shows the saved progress ("Primer semestre · Nivel 3") and its
+## main button says "Jugar" the first time and "Continuar" afterwards. The button
+## asks GameSession to open the saved level (the career map arrives in Block 8).
+## The Android back button asks before closing the game.
 ##
 ## Hidden debug option (debug builds only): tap the logo DEBUG_TAPS times
 ## in a row to open a panel that deletes the progress or simulates a save failure.
 
-const LOADING_SCENE := "res://scenes/ui/loading_screen.tscn"
 const DEBUG_TAPS := 5
 ## Maximum seconds between two taps on the logo to keep counting.
 const DEBUG_TAP_WINDOW := 1.0
@@ -23,6 +23,9 @@ var _last_tap_time := 0.0
 @onready var reset_button: Button = %ResetButton
 @onready var fail_save_button: Button = %FailSaveButton
 @onready var close_debug_button: Button = %CloseDebugButton
+@onready var quit_panel: Control = %QuitPanel
+@onready var quit_yes_button: Button = %QuitYesButton
+@onready var quit_no_button: Button = %QuitNoButton
 
 
 func _ready() -> void:
@@ -31,7 +34,10 @@ func _ready() -> void:
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	fail_save_button.pressed.connect(_on_fail_save_button_pressed)
 	close_debug_button.pressed.connect(debug_panel.hide)
+	quit_yes_button.pressed.connect(get_tree().quit)
+	quit_no_button.pressed.connect(quit_panel.hide)
 	debug_panel.hide()
+	quit_panel.hide()
 	# The version is written only once, in Project Settings (application/config/version).
 	version_label.text = "v%s" % ProjectSettings.get_setting("application/config/version")
 	_show_progress()
@@ -39,21 +45,21 @@ func _ready() -> void:
 
 ## Writes the progress of the world and the text of the main button.
 func _show_progress() -> void:
-	var world_name := ProgressRepository.get_world().display_name
+	var world := GameSession.campaign.worlds[0]
 	if ProgressRepository.has_progress():
-		subtitle_label.text = "%s · Nivel %d" % [world_name, ProgressRepository.get_current_level_number()]
+		subtitle_label.text = "%s · Nivel %d" % [world.display_name, ProgressRepository.get_current_level(world)]
 		play_button.text = "Continuar"
 	else:
-		subtitle_label.text = world_name
+		subtitle_label.text = world.display_name
 		play_button.text = "Jugar"
 	# A damaged or invalid progress file is not an error for the player:
-	# the game simply starts again from level 1 and says so.
+	# the game simply starts again from zero and says so.
 	load_error_label.visible = ProgressRepository.load_error != OK
 	fail_save_button.text = "Simular falla al guardar: %s" % ("Sí" if ProgressRepository.simulate_save_error else "No")
 
 
 func _on_play_button_pressed() -> void:
-	get_tree().change_scene_to_file(LOADING_SCENE)
+	GameSession.continue_game()
 
 
 # --- Hidden debug panel ---
@@ -84,9 +90,12 @@ func _on_fail_save_button_pressed() -> void:
 
 
 func _notification(what: int) -> void:
-	# Android back button on the home screen closes the debug panel or the app.
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	# Android back button on the home screen: closes the open panel,
+	# or asks "¿Salir del juego?" before closing the app.
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not SceneTransition.is_changing:
 		if debug_panel.visible:
 			debug_panel.hide()
+		elif quit_panel.visible:
+			quit_panel.hide()
 		else:
-			get_tree().quit()
+			quit_panel.show()
