@@ -25,6 +25,8 @@ func _on_fire_timer_timeout() -> void:
 		# It starts at the right edge of the Laptop (cell units, not pixels).
 		projectile.setup(lane, column + 0.3, defender_type.projectile_damage)
 		shot_fired.emit(projectile)
+		if visual:
+			visual.play_once("action")  # recoil and screen flash
 
 
 ## True if an enemy is in this lane and to the right of this Laptop.

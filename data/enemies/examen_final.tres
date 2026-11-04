@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/data/enemy_type.gd" id="1_type"]
 [ext_resource type="Texture2D" path="res://art/enemies/examen_final.png" id="2_texture"]
 [ext_resource type="Resource" path="res://data/enemies/examen_sorpresa.tres" id="3_summon"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/examen_final_visual.tscn" id="9_visual"]
 
 [resource]
 script = ExtResource("1_type")
@@ -17,3 +18,4 @@ sprite_size = 200.0
 is_boss = true
 summon_type = ExtResource("3_summon")
 description = "Acumulativo: viene todo, hasta lo que no vimos. Aguanta muchísimo y llama a exámenes sorpresa a los carriles vecinos."
+visual_scene = ExtResource("9_visual")

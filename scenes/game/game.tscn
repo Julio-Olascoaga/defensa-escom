@@ -73,6 +73,9 @@ scale = Vector2(0.5, 0.5)
 texture = ExtResource("10_background")
 centered = false
 
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+
 [node name="Board" parent="." instance=ExtResource("2_board")]
 position = Vector2(80, 110)
 

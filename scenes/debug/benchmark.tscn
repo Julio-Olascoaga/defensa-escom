@@ -1,0 +1,63 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/debug/benchmark.gd" id="1_bench"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/game_bg.jpg" id="2_background"]
+[ext_resource type="PackedScene" path="res://scenes/game/board.tscn" id="3_board"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_result"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.051, 0.039, 0.122, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="Benchmark" type="Node2D"]
+script = ExtResource("1_bench")
+
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_background")
+centered = false
+
+[node name="Board" parent="." instance=ExtResource("3_board")]
+position = Vector2(80, 110)
+
+[node name="Defenders" type="Node2D" parent="."]
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Projectiles" type="Node2D" parent="."]
+
+[node name="Orbs" type="Node2D" parent="."]
+
+[node name="Effects" type="Node2D" parent="." groups=["effects"]]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Top" type="HBoxContainer" parent="UI"]
+offset_left = 16.0
+offset_top = 8.0
+offset_right = 1264.0
+offset_bottom = 100.0
+theme_override_constants/separation = 16
+
+[node name="BackButton" type="Button" parent="UI/Top"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 64)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+text = "← Inicio"
+
+[node name="ResultLabel" type="Label" parent="UI/Top"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_result")
+text = "Preparando…"
+vertical_alignment = 1

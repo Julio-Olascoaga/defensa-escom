@@ -9,11 +9,21 @@ extends Node2D
 ## Block 9: before the first wave the Director talks (LevelData.intro_dialogue)
 ## and, in the tutorial level, the Tutorial guides the player; after the last
 ## wave he talks again (outro_dialogue) before the Victory panel.
+## Block 10: the camera shakes when the boss enters and when it enters phase 2;
+## energy orbs fly to the energy counter of the top bar.
 
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
 const EXTRAORDINARIO_SCENE := preload("res://scenes/game/extraordinario.tscn")
 
 enum Phase { PLAYING, VICTORY, DEFEAT }
+
+## Camera shake: pixels and seconds when the boss enters and when it enters phase 2.
+const BOSS_ENTRY_SHAKE := 14.0
+const BOSS_ENTRY_SHAKE_TIME := 0.7
+const BOSS_PHASE2_SHAKE := 10.0
+const BOSS_PHASE2_SHAKE_TIME := 0.5
+## Seconds between two positions of a shake.
+const SHAKE_STEP := 0.05
 
 ## The player selected a card (the Tutorial listens to these three signals).
 signal card_selected(type: DefenderType)
@@ -33,6 +43,7 @@ var phase := Phase.PLAYING
 var extraordinarios: Array[Extraordinario] = []
 ## How many Extraordinarios ran in this match. Grade = 10 - this, minimum 6.
 var extraordinarios_used := 0
+var camera_tween: Tween
 
 @onready var background: Sprite2D = $Background
 @onready var board: Board = $Board
@@ -55,6 +66,7 @@ var extraordinarios_used := 0
 @onready var wave_manager: WaveManager = $WaveManager
 @onready var dialogue_box: DialogueBox = $DialogueBox
 @onready var tutorial: Tutorial = $Tutorial
+@onready var camera: Camera2D = $Camera
 
 
 func _ready() -> void:
@@ -269,6 +281,7 @@ func _on_orb_produced(orb: EnergyOrb) -> void:
 	orbs.add_child(orb)
 	# The orb's position is its top-left corner, so we subtract half its size to center it.
 	orb.global_position = board.cell_to_pixel(orb.lane, orb.column) - orb.size / 2.0
+	orb.fly_target = hud.energy_label.get_global_rect().get_center()  # the HUD is on screen pixels
 	orb.collected.connect(add_energy)
 	orb.collected.connect(orb_collected.emit)
 
@@ -296,6 +309,23 @@ func spawn_enemy(type: EnemyType, lane: int, column: float = Enemy.SPAWN_COLUMN)
 	ProgressRepository.mark_known("enemies", [type])  # it saves only the first time
 	if type.is_boss:
 		_show_boss_bar(enemy)
+		enemy.phase_changed.connect(_on_boss_phase_changed)
+		shake_camera(BOSS_ENTRY_SHAKE, BOSS_ENTRY_SHAKE_TIME)
+
+
+# --- Camera shake ---
+
+## Moves the camera (only its offset, so cells and taps keep their place)
+## to random points that get smaller, then back to the center.
+func shake_camera(strength: float, duration: float) -> void:
+	if camera_tween:
+		camera_tween.kill()
+	camera_tween = create_tween()
+	var steps := maxi(1, roundi(duration / SHAKE_STEP))
+	for i in steps:
+		var power := strength * (1.0 - float(i) / steps)
+		camera_tween.tween_property(camera, "offset", Vector2(randf_range(-power, power), randf_range(-power, power)), SHAKE_STEP)
+	camera_tween.tween_property(camera, "offset", Vector2.ZERO, SHAKE_STEP)
 
 
 # --- Extraordinarios ---
@@ -327,6 +357,13 @@ func _show_boss_bar(boss: Enemy) -> void:
 
 func _on_boss_damaged(boss: Enemy) -> void:
 	boss_health_bar.value = boss.health
+
+
+## The boss reached half of its health: it turns red and bigger (Enemy) and
+## the screen says it, with a shake.
+func _on_boss_phase_changed(boss: Enemy) -> void:
+	shake_camera(BOSS_PHASE2_SHAKE, BOSS_PHASE2_SHAKE_TIME)
+	wave_banner.show_message("¡%s está furioso!" % boss.enemy_type.display_name)
 
 
 func _on_boss_died(_boss: Enemy) -> void:

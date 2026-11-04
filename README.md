@@ -6,9 +6,19 @@ The player places defenders (Café, Laptop, Firewall) on a 5×9 board to stop ca
 Course project for *Desarrollo de Aplicaciones Móviles Nativas* (group 7CV4, ESCOM-IPN).
 Team: Cruz Villa Miguel Angel, Hernández Alonso Diego Raymundo, Martinez Martinez Carlos Daniel, Reyes Olascoaga Julio Cesar.
 
-## Current version: v1.3 (Block 9: The Director, tutorial and Expediente)
+## Current version: v1.4 (Block 10: Cut-out animation and progressive damage)
 
-Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 9 makes the game explain itself (see `docs/tech-note-v1.3.md`):
+Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 10 makes every character move and shows the damage on the character (see `docs/tech-note-v1.4.md`):
+
+- **Cut-out puppets:** each character has a scene in `scenes/visuals/` (a `CharacterVisual`: one `Sprite2D` per piece hanging from its pivot — hip, shoulder, laptop hinge — and an `AnimationPlayer` with fixed names: enemies `idle`/`walk`/`attack`/`hit`/`die`, defenders `idle`/`action`/`hit`/`die`). `DefenderType.visual_scene` / `EnemyType.visual_scene` choose it; a type without one keeps the fixed image of the 1.0.
+- **Defenders:** the Café sways with steam and hops when it releases an orb; the Laptop has code running on its screen and recoils with a screen flash when it shoots; the Firewall's bricks breathe and it compresses when bitten. When they die, their pieces fall apart spinning.
+- **Enemies:** walk with alternating legs and a bobbing body (`anim.speed_scale = speed / walk_base_speed`), lean in when they bite, fall backwards dropping paper bits. The 1.0 white hit flash is kept. Armored enemies (`armor_health`, from Block 12) drop their armor piece.
+- **Damage in 3 stages:** above 66 % health intact, 66–33 % damaged, below 33 % critical; each stage changes the frame of every piece (strips of 3 frames), drops pieces and shakes harder, and the critical stage smokes. A bitten Firewall goes through the 3 stages and then falls apart (P09).
+- **Effects:** projectile trail and impact bits; orbs that pop out with a bounce and fly to the energy counter before adding; the boss enters with a camera shake and changes phase at 50 % health (red, cracked, bigger, banner). All particle caps are in `FxLimits`; a 30-enemy benchmark is in the hidden debug panel.
+- **Cutting pipeline:** `tools/cut_parts.py` cuts a character drawn in "vista desarmada" (pieces on green or magenta, 40 px apart, 3 sheets: intact, damaged, critical) into one 3-frame strip per piece in `art/characters/<character>/`. **The art of this version is placeholder** (cut from the 1.0 images, damage drawn by a script) until the real art batches arrive.
+- **v1.3 fixes:** the tutorial no longer gets stuck when the only Café is erased, and its arrow is hidden under the pause menu.
+
+Block 9 (v1.3) the Director, tutorial and Expediente, still in place:
 
 - **A story with school humor:** every semester, the homework nobody delivered wakes up in the **Archivo Muerto** and marches to the classrooms. Her Mosso guides the player through World 1, a small mystery that ends with *El Examen Final* and a clue that leads to World 2.
 - **The Director, Her Mosso:** a dialogue box (`DialogueBox`, a `CanvasLayer` that pauses the game while it talks) with his portrait in 6 expressions, typewriter text (tap to complete, tap to continue) and a *Saltar* button. He welcomes the player to the semester (`WorldData.intro_dialogue`), talks before the first wave (`LevelData.intro_dialogue`) and after the last one (`outro_dialogue`), and congratulates the player on *Semestre aprobado*. Each conversation is a `DialogueData` file in `data/dialogues/` and is shown **only once** (`[seen] dialogues`).
@@ -65,7 +75,7 @@ Everything from v1.0 still works:
 | Stretch | `canvas_items`, aspect `keep` |
 | Touch | *Emulate Mouse From Touch* enabled |
 | Back button | `quit_on_go_back = false` (handled by the game) |
-| Version | `application/config/version = "1.3"` (shown on the home screen). Android preset (not in the repo): version/name `1.3`, version/code `4`, permission *Vibrate* |
+| Version | `application/config/version = "1.4"` (shown on the home screen). Android preset (not in the repo): version/name `1.4`, version/code `5`, permission *Vibrate* |
 | Screen | `keep_screen_on = false`; the game screen keeps it on while playing |
 | Audio buses | `default_bus_layout.tres`: `Music` and `SFX` |
 | Autoloads | `GameSession`, `ProgressRepository`, `AudioManager`, `SceneTransition` (in this order) |
@@ -82,7 +92,8 @@ Everything from v1.0 still works:
 - **Cell-based logic:** game logic works in board cells (lane, column, with decimals like column 6.4). Only `Board.cell_to_pixel()` / `Board.pixel_to_cell()` convert to and from screen pixels. Enemy speed is in cells per second, and hits are distance checks in columns.
 - **Signals:** nodes communicate through signals (`Board.cell_tapped`, `Hud.card_pressed`, `GeneratorDefender.orb_produced`, `EnergyOrb.collected`, `ShooterDefender.shot_fired`, `Enemy.reached_safe_zone`, `Enemy.damaged`, `Enemy.summon_requested`, `Defender.died`, `WaveManager.spawn_requested`, `WaveManager.wave_warning`, `WaveManager.all_waves_cleared`...). The `Game` node owns the energy and the phase of the match, applies the rules and creates every enemy, including the boss's summons.
 - **Story as data:** a conversation is a `DialogueData` with `DialogueLine`s (speaker, expression, text, optional card or enemy to present). Worlds and levels point to their conversations; `DialogueBox.play_once()` shows each one once. The tutorial is a list of steps in `tutorial.gd` that waits for Game signals (`card_selected`, `defender_placed`, `orb_collected`).
-- **Effects:** animations are Tweens created by each node (`create_tween()`), so they stop with the pause and disappear with their node. Sparks are one-shot `CPUParticles2D` (`SparkBurst`) added to the `Effects` node of the game scene.
+- **Effects:** animations are Tweens created by each node (`create_tween()`) or the `AnimationPlayer` of a puppet, so they stop with the pause. Sparks, paper bits and falling pieces are one-shot `CPUParticles2D` (`SparkBurst`) added to the `Effects` node of the game scene, capped by `FxLimits`. A dead enemy or defender is freed at once; only its puppet moves to `Effects` to play the death.
+- **Puppets:** `CharacterVisual` (`scripts/entities/character_visual.gd`) is the base of every `scenes/visuals/*_visual.tscn`. Enemy and Defender instance `type.visual_scene` inside their `Visual` node and only call `play()`, `play_once()`, `set_damage_stage()` and `die()`.
 
 ### Adding a level (no scripts)
 
@@ -115,6 +126,13 @@ Example: `data/defenders/usb.tres` (*USB*, a cheap wall: `BlockerDefender`, cost
 
 Create an `EnemyType` in `data/enemies/` with its health, speed, damage and texture. For a boss, enable `is_boss` (health bar), raise `sprite_size` and choose a `summon_type` and `summon_interval`. Then use it in the `SpawnEvent`s of a level.
 
+### Animating a character (cut-out puppet)
+
+1. Put its three "vista desarmada" sheets (`intacto.png`, `danado.png`, `critico.png`, pieces on green `#00FF00` or magenta `#FF00FF`, 40 px apart) and a `parts.txt` with the piece names in `tools/art_src/<character>/`.
+2. `pip install pillow`, then `python tools/cut_parts.py tools/art_src/<character> --scale 0.25` → `art/characters/<character>/<piece>.png` (3 frames each).
+3. Duplicate a scene of `scenes/visuals/` with a similar body, replace the textures of its pieces, move each piece to its pivot and set `design_width`. Keep the animation names.
+4. Drag the scene to `visual_scene` of the `DefenderType` / `EnemyType`. Without it, the type keeps its fixed image.
+
 ## Folder structure
 
 ```
@@ -123,7 +141,10 @@ res://
 │   ├── defenders/   cafe, laptop, firewall (.png)
 │   ├── enemies/     tarea_infinita, examen_sorpresa, diapositivas, examen_final (.png)
 │   ├── items/       energy_orb, projectile (.png)
-│   ├── fx/          spark.png
+│   ├── fx/          spark.png, puff.png, chip.png
+│   ├── characters/  part strips of the puppets, 3 frames each (placeholder in v1.4):
+│   │                cafe/, laptop/, firewall/, tarea_infinita/, examen_sorpresa/,
+│   │                diapositivas/, examen_final/
 │   ├── backgrounds/ game_bg.jpg, menu_bg.jpg
 │   ├── icon/        icon.png
 │   ├── director/    the Director in 6 expressions: normal, feliz, serio, sorprendido,
@@ -138,6 +159,10 @@ res://
 │   ├── game/        game.tscn, board.tscn, extraordinario.tscn, tutorial.tscn
 │   ├── entities/    generator_defender, shooter_defender, blocker_defender, energy_orb,
 │   │                enemy, projectile (.tscn)
+│   ├── visuals/     the cut-out puppets: cafe_visual, laptop_visual, firewall_visual,
+│   │                tarea_infinita_visual, examen_sorpresa_visual, diapositivas_visual,
+│   │                examen_final_visual (.tscn)
+│   ├── debug/       benchmark.tscn (30 enemies)
 │   └── fx/          spark_burst.tscn
 ├── scripts/
 │   ├── engine/      game.gd, board.gd, wave_manager.gd, extraordinario.gd, tutorial.gd
@@ -147,8 +172,11 @@ res://
 │   │                loading_screen.gd, hud.gd, pause_menu.gd, defender_card.gd,
 │   │                notice.gd, defeat_panel.gd, victory_panel.gd, save_error_panel.gd
 │   ├── entities/    defender.gd, generator_defender.gd, shooter_defender.gd,
-│   │                blocker_defender.gd, energy_orb.gd, enemy.gd, projectile.gd
-│   ├── fx/          spark_burst.gd
+│   │                blocker_defender.gd, energy_orb.gd, enemy.gd, projectile.gd,
+│   │                character_visual.gd
+│   ├── visuals/     code_screen.gd
+│   ├── debug/       benchmark.gd
+│   ├── fx/          spark_burst.gd, fx_limits.gd
 │   ├── autoload/    game_session.gd, audio_manager.gd, scene_transition.gd
 │   ├── data/        defender_type.gd, enemy_type.gd, spawn_event.gd, wave_data.gd,
 │   │                level_data.gd, world_data.gd, campaign_data.gd,
@@ -161,11 +189,16 @@ res://
 │   ├── dialogues/   conversations of the Director: w1_intro, w1_l1_intro … w1_outro (.tres)
 │   └── worlds/      world_1/ (world_1.tres, levels/w1_l1.tres … w1_l6.tres), world_2/ … world_8/
 ├── default_bus_layout.tres  audio buses Music and SFX
+├── tools/           cut_parts.py (cutting pipeline), make_placeholder_sheets.py, art_src/
+│                    (source sheets; .gdignore: not imported by Godot)
 └── docs/            technical notes and screenshots per block (.gdignore: not imported by Godot)
 ```
 
 ## Screenshots
 
+![v1.4 combat with the animated puppets](docs/img/v1.4-combat.png)
+![v1.4 a bitten Firewall in its critical stage](docs/img/v1.4-firewall-3.png)
+![v1.4 boss phase 2](docs/img/v1.4-boss-phase2.png)
 ![v1.3 the Director welcomes the player](docs/img/v1.3-world-intro.png)
 ![v1.3 new card](docs/img/v1.3-new-card.png)
 ![v1.3 guided tutorial](docs/img/v1.3-tutorial-lane.png)
@@ -194,7 +227,7 @@ res://
 | 7 | v1.1 | Foundations 2.0: campaign data, save v2, transitions, audio buses, Android behavior | ✅ Done (Play Console and signed AAB pending, in class) |
 | 8 | v1.2 | Career map, level select, grades, Extraordinarios, settings | ✅ Done (placeholder art) |
 | 9 | v1.3 | The Director: dialogues, tutorial, Expediente | ✅ Done |
-| 10 | v1.4 | Cut-out animation and 3-stage damage | Planned |
+| 10 | v1.4 | Cut-out animation and 3-stage damage | ✅ Done (placeholder art; 50 fps test on a phone pending) |
 | 11 | v1.5 | IPN locations and audio | Planned |
 | 12 | v1.6 | World 1 with 6 levels and World 2 | Planned |
 | 13 | v2.0 | Polish and closed testing | Planned |

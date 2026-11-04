@@ -1,0 +1,5 @@
+body
+clock
+arm_pen
+leg_l
+leg_r

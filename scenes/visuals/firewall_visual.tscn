@@ -1,0 +1,159 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/character_visual.gd" id="1_uxw5l"]
+[ext_resource type="Texture2D" path="res://art/characters/firewall/frame.png" id="2_xaonj"]
+[ext_resource type="Texture2D" path="res://art/characters/firewall/bricks.png" id="3_faqvx"]
+[ext_resource type="Texture2D" path="res://art/characters/firewall/flames.png" id="4_aiyh1"]
+
+[sub_resource type="Animation" id="Animation_vsdd5"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Frame/Bricks:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Frame/Flames:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_gldb3"]
+resource_name = "die"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.15, 0.8), Vector2(1.05, 0.9)]
+}
+
+[sub_resource type="Animation" id="Animation_x23kb"]
+resource_name = "hit"
+length = 0.35
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.08, 0.2, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 0.82), Vector2(0.97, 1.05), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Frame/Bricks:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.08, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.06, 0.9), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_p5bqo"]
+resource_name = "idle"
+length = 1.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Frame/Bricks:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.9, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.035, 1.035), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Frame/Flames:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.45, 0.9, 1.35, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.04, 1.12), Vector2(1, 0.95), Vector2(1.03, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w2pfq"]
+_data = {
+&"RESET": SubResource("Animation_vsdd5"),
+&"die": SubResource("Animation_gldb3"),
+&"hit": SubResource("Animation_x23kb"),
+&"idle": SubResource("Animation_p5bqo")
+}
+
+[node name="FirewallVisual" type="Node2D" unique_id=764341298]
+script = ExtResource("1_uxw5l")
+
+[node name="Rig" type="Node2D" parent="." unique_id=37861506]
+position = Vector2(0, 124)
+
+[node name="Frame" type="Sprite2D" parent="Rig" unique_id=1633860946]
+position = Vector2(0, 2)
+texture = ExtResource("2_xaonj")
+centered = false
+offset = Vector2(-99, -216)
+hframes = 3
+
+[node name="Bricks" type="Sprite2D" parent="Rig/Frame" unique_id=771654319]
+position = Vector2(1, -109)
+texture = ExtResource("3_faqvx")
+centered = false
+offset = Vector2(-65, -77)
+hframes = 3
+
+[node name="Flames" type="Sprite2D" parent="Rig/Frame" unique_id=1221042901]
+show_behind_parent = true
+position = Vector2(-1, -178)
+texture = ExtResource("4_aiyh1")
+centered = false
+offset = Vector2(-96, -74)
+hframes = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=386191326]
+libraries/ = SubResource("AnimationLibrary_w2pfq")
+autoplay = &"idle"

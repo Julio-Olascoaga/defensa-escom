@@ -1,0 +1,214 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/character_visual.gd" id="1_cr3wj"]
+[ext_resource type="Texture2D" path="res://art/characters/laptop/base.png" id="2_8trss"]
+[ext_resource type="Texture2D" path="res://art/characters/laptop/lid.png" id="3_ah312"]
+[ext_resource type="Script" path="res://scripts/visuals/code_screen.gd" id="4_5g3b2"]
+
+[sub_resource type="Animation" id="Animation_tly1u"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Lid:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 103)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig/Lid/Flash:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_p74ek"]
+resource_name = "action"
+length = 0.35
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Lid:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.18, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, -0.13, 0.03, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 103), Vector2(-7, 103), Vector2(0, 103)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/Lid/Flash:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.85), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_x6j16"]
+resource_name = "die"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.15, 0.8), Vector2(1.05, 0.9)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Lid:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 0.5]
+}
+
+[sub_resource type="Animation" id="Animation_rvgoj"]
+resource_name = "hit"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.09, 0.195, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 0.9), Vector2(0.97, 1.03), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_1c2w0"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Lid:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, -0.02, 0.0, 0.015, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.01), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4pd45"]
+_data = {
+&"RESET": SubResource("Animation_tly1u"),
+&"action": SubResource("Animation_p74ek"),
+&"die": SubResource("Animation_x6j16"),
+&"hit": SubResource("Animation_rvgoj"),
+&"idle": SubResource("Animation_1c2w0")
+}
+
+[node name="LaptopVisual" type="Node2D" unique_id=1974706838]
+script = ExtResource("1_cr3wj")
+
+[node name="Rig" type="Node2D" parent="." unique_id=895959351]
+position = Vector2(0, 103)
+
+[node name="Base" type="Sprite2D" parent="Rig" unique_id=1579747710]
+position = Vector2(-6, 0)
+texture = ExtResource("2_8trss")
+centered = false
+offset = Vector2(-120, -119)
+hframes = 3
+
+[node name="Lid" type="Sprite2D" parent="Rig" unique_id=1317859142]
+show_behind_parent = true
+position = Vector2(34, -79)
+texture = ExtResource("3_ah312")
+centered = false
+offset = Vector2(-88, -127)
+hframes = 3
+
+[node name="CodeScreen" type="Node2D" parent="Rig/Lid" unique_id=646466345]
+script = ExtResource("4_5g3b2")
+area = Rect2(-64, -102, 122, 86)
+
+[node name="Flash" type="Polygon2D" parent="Rig/Lid" unique_id=1386797693]
+modulate = Color(1, 1, 1, 0)
+color = Color(0.85, 1, 1, 1)
+polygon = PackedVector2Array(-74, -112, 70, -109, 68, -4, -74, -10)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1833599709]
+libraries/ = SubResource("AnimationLibrary_4pd45")
+autoplay = &"idle"
