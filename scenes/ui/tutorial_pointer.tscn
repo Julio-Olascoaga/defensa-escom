@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/tutorial_pointer.gd" id="1_pointer"]
+
+[node name="TutorialPointer" type="Node2D"]
+script = ExtResource("1_pointer")
+
+[node name="Arrow" type="Node2D" parent="."]
+
+[node name="Outline" type="Polygon2D" parent="Arrow"]
+color = Color(0.169, 0.106, 0.18, 1)
+polygon = PackedVector2Array(0, 4, -40, -42, -18, -42, -18, -96, 18, -96, 18, -42, 40, -42)
+
+[node name="Fill" type="Polygon2D" parent="Arrow"]
+color = Color(1, 0.831, 0.231, 1)
+polygon = PackedVector2Array(0, -6, -28, -38, -12, -38, -12, -90, 12, -90, 12, -38, 28, -38)

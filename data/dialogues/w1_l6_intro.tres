@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/enemies/examen_final.tres" id="3_final"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Llegó el día. Ya sé quién organizaba todo…"
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "¡El Examen Final! Acumulativo: viene todo. Hasta lo que no vimos en clase."
+show_enemy = ExtResource("3_final")
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Llama a exámenes sorpresa a los carriles de arriba y de abajo. No dejes ninguno solo."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+text = "Llena los carriles de Laptops, protégelas con Firewalls y no te gastes los extraordinarios temprano."
+
+[sub_resource type="Resource" id="Resource_line5"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Estudiaste para esto. Bueno, más o menos. ¡Tú puedes!"
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l6_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4"), SubResource("Resource_line5")])

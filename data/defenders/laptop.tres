@@ -15,3 +15,4 @@ color = Color(0.302, 0.671, 0.969, 1)
 behavior_scene = ExtResource("2_behavior")
 fire_interval = 1.5
 projectile_damage = 20.0
+description = "Tiene más años que tú, pero compila. Dispara líneas de código a todo lo que avance por su carril."

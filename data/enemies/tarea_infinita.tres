@@ -12,3 +12,4 @@ speed = 0.25
 damage_per_second = 25.0
 texture = ExtResource("2_texture")
 color = Color(0.953, 0.851, 0.894, 1)
+description = "Nació un viernes, cuando alguien dijo «para el lunes». Camina sin prisa y nunca se acaba."

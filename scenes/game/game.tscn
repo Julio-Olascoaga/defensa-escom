@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/victory_panel.tscn" id="8_victory"]
 [ext_resource type="PackedScene" path="res://scenes/ui/save_error_panel.tscn" id="9_save_error"]
 [ext_resource type="Texture2D" path="res://art/backgrounds/game_bg.jpg" id="10_background"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_box.tscn" id="11_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/game/tutorial.tscn" id="12_tutorial"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
 content_margin_left = 24.0
@@ -175,3 +177,7 @@ visible = false
 
 [node name="SaveErrorPanel" parent="UI" instance=ExtResource("9_save_error")]
 visible = false
+
+[node name="Tutorial" parent="." instance=ExtResource("12_tutorial")]
+
+[node name="DialogueBox" parent="." instance=ExtResource("11_dialogue")]

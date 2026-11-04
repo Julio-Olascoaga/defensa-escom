@@ -7,6 +7,9 @@
 [ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="5_5qux5"]
 [ext_resource type="Script" path="res://scripts/data/spawn_event.gd" id="6_p1ako"]
 [ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="7_logof"]
+[ext_resource type="Resource" path="res://data/dialogues/w1_l2_intro.tres" id="100_b9_intro_dialogue"]
+[ext_resource type="Resource" path="res://data/dialogues/w1_l2_outro.tres" id="101_b9_outro_dialogue"]
+[ext_resource type="Resource" path="res://data/defenders/firewall.tres" id="102_b9_reward_card"]
 
 [sub_resource type="Resource" id="Resource_672dg"]
 script = ExtResource("6_p1ako")
@@ -68,3 +71,6 @@ display_name = "Inicio de semestre"
 defenders = Array[ExtResource("1_teyxd")]([ExtResource("2_e8cxq"), ExtResource("3_tn1c4")])
 waves = Array[ExtResource("5_5qux5")]([SubResource("Resource_3hqv6"), SubResource("Resource_drahd")])
 use_extraordinarios = true
+intro_dialogue = ExtResource("100_b9_intro_dialogue")
+outro_dialogue = ExtResource("101_b9_outro_dialogue")
+reward_card = ExtResource("102_b9_reward_card")

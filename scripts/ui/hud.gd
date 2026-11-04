@@ -58,6 +58,15 @@ func create_cards(defender_types: Array[DefenderType]) -> void:
 		card.pressed.connect(_on_card_pressed.bind(card))
 
 
+## The card of a defender type, or null if the level does not have it
+## (the tutorial points its arrow at it).
+func get_card(type: DefenderType) -> DefenderCard:
+	for card: DefenderCard in cards_box.get_children():
+		if card.defender_type == type:
+			return card
+	return null
+
+
 ## Moves the content of the bar away from the phone's notch (Game measures it).
 ## The dark background of the bar still covers the whole width.
 func set_side_margins(left: float, right: float) -> void:

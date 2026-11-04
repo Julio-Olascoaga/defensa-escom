@@ -13,3 +13,4 @@ cooldown = 20.0
 texture = ExtResource("3_texture")
 color = Color(1, 0.42, 0.42, 1)
 behavior_scene = ExtResource("2_behavior")
+description = "Hecho por los de Redes. Aguanta lo que le echen, hasta memes. Ponlo delante para frenar a los enemigos."

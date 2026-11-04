@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/defenders/firewall.tres" id="3_firewall"]
+[ext_resource type="Resource" path="res://data/enemies/examen_sorpresa.tres" id="4_sorpresa"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "¡Te doy el Firewall! Los de Redes dicen que aguanta lo que le echen. Hasta memes."
+show_card = ExtResource("3_firewall")
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+text = "Ponlo delante de tus Laptops: mientras lo muerden, ellas disparan."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "¡Cuidado! El del examen sorpresa. Nadie sabe cuándo llega; ni él."
+show_enemy = ExtResource("4_sorpresa")
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Corre mucho, pero aguanta poco. Dispárale antes de que te pregunte algo."
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l3_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

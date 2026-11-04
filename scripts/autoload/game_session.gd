@@ -10,6 +10,7 @@ const CAREER_MAP_SCENE := "res://scenes/ui/career_map.tscn"
 const LEVEL_SELECT_SCENE := "res://scenes/ui/level_select.tscn"
 const WORLD_COMPLETE_SCENE := "res://scenes/ui/world_complete.tscn"
 const SETTINGS_SCENE := "res://scenes/ui/settings.tscn"
+const EXPEDIENTE_SCENE := "res://scenes/ui/expediente.tscn"
 const LOADING_SCENE := "res://scenes/ui/loading_screen.tscn"
 
 ## Grade of a level won without using any Extraordinario.

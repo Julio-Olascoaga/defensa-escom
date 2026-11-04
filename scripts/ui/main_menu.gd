@@ -1,8 +1,8 @@
 extends Control
 ## Home screen ("Inicio"). Shows the saved progress ("Primer semestre · Nivel 3")
 ## and its main button says "Jugar" the first time and "Continuar" afterwards;
-## it opens the career map. The other buttons open Ajustes and Créditos
-## (Expediente arrives in Block 9 and is disabled until then).
+## it opens the career map. The other buttons open the Expediente (Block 9),
+## Ajustes and Créditos.
 ## The Android back button asks before closing the game.
 ##
 ## Hidden debug option (debug builds only): tap the logo DEBUG_TAPS times
@@ -34,6 +34,7 @@ var _last_tap_time := 0.0
 
 func _ready() -> void:
 	play_button.pressed.connect(_on_play_button_pressed)
+	expediente_button.pressed.connect(_on_expediente_button_pressed)
 	settings_button.pressed.connect(_on_settings_button_pressed)
 	credits_button.pressed.connect(_on_credits_button_pressed)
 	logo.gui_input.connect(_on_logo_gui_input)
@@ -66,6 +67,10 @@ func _show_progress() -> void:
 
 func _on_play_button_pressed() -> void:
 	GameSession.open_map()
+
+
+func _on_expediente_button_pressed() -> void:
+	SceneTransition.change_scene(GameSession.EXPEDIENTE_SCENE)
 
 
 func _on_settings_button_pressed() -> void:

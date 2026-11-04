@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Tercer parcial. Esto ya no es normal: todos los pendientes salieron juntos del Archivo Muerto."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Investigué. Alguien los está organizando. Alguien… acumulativo."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+text = "Empieza con varios Cafés. Sin energía no hay defensa, y yo ya me quedé sin taza."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Aguanta las últimas oleadas, que vienen pesadas. Ya casi terminas el semestre."
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l5_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

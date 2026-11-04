@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "orgulloso"
+text = "¡Aprobaste el primer semestre! Lo voy a presumir en todo el pasillo."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Ese promedio es tuyo. Puedes volver a cualquier nivel para subirlo… si te animas."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Lo del sello me tiene pensando. El segundo semestre te espera en la Biblioteca Central."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Descansa un poco. Pero no mucho: los préstamos vencidos no esperan. ¡Huélum!"
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_outro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "orgulloso"
+text = "¡Primera semana superada! Te ganaste algo especial."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Le pedí un favor a los de Redes y te armaron algo. Lo estrenas en el siguiente nivel."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Lo vas a necesitar: en el Archivo Muerto se escucha un rumor… ya viene el primer parcial."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+text = "Revisa tu Expediente cuando quieras: ahí anoto a cada enemigo que conoces. Saber es poder."
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l2_outro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

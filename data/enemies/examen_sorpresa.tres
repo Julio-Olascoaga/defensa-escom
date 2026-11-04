@@ -12,3 +12,4 @@ speed = 0.6
 damage_per_second = 25.0
 texture = ExtResource("2_texture")
 color = Color(0.953, 0.851, 0.894, 1)
+description = "Nadie sabe cuándo llega; ni él. Corre mucho, pero cae rápido."

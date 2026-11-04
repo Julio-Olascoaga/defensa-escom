@@ -5,6 +5,8 @@ extends Control
 ## opened. It replaces the 1.0 notice "¡Mundo 1 superado!" and, unlike the 1.0,
 ## the progress is not sent back to level 1.
 ## "Mapa de la carrera" and the Android back button go to the career map.
+## Block 9: the Director congratulates the player (WorldData.outro_dialogue)
+## before the stamp falls; the stamp Tween waits because the game is paused.
 
 const STAMP_START_SCALE := 2.4
 const STAMP_TIME := 0.35
@@ -20,6 +22,7 @@ var stamp_tween: Tween
 @onready var grades_grid: GridContainer = %Grades
 @onready var next_world_label: Label = %NextWorldLabel
 @onready var map_button: Button = %MapButton
+@onready var dialogue_box: DialogueBox = $DialogueBox
 
 
 func _ready() -> void:
@@ -36,6 +39,7 @@ func _ready() -> void:
 		grades_grid.add_child(line)
 	next_world_label.text = _next_world_text()
 	_play_stamp()
+	dialogue_box.play_once(world.outro_dialogue)  # only the first time
 
 
 ## What happens with the next semester now that this one is passed.
@@ -65,4 +69,7 @@ func _go_to_map() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not SceneTransition.is_changing:
-		_go_to_map()
+		if dialogue_box.is_open():
+			dialogue_box.finish()  # back = "Saltar"
+		else:
+			_go_to_map()

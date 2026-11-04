@@ -6,11 +6,21 @@ extends Node2D
 ## counts how many were used (that is the grade) and handles play time and pause.
 ## The level it plays comes from the GameSession Autoload, which also
 ## saves the progress (through ProgressRepository) when the level is won.
+## Block 9: before the first wave the Director talks (LevelData.intro_dialogue)
+## and, in the tutorial level, the Tutorial guides the player; after the last
+## wave he talks again (outro_dialogue) before the Victory panel.
 
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
 const EXTRAORDINARIO_SCENE := preload("res://scenes/game/extraordinario.tscn")
 
 enum Phase { PLAYING, VICTORY, DEFEAT }
+
+## The player selected a card (the Tutorial listens to these three signals).
+signal card_selected(type: DefenderType)
+## A defender was placed in a cell.
+signal defender_placed(type: DefenderType, lane: int, column: int)
+## The player collected an energy orb.
+signal orb_collected(amount: int)
 
 ## Data of the level being played (name, start energy, defenders and waves).
 var level: LevelData
@@ -43,6 +53,8 @@ var extraordinarios_used := 0
 @onready var victory_panel: VictoryPanel = $UI/VictoryPanel
 @onready var save_error_panel: SaveErrorPanel = $UI/SaveErrorPanel
 @onready var wave_manager: WaveManager = $WaveManager
+@onready var dialogue_box: DialogueBox = $DialogueBox
+@onready var tutorial: Tutorial = $Tutorial
 
 
 func _ready() -> void:
@@ -50,6 +62,7 @@ func _ready() -> void:
 	energy = level.start_energy
 	_apply_background()
 	hud.set_level_name(GameSession.current_level_number(), level.display_name)
+	hud.set_wave(1, level.waves.size())  # the wave that comes first, while the Director talks
 	hud.create_cards(level.defenders)  # one card per defender available in this level
 	var margins := _safe_side_margins()
 	hud.set_side_margins(margins.x, margins.y)
@@ -75,6 +88,21 @@ func _ready() -> void:
 	wave_manager.wave_progress.connect(hud.set_wave_progress)
 	wave_manager.all_waves_cleared.connect(_on_all_waves_cleared)
 	hud.set_energy(energy)
+	_update_hint()
+	_begin_level()
+
+
+## The Director talks (only the first time), the tutorial runs if the level
+## has one and has not been done yet, and then the first wave starts.
+## Until wave_manager.start() is called, WaveManager does nothing.
+func _begin_level() -> void:
+	ProgressRepository.mark_known("cards", level.defenders)  # the Expediente shows the cards of the bar
+	hint.hide()  # while the Director talks, the hint would be under the dialogue box
+	await dialogue_box.play_once(level.intro_dialogue)
+	var tutorial_id := "tutorial_" + level.id
+	if level.is_tutorial and not ProgressRepository.has_seen_dialogue(tutorial_id):
+		await tutorial.run(self)  # the Director explains it in the tutorial bubble
+		ProgressRepository.mark_dialogue_seen(tutorial_id)
 	_update_hint()
 	wave_manager.start(level.waves)
 
@@ -142,6 +170,7 @@ func _on_card_pressed(card: DefenderCard) -> void:
 		notice.show_message("Energía insuficiente: faltan %d" % (type.cost - energy))
 	else:
 		hud.select_card(card)
+		card_selected.emit(type)
 
 
 func _on_board_cell_tapped(lane: int, column: int) -> void:
@@ -160,6 +189,9 @@ func _on_board_cell_tapped(lane: int, column: int) -> void:
 		return
 	if energy < type.cost:
 		notice.show_message("Energía insuficiente: faltan %d" % (type.cost - energy))
+		return
+	if not tutorial.allows_placement(type, lane):
+		notice.show_message("Ponla en el carril que marca la flecha")
 		return
 	if type.behavior_scene == null:
 		push_error("DefenderType '%s' has no behavior_scene" % type.display_name)
@@ -188,6 +220,7 @@ func place_defender(type: DefenderType, lane: int, column: int) -> void:
 	board.occupy_cell(lane, column, defender)
 	spend_energy(type.cost)
 	_update_hint()
+	defender_placed.emit(type, lane, column)
 
 
 # --- "Dar de baja" (eraser) ---
@@ -224,9 +257,10 @@ func _on_defender_died(defender: Defender) -> void:
 	_update_hint()
 
 
-## The empty-board hint is visible only while there are no defenders.
+## The empty-board hint is visible only while there are no defenders
+## (and not during the tutorial, where the Director explains it).
 func _update_hint() -> void:
-	hint.visible = board.is_empty()
+	hint.visible = board.is_empty() and not tutorial.is_running()
 
 
 # --- Energy orbs ---
@@ -236,6 +270,7 @@ func _on_orb_produced(orb: EnergyOrb) -> void:
 	# The orb's position is its top-left corner, so we subtract half its size to center it.
 	orb.global_position = board.cell_to_pixel(orb.lane, orb.column) - orb.size / 2.0
 	orb.collected.connect(add_energy)
+	orb.collected.connect(orb_collected.emit)
 
 
 # --- Projectiles ---
@@ -256,6 +291,9 @@ func spawn_enemy(type: EnemyType, lane: int, column: float = Enemy.SPAWN_COLUMN)
 	enemy.reached_safe_zone.connect(_on_enemy_reached_safe_zone)
 	enemy.summon_requested.connect(spawn_enemy)
 	enemies.add_child(enemy)
+	if type == level.featured_enemy and not ProgressRepository.is_known("enemies", type):
+		notice.show_message("¡Cuidado! Ahí viene: %s" % type.display_name)
+	ProgressRepository.mark_known("enemies", [type])  # it saves only the first time
 	if type.is_boss:
 		_show_boss_bar(enemy)
 
@@ -305,6 +343,8 @@ func _on_all_waves_cleared() -> void:
 	var previous_grade := ProgressRepository.get_grade(GameSession.current_world(), GameSession.level_index)
 	# The progress moves on and is saved right away (the grade only if it is better).
 	var save_error := GameSession.complete_current_level(grade)
+	ProgressRepository.mark_known("cards", [level.reward_card])  # null is ignored
+	await dialogue_box.play_once(level.outro_dialogue)  # the game stays paused after it
 	victory_panel.show_victory(GameSession.current_level_number(), level.display_name, grade,
 			previous_grade, not GameSession.has_next_level())
 	if save_error != OK:
@@ -381,6 +421,9 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if SceneTransition.is_changing:
 			return  # the screen is already changing
+		if dialogue_box.is_open():
+			dialogue_box.finish()  # back = "Saltar"
+			return
 		if phase == Phase.PLAYING:
 			# Android back button: opens or closes the pause menu.
 			if get_tree().paused:

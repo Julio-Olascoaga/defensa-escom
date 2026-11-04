@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "¡Lo lograste! El Examen Final se deshizo en hojas de respuestas."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Espera… entre las hojas quedó un sello: «Biblioteca Central. Préstamo vencido»."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Entonces el Archivo Muerto no es el único lugar de donde salen. Esto apenas empieza."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "orgulloso"
+text = "Pero eso es problema del segundo semestre. Hoy, celebra."
+
+[resource]
+script = ExtResource("1_data")
+id = "w1_l6_outro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

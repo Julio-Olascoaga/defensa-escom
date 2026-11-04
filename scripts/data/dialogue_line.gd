@@ -3,8 +3,9 @@ extends Resource
 ## One line of a conversation: who speaks, with which face and what they say.
 ## The dialogue box (Block 9) shows the lines of a DialogueData one by one.
 
-## Name shown above the text ("El Director").
-@export var speaker: String = "El Director"
+## Name shown above the text. The Director of the game is called "Her Mosso";
+## lines that keep this default value change all at once if the name changes here.
+@export var speaker: String = "Her Mosso"
 ## Face of the portrait: art/director/<expression>.png.
 @export_enum("normal", "feliz", "serio", "sorprendido", "preocupado", "orgulloso") var expression: String = "normal"
 ## What the character says.

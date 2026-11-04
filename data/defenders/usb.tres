@@ -11,3 +11,4 @@ health = 600.0
 cooldown = 10.0
 color = Color(0.38, 0.62, 0.95, 1)
 behavior_scene = ExtResource("1_daxxu")
+description = "Barato, rápido de recargar y siempre se pierde. Bloquea un rato a los enemigos."
