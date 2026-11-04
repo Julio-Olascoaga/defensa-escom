@@ -82,6 +82,8 @@ position = Vector2(80, 110)
 
 [node name="Orbs" type="Node2D" parent="."]
 
+[node name="Extraordinarios" type="Node2D" parent="."]
+
 [node name="Effects" type="Node2D" parent="." groups=["effects"]]
 
 [node name="WaveManager" type="Node" parent="."]

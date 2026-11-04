@@ -1,18 +1,16 @@
 extends Node2D
 ## Root of the game scene.
 ## It owns the energy and the phase of the match (playing, victory, defeat),
-## connects the signals between entities and UI, places defenders,
-## spawns the enemies WaveManager asks for, and handles play time and pause.
+## connects the signals between entities and UI, places and removes defenders,
+## spawns the enemies WaveManager asks for, runs the Extraordinarios,
+## counts how many were used (that is the grade) and handles play time and pause.
 ## The level it plays comes from the GameSession Autoload, which also
 ## saves the progress (through ProgressRepository) when the level is won.
 
-const MAIN_MENU_SCENE := "res://scenes/ui/main_menu.tscn"
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
+const EXTRAORDINARIO_SCENE := preload("res://scenes/game/extraordinario.tscn")
 
 enum Phase { PLAYING, VICTORY, DEFEAT }
-
-## Grade of a level won without help. From Block 8 every Extraordinario used takes one point away.
-const MAX_GRADE := 10
 
 ## Data of the level being played (name, start energy, defenders and waves).
 var level: LevelData
@@ -21,6 +19,10 @@ var level: LevelData
 var elapsed_time := 0.0
 var energy := 0
 var phase := Phase.PLAYING
+## One Extraordinario per lane (index = lane), only if the level uses them.
+var extraordinarios: Array[Extraordinario] = []
+## How many Extraordinarios ran in this match. Grade = 10 - this, minimum 6.
+var extraordinarios_used := 0
 
 @onready var background: Sprite2D = $Background
 @onready var board: Board = $Board
@@ -28,6 +30,7 @@ var phase := Phase.PLAYING
 @onready var enemies: Node2D = $Enemies
 @onready var projectiles: Node2D = $Projectiles
 @onready var orbs: Node2D = $Orbs
+@onready var extraordinarios_node: Node2D = $Extraordinarios
 @onready var hud: Hud = $UI/HUD
 @onready var hint: Label = $UI/Hint
 @onready var notice: Notice = $UI/Notice
@@ -51,10 +54,13 @@ func _ready() -> void:
 	var margins := _safe_side_margins()
 	hud.set_side_margins(margins.x, margins.y)
 	DisplayServer.screen_set_keep_on(true)  # the phone does not turn its screen off while playing
+	if level.use_extraordinarios:
+		_create_extraordinarios()
 
 	board.cell_tapped.connect(_on_board_cell_tapped)
 	hud.pause_pressed.connect(pause_game)
 	hud.card_pressed.connect(_on_card_pressed)
+	hud.eraser_toggled.connect(_on_eraser_toggled)
 	pause_menu.resume_requested.connect(resume_game)
 	pause_menu.restart_requested.connect(_on_restart_requested)
 	pause_menu.exit_requested.connect(_on_exit_requested)
@@ -127,6 +133,7 @@ func spend_energy(amount: int) -> void:
 
 func _on_card_pressed(card: DefenderCard) -> void:
 	var type := card.defender_type
+	hud.set_eraser_active(false)  # choosing a card puts the eraser away
 	if card == hud.selected_card:
 		hud.clear_selection()  # tapping the selected card again cancels it
 	elif card.is_recharging():
@@ -139,6 +146,9 @@ func _on_card_pressed(card: DefenderCard) -> void:
 
 func _on_board_cell_tapped(lane: int, column: int) -> void:
 	board.highlight_cell(lane, column)
+	if hud.eraser_active:
+		_erase_at(lane, column)
+		return
 	var card := hud.selected_card
 	if card == null:
 		notice.show_message("Primero toca una tarjeta de defensor")
@@ -177,6 +187,35 @@ func place_defender(type: DefenderType, lane: int, column: int) -> void:
 
 	board.occupy_cell(lane, column, defender)
 	spend_energy(type.cost)
+	_update_hint()
+
+
+# --- "Dar de baja" (eraser) ---
+
+func _on_eraser_toggled(active: bool) -> void:
+	if active:
+		hud.clear_selection()
+		notice.show_message("Toca un defensor para darlo de baja")
+
+
+## With the eraser active, a tap on a defender removes it (no energy back)
+## and puts the eraser away. A tap on an empty cell only says what to do.
+func _erase_at(lane: int, column: int) -> void:
+	if not board.is_occupied(lane, column):
+		notice.show_message("Toca un defensor para darlo de baja")
+		return
+	remove_defender(lane, column)
+	hud.set_eraser_active(false)
+	board.clear_highlight()
+
+
+## Removes the defender of a cell and frees the cell. Its cost is not returned.
+func remove_defender(lane: int, column: int) -> void:
+	var defender := board.get_defender(lane, column)
+	if defender == null:
+		return
+	board.free_cell(lane, column)
+	defender.queue_free()
 	_update_hint()
 
 
@@ -221,6 +260,22 @@ func spawn_enemy(type: EnemyType, lane: int, column: float = Enemy.SPAWN_COLUMN)
 		_show_boss_bar(enemy)
 
 
+# --- Extraordinarios ---
+
+## One per lane, waiting at the left edge of the board.
+func _create_extraordinarios() -> void:
+	for lane in Board.LANES:
+		var extraordinario: Extraordinario = EXTRAORDINARIO_SCENE.instantiate()
+		extraordinario.setup(lane, board)
+		extraordinarios_node.add_child(extraordinario)
+		extraordinarios.append(extraordinario)
+
+
+## Grade the player would get if the level ended now.
+func current_grade() -> int:
+	return GameSession.grade_for(extraordinarios_used)
+
+
 # --- Boss health bar ---
 
 func _show_boss_bar(boss: Enemy) -> void:
@@ -246,12 +301,12 @@ func _on_all_waves_cleared() -> void:
 		return
 	phase = Phase.VICTORY
 	get_tree().paused = true  # freezes the board behind the panel
-	# The progress moves on and is saved right away.
-	var save_error := GameSession.complete_current_level(MAX_GRADE)
-	if GameSession.has_next_level():
-		victory_panel.show_level_cleared(GameSession.current_level_number(), level.display_name)
-	else:
-		victory_panel.show_world_cleared(GameSession.current_world().display_name)
+	var grade := current_grade()
+	var previous_grade := ProgressRepository.get_grade(GameSession.current_world(), GameSession.level_index)
+	# The progress moves on and is saved right away (the grade only if it is better).
+	var save_error := GameSession.complete_current_level(grade)
+	victory_panel.show_victory(GameSession.current_level_number(), level.display_name, grade,
+			previous_grade, not GameSession.has_next_level())
 	if save_error != OK:
 		save_error_panel.show_error()  # drawn on top of the Victory panel
 
@@ -264,9 +319,22 @@ func _on_save_retry_requested() -> void:
 		save_error_panel.show_retry_failed()
 
 
-func _on_enemy_reached_safe_zone(_enemy: Enemy) -> void:
+## An enemy entered the safe zone. If its lane still has its Extraordinario,
+## the Extraordinario runs along the lane (or is already running and will
+## remove it); otherwise, or if the level does not use them (rule of the 1.0), defeat.
+func _on_enemy_reached_safe_zone(enemy: Enemy) -> void:
 	if phase != Phase.PLAYING:
 		return
+	if enemy and not extraordinarios.is_empty():
+		var extraordinario := extraordinarios[enemy.lane]
+		if extraordinario.state == Extraordinario.State.READY:
+			extraordinario.trigger()
+			extraordinarios_used += 1
+			AudioManager.vibrate()
+			notice.show_message("¡Extraordinario! Calificación máxima: %d" % current_grade())
+			return
+		if extraordinario.can_save():
+			return  # it is already running along this lane and will remove the enemy
 	phase = Phase.DEFEAT
 	get_tree().paused = true  # freezes the board behind the panel
 	defeat_panel.show()       # it keeps working: its mode is "When Paused"
@@ -290,12 +358,17 @@ func _on_restart_requested() -> void:
 	SceneTransition.reload_scene()
 
 
+## "Siguiente nivel", or "Continuar" after the last level of the world.
 func _on_next_level_requested() -> void:
-	GameSession.start_next_level()
+	if GameSession.has_next_level():
+		GameSession.start_next_level()
+	else:
+		GameSession.open_world_complete()
 
 
+## Pause, Defeat and Victory go back to the level select of this world.
 func _on_exit_requested() -> void:
-	SceneTransition.change_scene(MAIN_MENU_SCENE)
+	GameSession.open_level_select()
 
 
 func _notification(what: int) -> void:
@@ -315,6 +388,6 @@ func _notification(what: int) -> void:
 			else:
 				pause_game()
 		else:
-			# After a victory or a defeat it works like "Volver al inicio".
+			# After a victory or a defeat it works like "Selección de nivel".
 			# The progress was already saved (or kept in memory) when the level was won.
 			_on_exit_requested()
