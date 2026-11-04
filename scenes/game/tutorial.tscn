@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/engine/tutorial.gd" id="1_tutorial"]
 [ext_resource type="Texture2D" path="res://art/director/feliz.png" id="2_face"]
 [ext_resource type="PackedScene" path="res://scenes/ui/tutorial_pointer.tscn" id="3_pointer"]
+[ext_resource type="Script" path="res://scripts/ui/pause_hidden_layer.gd" id="4_layer"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bubble"]
 content_margin_left = 14.0
@@ -25,6 +26,7 @@ script = ExtResource("1_tutorial")
 
 [node name="Layer" type="CanvasLayer" parent="."]
 layer = 2
+script = ExtResource("4_layer")
 
 [node name="Bubble" type="PanelContainer" parent="Layer"]
 unique_name_in_owner = true
