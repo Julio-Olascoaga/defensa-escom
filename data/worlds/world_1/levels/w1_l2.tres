@@ -63,6 +63,7 @@ events = Array[ExtResource("6_p1ako")]([SubResource("Resource_2rc4p"), SubResour
 
 [resource]
 script = ExtResource("4_swk0v")
+id = "w1_l2"
 display_name = "Inicio de semestre"
 defenders = Array[ExtResource("1_teyxd")]([ExtResource("2_e8cxq"), ExtResource("3_tn1c4")])
 waves = Array[ExtResource("5_5qux5")]([SubResource("Resource_3hqv6"), SubResource("Resource_drahd")])

@@ -3,14 +3,16 @@ extends Node2D
 ## It owns the energy and the phase of the match (playing, victory, defeat),
 ## connects the signals between entities and UI, places defenders,
 ## spawns the enemies WaveManager asks for, and handles play time and pause.
-## The level it plays comes from the ProgressRepository Autoload, which also
-## saves the progress when the level is won.
+## The level it plays comes from the GameSession Autoload, which also
+## saves the progress (through ProgressRepository) when the level is won.
 
 const MAIN_MENU_SCENE := "res://scenes/ui/main_menu.tscn"
-const LOADING_SCENE := "res://scenes/ui/loading_screen.tscn"
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
 
 enum Phase { PLAYING, VICTORY, DEFEAT }
+
+## Grade of a level won without help. From Block 8 every Extraordinario used takes one point away.
+const MAX_GRADE := 10
 
 ## Data of the level being played (name, start energy, defenders and waves).
 var level: LevelData
@@ -20,6 +22,7 @@ var elapsed_time := 0.0
 var energy := 0
 var phase := Phase.PLAYING
 
+@onready var background: Sprite2D = $Background
 @onready var board: Board = $Board
 @onready var defenders: Node2D = $Defenders
 @onready var enemies: Node2D = $Enemies
@@ -40,10 +43,14 @@ var phase := Phase.PLAYING
 
 
 func _ready() -> void:
-	level = ProgressRepository.get_current_level()
+	level = GameSession.current_level()
 	energy = level.start_energy
-	hud.set_level_name(ProgressRepository.get_current_level_number(), level.display_name)
+	_apply_background()
+	hud.set_level_name(GameSession.current_level_number(), level.display_name)
 	hud.create_cards(level.defenders)  # one card per defender available in this level
+	var margins := _safe_side_margins()
+	hud.set_side_margins(margins.x, margins.y)
+	DisplayServer.screen_set_keep_on(true)  # the phone does not turn its screen off while playing
 
 	board.cell_tapped.connect(_on_board_cell_tapped)
 	hud.pause_pressed.connect(pause_game)
@@ -64,6 +71,39 @@ func _ready() -> void:
 	hud.set_energy(energy)
 	_update_hint()
 	wave_manager.start(level.waves)
+
+
+func _exit_tree() -> void:
+	DisplayServer.screen_set_keep_on(false)  # menus let the phone sleep again
+
+
+## The level's own background, or else its world's. If neither has one,
+## the background drawn in game.tscn stays (the one of the 1.0).
+## Backgrounds are 2560 x 1440 px, like the 1.0 one (the node is scaled to 0.5).
+func _apply_background() -> void:
+	var texture := level.background
+	if texture == null:
+		texture = GameSession.current_world().background
+	if texture:
+		background.texture = texture
+
+
+## Android notch and round corners: how many pixels of the left and right
+## edges of the game are hidden. The game keeps its 16:9 picture (stretch aspect
+## "keep"), so on long phones the black side bars already cover the notch and
+## both margins are 0. On PC it is always 0.
+func _safe_side_margins() -> Vector2:
+	if not OS.has_feature("mobile"):
+		return Vector2.ZERO
+	var screen := Vector2(DisplayServer.screen_get_size())
+	var safe := Rect2(DisplayServer.get_display_safe_area())
+	var view := get_viewport_rect().size
+	var screen_scale := minf(screen.x / view.x, screen.y / view.y)  # screen pixels per game pixel
+	var picture_left := (screen.x - view.x * screen_scale) / 2.0   # where the game picture starts
+	var picture_right := picture_left + view.x * screen_scale
+	var left := maxf(0.0, safe.position.x - picture_left) / screen_scale
+	var right := maxf(0.0, picture_right - safe.end.x) / screen_scale
+	return Vector2(left, right)
 
 
 func _process(delta: float) -> void:
@@ -206,14 +246,12 @@ func _on_all_waves_cleared() -> void:
 		return
 	phase = Phase.VICTORY
 	get_tree().paused = true  # freezes the board behind the panel
-	var level_number := ProgressRepository.get_current_level_number()
-	var has_next := ProgressRepository.has_next_level()
 	# The progress moves on and is saved right away.
-	var save_error := ProgressRepository.complete_level()
-	if has_next:
-		victory_panel.show_level_cleared(level_number, level.display_name)
+	var save_error := GameSession.complete_current_level(MAX_GRADE)
+	if GameSession.has_next_level():
+		victory_panel.show_level_cleared(GameSession.current_level_number(), level.display_name)
 	else:
-		victory_panel.show_world_cleared(ProgressRepository.get_world().display_name)
+		victory_panel.show_world_cleared(GameSession.current_world().display_name)
 	if save_error != OK:
 		save_error_panel.show_error()  # drawn on top of the Victory panel
 
@@ -246,30 +284,30 @@ func resume_game() -> void:
 	get_tree().paused = false
 
 
+## The scene stays paused behind the fade; SceneTransition unpauses it
+## right before the change, so the new scene does not start paused.
 func _on_restart_requested() -> void:
-	get_tree().paused = false  # the new scene must not start paused
-	get_tree().reload_current_scene()
+	SceneTransition.reload_scene()
 
 
-## ProgressRepository already points to the next level,
-## so the loading screen loads it.
 func _on_next_level_requested() -> void:
-	get_tree().paused = false
-	get_tree().change_scene_to_file(LOADING_SCENE)
+	GameSession.start_next_level()
 
 
 func _on_exit_requested() -> void:
-	get_tree().paused = false
-	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+	SceneTransition.change_scene(MAIN_MENU_SCENE)
 
 
 func _notification(what: int) -> void:
 	# Notifications arrive even while paused.
 	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		# The app went to the background (call, home button...): pause it.
-		if not get_tree().paused:
+		# ProgressRepository saves at the same moment.
+		if phase == Phase.PLAYING and not get_tree().paused:
 			pause_game()
 	elif what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if SceneTransition.is_changing:
+			return  # the screen is already changing
 		if phase == Phase.PLAYING:
 			# Android back button: opens or closes the pause menu.
 			if get_tree().paused:

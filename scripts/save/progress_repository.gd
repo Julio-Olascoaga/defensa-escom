@@ -1,83 +1,136 @@
 extends Node
-## Autoload (singleton) "ProgressRepository": remembers which level is being played
-## and saves the progress so it survives closing the app.
-## It is the only piece of the game that reads and writes in user://.
-## The file is a ConfigFile with one section per world:
+## Autoload (singleton) "ProgressRepository": the only piece of the game that
+## reads and writes in user://. It keeps the whole progress in a ConfigFile in
+## memory and writes it to user://progress.cfg every time something changes.
 ##
-##     [world_1]
-##     current_level=3
-##     unlocked_level=3
+##     [meta]
+##     version=2
+##     [world_1]              <- one section per world, named with WorldData.id
+##     current_level=3        <- level opened by "Continuar" (1 = first level)
+##     unlocked_level=4       <- highest level the player can enter
+##     completed=true         <- the last level of the world was won
+##     grade_w1_l1=10         <- best grade of each level, named with LevelData.id
+##     [seen]
+##     dialogues=["w1_intro"] <- conversations already shown (Block 9)
+##     [settings]
+##     music_volume=0.8
+##     sfx_volume=1.0
+##     vibration=true
+##
+## A file saved by the 1.0 (it has no [meta] section) is migrated when it is read.
 
 const SAVE_PATH := "user://progress.cfg"
+## Version of the file format. The 1.0 had no version (it counts as 1).
+const VERSION := 2
+## Values used while the player has not changed the settings.
+const DEFAULT_SETTINGS := {"music_volume": 0.8, "sfx_volume": 1.0, "vibration": true}
 
-## The world being played. Its list of levels decides the order.
-const WORLD := preload("res://data/worlds/world_1.tres")
-
-## Position of the current level inside WORLD.levels (0 = level 1).
-var current_level_index := 0
-## Highest level reached in WORLD (0 = level 1). It never goes down,
-## not even when the world is completed and the current level returns to 1.
-var unlocked_level_index := 0
 ## Result of the last load_progress(). OK also covers "there was no file yet";
 ## any other value means the file was damaged or had invalid data
-## and the progress started again from level 1.
+## and the progress started again from zero.
 var load_error := OK
 ## Debug only: makes save_progress() fail on purpose to test the error notice.
 var simulate_save_error := false
+
+## Everything that is saved, in memory. save_progress() writes it to SAVE_PATH.
+var _config := ConfigFile.new()
 
 
 func _ready() -> void:
 	load_progress()
 
 
-func get_world() -> WorldData:
-	return WORLD
+func _notification(what: int) -> void:
+	# The app went to the background (home button, call...): save just in case
+	# Android closes it while it is not visible.
+	if what == NOTIFICATION_APPLICATION_PAUSED:
+		save_progress()
 
 
-## The LevelData of the level being played (null if the world file has an empty slot).
-func get_current_level() -> LevelData:
-	return WORLD.levels[current_level_index]
+# --- Levels and grades ---
+
+## Level opened by "Continuar" in this world (1 = first level).
+func get_current_level(world: WorldData) -> int:
+	return _config.get_value(world.id, "current_level", 1)
 
 
-## Number shown to the player: index 0 is "Nivel 1".
-func get_current_level_number() -> int:
-	return current_level_index + 1
+## Highest level of this world the player can enter (1 = only the first one).
+func get_unlocked_level(world: WorldData) -> int:
+	return _config.get_value(world.id, "unlocked_level", 1)
 
 
-## True if the world still has a level after the current one.
-func has_next_level() -> bool:
-	return current_level_index + 1 < WORLD.levels.size()
+## True once the last level of the world has been won.
+func is_world_completed(world: WorldData) -> bool:
+	return _config.get_value(world.id, "completed", false)
+
+
+## Best grade of a level (6 to 10), or 0 if it has never been won.
+func get_grade(world: WorldData, level_index: int) -> int:
+	return _config.get_value(world.id, _grade_key(world, level_index), 0)
 
 
 ## True once the player has won at least one level (Inicio shows "Continuar").
 func has_progress() -> bool:
-	return current_level_index > 0 or unlocked_level_index > 0
+	for world in GameSession.campaign.worlds:
+		if _config.has_section(world.id):
+			return true
+	return false
 
 
-## Game calls this when the player wins the level.
-## Moves on to the next level; after the last one, the world is complete
-## and the current level goes back to 1. Then it saves.
+## GameSession calls this when the player wins a level.
+## Moves "Continuar" to the next level (after the last one the world is
+## completed and it goes back to level 1), unlocks the next level, keeps the
+## grade only if it is better than the saved one, and saves.
 ## Returns the result of save_progress() so Game can show the error notice.
-func complete_level() -> Error:
-	if has_next_level():
-		current_level_index += 1
-	else:
-		current_level_index = 0
-	unlocked_level_index = maxi(unlocked_level_index, current_level_index)
+func complete_level(world: WorldData, level_index: int, grade: int) -> Error:
+	var level_count := world.levels.size()
+	var next_number := level_index + 2  # number of the next level (index 0 is level 1)
+	if next_number > level_count:
+		_config.set_value(world.id, "completed", true)
+		next_number = 1
+	_config.set_value(world.id, "current_level", next_number)
+	var unlocked := mini(level_index + 2, level_count)  # the next level, or the last one
+	_config.set_value(world.id, "unlocked_level", maxi(get_unlocked_level(world), unlocked))
+	if grade > get_grade(world, level_index):
+		_config.set_value(world.id, _grade_key(world, level_index), grade)
+	return save_progress()
+
+
+# --- Dialogues (Block 9) ---
+
+func has_seen_dialogue(dialogue_id: String) -> bool:
+	return dialogue_id in _config.get_value("seen", "dialogues", [])
+
+
+func mark_dialogue_seen(dialogue_id: String) -> Error:
+	var seen: Array = _config.get_value("seen", "dialogues", [])
+	if dialogue_id in seen:
+		return OK
+	seen.append(dialogue_id)
+	_config.set_value("seen", "dialogues", seen)
+	return save_progress()
+
+
+# --- Settings ---
+
+## Reads one of DEFAULT_SETTINGS ("music_volume", "sfx_volume" or "vibration").
+func get_setting(key: String) -> Variant:
+	return _config.get_value("settings", key, DEFAULT_SETTINGS[key])
+
+
+func set_setting(key: String, value: Variant) -> Error:
+	_config.set_value("settings", key, value)
 	return save_progress()
 
 
 # --- user://progress.cfg ---
 
-## Writes the progress of WORLD. Other sections of the file (future worlds) are kept.
+## Writes everything in memory to SAVE_PATH.
 func save_progress() -> Error:
 	if simulate_save_error:
 		return ERR_FILE_CANT_WRITE
-	var config := ConfigFile.new()
-	config.load(SAVE_PATH)  # if it fails we simply start from an empty file
-	config.set_value(_world_section(), "current_level", current_level_index + 1)
-	config.set_value(_world_section(), "unlocked_level", unlocked_level_index + 1)
-	var error := config.save(SAVE_PATH)
+	_config.set_value("meta", "version", VERSION)
+	var error := _config.save(SAVE_PATH)
 	if error != OK:
 		push_warning("Could not save %s (error %d)" % [SAVE_PATH, error])
 	else:
@@ -85,14 +138,12 @@ func save_progress() -> Error:
 	return error
 
 
-## Reads the progress of WORLD. If the file does not exist, is damaged or has
-## values that do not fit the world, the game starts from level 1 without crashing.
+## Reads SAVE_PATH. If the file does not exist, is damaged or has values that
+## do not fit the campaign, the game starts from zero without crashing.
 func load_progress() -> void:
-	current_level_index = 0
-	unlocked_level_index = 0
+	_config = ConfigFile.new()
 	load_error = OK
-	var config := ConfigFile.new()
-	var error := config.load(SAVE_PATH)
+	var error := _config.load(SAVE_PATH)
 	if error == ERR_FILE_NOT_FOUND:
 		return  # first launch: nothing saved yet
 	if error != OK:
@@ -100,40 +151,69 @@ func load_progress() -> void:
 		return
 	# ConfigFile accepts some garbage without an error (random text, binary data)
 	# and simply finds no sections, so a file with no sections is also damaged.
-	if config.get_sections().is_empty():
+	if _config.get_sections().is_empty():
 		_reject_file("has no sections", ERR_FILE_CORRUPT)
 		return
-	if not config.has_section(_world_section()):
-		return  # the file only has other worlds: this one starts at level 1
-	# A missing key reads as 0, which is not a valid level number.
-	var current: Variant = config.get_value(_world_section(), "current_level", 0)
-	var unlocked: Variant = config.get_value(_world_section(), "unlocked_level", 0)
-	if not _is_valid_level_number(current) or not _is_valid_level_number(unlocked) or current > unlocked:
+	var is_old_format := not _config.has_section("meta")
+	if is_old_format:
+		_migrate_from_v1()
+	if not _has_valid_values():
 		_reject_file("has invalid values", ERR_INVALID_DATA)
 		return
-	current_level_index = current - 1
-	unlocked_level_index = unlocked - 1
+	if is_old_format:
+		save_progress()  # if it fails, the old file stays and is migrated again next time
 
 
-## Debug only: forgets the progress and deletes the file.
-func reset_progress() -> void:
-	current_level_index = 0
-	unlocked_level_index = 0
+## Debug option (and the "Borrar progreso" button of Block 8): forgets the
+## levels, grades and dialogues, but keeps the settings.
+func reset_progress() -> Error:
+	for section in _config.get_sections():
+		if section != "meta" and section != "settings":
+			_config.erase_section(section)
 	load_error = OK
-	if FileAccess.file_exists(SAVE_PATH):
-		DirAccess.remove_absolute(SAVE_PATH)
+	return save_progress()
 
 
-## Name of the section in the file: the world's id ("world_1").
-func _world_section() -> String:
-	return WORLD.id
+## The 1.0 saved only [world_1] with level numbers from 1 to 5. The 2.0 put
+## the tutorial "Primer día" in front, so every old level moved one place:
+## the old level 1 ("Inicio de semestre") is now level 2.
+## Values that are not numbers are left as they are, so the validation rejects them.
+## It only changes the memory: load_progress() saves it after the validation.
+func _migrate_from_v1() -> void:
+	for key in ["current_level", "unlocked_level"]:
+		var value: Variant = _config.get_value("world_1", key, null)
+		if typeof(value) == TYPE_INT:
+			_config.set_value("world_1", key, value + 1)
+	print("%s migrated from the 1.0 format" % SAVE_PATH)
 
 
-## A level number from the file is valid if it is an integer between 1 and the number of levels.
-func _is_valid_level_number(value: Variant) -> bool:
-	return typeof(value) == TYPE_INT and value >= 1 and value <= WORLD.levels.size()
+## Each saved world needs whole level numbers inside the world,
+## and current_level cannot be beyond unlocked_level.
+func _has_valid_values() -> bool:
+	for world in GameSession.campaign.worlds:
+		if not _config.has_section(world.id):
+			continue
+		var current: Variant = _config.get_value(world.id, "current_level", 1)
+		var unlocked: Variant = _config.get_value(world.id, "unlocked_level", 1)
+		if not _is_level_number(current, world) or not _is_level_number(unlocked, world) or current > unlocked:
+			return false
+	return true
+
+
+func _is_level_number(value: Variant, world: WorldData) -> bool:
+	return typeof(value) == TYPE_INT and value >= 1 and value <= world.levels.size()
+
+
+## Name of the grade in the file: "grade_" + the level's id ("grade_w1_l3").
+## A level without id uses its position ("grade_world_1_l3").
+func _grade_key(world: WorldData, level_index: int) -> String:
+	var level := world.levels[level_index]
+	if level.id != "":
+		return "grade_" + level.id
+	return "grade_%s_l%d" % [world.id, level_index + 1]
 
 
 func _reject_file(reason: String, error: Error) -> void:
-	push_warning("%s %s; starting from level 1" % [SAVE_PATH, reason])
+	push_warning("%s %s; starting from zero" % [SAVE_PATH, reason])
+	_config = ConfigFile.new()
 	load_error = error

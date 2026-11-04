@@ -121,6 +121,7 @@ events = Array[ExtResource("7_event")]([SubResource("Resource_boss_event")])
 
 [resource]
 script = ExtResource("5_level")
+id = "w1_l6"
 display_name = "El examen final"
 start_energy = 200
 defenders = Array[ExtResource("1_defender")]([ExtResource("2_cafe"), ExtResource("3_laptop"), ExtResource("4_firewall")])

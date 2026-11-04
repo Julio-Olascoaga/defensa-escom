@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CampaignData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/campaign_data.gd" id="1_campaign"]
+[ext_resource type="Script" path="res://scripts/data/world_data.gd" id="10_world"]
+[ext_resource type="Resource" path="res://data/worlds/world_1/world_1.tres" id="2_w1"]
+[ext_resource type="Resource" path="res://data/worlds/world_2/world_2.tres" id="3_w2"]
+[ext_resource type="Resource" path="res://data/worlds/world_3/world_3.tres" id="4_w3"]
+[ext_resource type="Resource" path="res://data/worlds/world_4/world_4.tres" id="5_w4"]
+[ext_resource type="Resource" path="res://data/worlds/world_5/world_5.tres" id="6_w5"]
+[ext_resource type="Resource" path="res://data/worlds/world_6/world_6.tres" id="7_w6"]
+[ext_resource type="Resource" path="res://data/worlds/world_7/world_7.tres" id="8_w7"]
+[ext_resource type="Resource" path="res://data/worlds/world_8/world_8.tres" id="9_w8"]
+
+[resource]
+script = ExtResource("1_campaign")
+worlds = Array[ExtResource("10_world")]([ExtResource("2_w1"), ExtResource("3_w2"), ExtResource("4_w3"), ExtResource("5_w4"), ExtResource("6_w5"), ExtResource("7_w6"), ExtResource("8_w7"), ExtResource("9_w8")])

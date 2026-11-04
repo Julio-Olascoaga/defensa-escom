@@ -19,6 +19,12 @@ extends Resource
 @export var color: Color = Color.WHITE
 ## Scene with the behavior script (generator, shooter or blocker).
 @export var behavior_scene: PackedScene
+## Text of its card in the Expediente and in "¡Nueva carta!" (Block 9).
+@export_multiline var description: String = ""
+## Small image for the card bar and the Expediente. Empty = texture.
+@export var icon: Texture2D
+## Animated cut-out puppet (Block 10). Empty = the fixed texture of the 1.0.
+@export var visual_scene: PackedScene
 
 @export_group("Generator")
 ## Energy inside each orb. Only generator defenders use it.
@@ -31,3 +37,12 @@ extends Resource
 @export var fire_interval: float = 1.5
 ## Damage of each projectile. Only shooter defenders use it.
 @export var projectile_damage: float = 20.0
+## Speed multiplier the projectile leaves on the enemy (0.5 = half speed, "lag").
+## 1.0 = it does not slow down (Laptop). Used from Block 12 (Router lento).
+@export var slow_factor: float = 1.0
+## Seconds the slow-down lasts. Used from Block 12.
+@export var slow_time: float = 0.0
+
+@export_group("Instant")
+## Radius in cells of the area it hits (1 = a 3 x 3 square). Used from Block 12 (Ctrl+Z).
+@export var area_radius: float = 1.0

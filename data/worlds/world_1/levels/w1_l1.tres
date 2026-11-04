@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_defender"]
+[ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="2_cafe"]
+[ext_resource type="Resource" path="res://data/defenders/laptop.tres" id="3_laptop"]
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="4_level"]
+[ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="5_wave"]
+[ext_resource type="Script" path="res://scripts/data/spawn_event.gd" id="6_event"]
+[ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="7_tarea"]
+
+[sub_resource type="Resource" id="Resource_e1"]
+script = ExtResource("6_event")
+lane = 2
+enemy_type = ExtResource("7_tarea")
+
+[sub_resource type="Resource" id="Resource_e2"]
+script = ExtResource("6_event")
+time = 15.0
+lane = 2
+enemy_type = ExtResource("7_tarea")
+
+[sub_resource type="Resource" id="Resource_e3"]
+script = ExtResource("6_event")
+time = 30.0
+lane = 2
+enemy_type = ExtResource("7_tarea")
+
+[sub_resource type="Resource" id="Resource_w1"]
+script = ExtResource("5_wave")
+start_delay = 30.0
+warning_text = "¡Llega tu primera tarea!"
+events = Array[ExtResource("6_event")]([SubResource("Resource_e1"), SubResource("Resource_e2"), SubResource("Resource_e3")])
+
+[resource]
+script = ExtResource("4_level")
+id = "w1_l1"
+display_name = "Primer día"
+defenders = Array[ExtResource("1_defender")]([ExtResource("2_cafe"), ExtResource("3_laptop")])
+waves = Array[ExtResource("5_wave")]([SubResource("Resource_w1")])
+is_tutorial = true

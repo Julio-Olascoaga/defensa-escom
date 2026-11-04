@@ -36,6 +36,17 @@ func create_cards(defender_types: Array[DefenderType]) -> void:
 		card.pressed.connect(_on_card_pressed.bind(card))
 
 
+## Moves the content of the bar away from the phone's notch (Game measures it).
+## The dark background of the bar still covers the whole width.
+func set_side_margins(left: float, right: float) -> void:
+	if left <= 0.0 and right <= 0.0:
+		return
+	var style := get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	style.content_margin_left += left
+	style.content_margin_right += right
+	add_theme_stylebox_override("panel", style)
+
+
 func set_energy(energy: int) -> void:
 	energy_label.text = "Energía %d" % energy
 	for card: DefenderCard in cards_box.get_children():

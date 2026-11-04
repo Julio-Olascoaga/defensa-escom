@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WorldData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1_level"]
+[ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l1.tres" id="2_l1"]
+[ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l2.tres" id="3_l2"]
+[ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l3.tres" id="4_l3"]
+[ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l4.tres" id="5_l4"]
+[ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l5.tres" id="6_l5"]
+[ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l6.tres" id="7_l6"]
+[ext_resource type="Script" path="res://scripts/data/world_data.gd" id="8_world"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/game_bg.jpg" id="9_background"]
+
+[resource]
+script = ExtResource("8_world")
+id = "world_1"
+display_name = "Primer semestre"
+levels = Array[ExtResource("1_level")]([ExtResource("2_l1"), ExtResource("3_l2"), ExtResource("4_l3"), ExtResource("5_l4"), ExtResource("6_l5"), ExtResource("7_l6")])
+semester = 1
+location_name = "Escuela Superior de Cómputo"
+background = ExtResource("9_background")

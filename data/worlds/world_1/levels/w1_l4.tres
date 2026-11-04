@@ -162,6 +162,7 @@ events = Array[ExtResource("7_1kq2h")]([SubResource("Resource_rsj1p"), SubResour
 
 [resource]
 script = ExtResource("5_4yy4m")
+id = "w1_l4"
 display_name = "Segundo parcial"
 start_energy = 75
 defenders = Array[ExtResource("1_3ksfh")]([ExtResource("2_ma2gn"), ExtResource("3_f8acn"), ExtResource("4_qn6xx")])
