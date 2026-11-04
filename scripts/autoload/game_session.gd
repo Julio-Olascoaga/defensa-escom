@@ -1,10 +1,21 @@
 extends Node
-## Autoload (singleton) "GameSession": loads the campaign (data/campaign.tres)
-## and remembers which world and which level the player chose.
-## Game, the loading screen and the menus ask it what to play.
+## Autoload (singleton) "GameSession": loads the campaign (data/campaign.tres),
+## remembers which world and which level the player chose, and knows the
+## rules of the career: which worlds and levels are open and how a level is graded.
+## The menus, the loading screen and Game ask it what to play.
 ## It does not save anything: ProgressRepository is the one that writes in user://.
 
+const MAIN_MENU_SCENE := "res://scenes/ui/main_menu.tscn"
+const CAREER_MAP_SCENE := "res://scenes/ui/career_map.tscn"
+const LEVEL_SELECT_SCENE := "res://scenes/ui/level_select.tscn"
+const WORLD_COMPLETE_SCENE := "res://scenes/ui/world_complete.tscn"
+const SETTINGS_SCENE := "res://scenes/ui/settings.tscn"
 const LOADING_SCENE := "res://scenes/ui/loading_screen.tscn"
+
+## Grade of a level won without using any Extraordinario.
+const MAX_GRADE := 10
+## Lowest passing grade: using many Extraordinarios never goes below it.
+const MIN_GRADE := 6
 
 ## The 8 semesters, in order.
 var campaign: CampaignData = preload("res://data/campaign.tres")
@@ -12,6 +23,11 @@ var campaign: CampaignData = preload("res://data/campaign.tres")
 var world_index := 0
 ## Position of the chosen level inside the world's levels (0 = level 1).
 var level_index := 0
+
+
+## Grade of a won level: 10 minus one point per Extraordinario used, never below 6.
+static func grade_for(extraordinarios_used: int) -> int:
+	return maxi(MAX_GRADE - extraordinarios_used, MIN_GRADE)
 
 
 func current_world() -> WorldData:
@@ -33,6 +49,77 @@ func has_next_level() -> bool:
 	return level_index + 1 < current_world().levels.size()
 
 
+# --- Locks ---
+
+## A world can be entered when it is available (not "Próximamente") and it is
+## the first one or the previous world has been completed (its last level won).
+func is_world_unlocked(index: int) -> bool:
+	var world := campaign.worlds[index]
+	if not world.available or world.levels.is_empty():
+		return false
+	return index == 0 or ProgressRepository.is_world_completed(campaign.worlds[index - 1])
+
+
+## A level can be entered when its world is open and the level is not beyond
+## the highest unlocked level of the world.
+func is_level_unlocked(world: int, level: int) -> bool:
+	return is_world_unlocked(world) and level + 1 <= ProgressRepository.get_unlocked_level(campaign.worlds[world])
+
+
+## Why a world cannot be entered (the career map shows it). "" = it is open.
+func world_lock_reason(index: int) -> String:
+	var world := campaign.worlds[index]
+	if not world.available or world.levels.is_empty():
+		return "%s: Próximamente" % world.display_name
+	if not is_world_unlocked(index):
+		return "Aprueba %s para abrir %s" % [campaign.worlds[index - 1].display_name, world.display_name]
+	return ""
+
+
+## Why a level cannot be entered (the level select shows it). "" = it is open.
+func level_lock_reason(world: int, level: int) -> String:
+	if not is_world_unlocked(world):
+		return world_lock_reason(world)
+	if not is_level_unlocked(world, level):
+		return "Gana el nivel %d para abrir el nivel %d" % [level, level + 1]
+	return ""
+
+
+## The last world the player can enter (the career map scrolls to it and Inicio shows it).
+func latest_world_index() -> int:
+	var latest := 0
+	for i in campaign.worlds.size():
+		if is_world_unlocked(i):
+			latest = i
+	return latest
+
+
+# --- Screens ---
+
+## "Jugar" / "Continuar" on Inicio.
+func open_map() -> void:
+	SceneTransition.change_scene(CAREER_MAP_SCENE)
+
+
+## A semester button of the career map: opens the level select of that world.
+## It does nothing if the world is locked (the map shows why before calling it).
+func open_world(index: int) -> void:
+	if not is_world_unlocked(index):
+		return
+	world_index = index
+	SceneTransition.change_scene(LEVEL_SELECT_SCENE)
+
+
+## Back to the level select of the current world (Pause, Defeat and Victory).
+func open_level_select() -> void:
+	SceneTransition.change_scene(LEVEL_SELECT_SCENE)
+
+
+## After the last level of a world is won.
+func open_world_complete() -> void:
+	SceneTransition.change_scene(WORLD_COMPLETE_SCENE)
+
+
 ## Chooses a level and opens the loading screen, which loads it.
 func start_level(world: int, level: int) -> void:
 	world_index = world
@@ -45,10 +132,11 @@ func start_next_level() -> void:
 	start_level(world_index, level_index + 1)
 
 
-## "Jugar" / "Continuar" on Inicio. Until the career map exists (Block 8)
-## it plays the saved level of the first world.
+## Plays the saved "next level" of the latest open world.
+## Inicio opens the career map since v1.2; this stays for tools and tests.
 func continue_game() -> void:
-	start_level(0, ProgressRepository.get_current_level(campaign.worlds[0]) - 1)
+	var world := latest_world_index()
+	start_level(world, ProgressRepository.get_current_level(campaign.worlds[world]) - 1)
 
 
 ## Game calls it when the level is won. It saves the result and returns

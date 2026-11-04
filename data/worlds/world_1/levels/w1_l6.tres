@@ -126,3 +126,4 @@ display_name = "El examen final"
 start_energy = 200
 defenders = Array[ExtResource("1_defender")]([ExtResource("2_cafe"), ExtResource("3_laptop"), ExtResource("4_firewall")])
 waves = Array[ExtResource("6_wave")]([SubResource("Resource_wave_1"), SubResource("Resource_wave_2")])
+use_extraordinarios = true

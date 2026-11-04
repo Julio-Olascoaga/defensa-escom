@@ -8,9 +8,16 @@ extends Button
 ## A yellow frame marks the selected card.
 
 const DIMMED := Color(1, 1, 1, 0.45)
+## Size of the card when the bar has 1 to 3 cards (as in the 1.0) and when it has 4 to 6.
+const FULL_SIZE := Vector2(160, 80)
+const COMPACT_SIZE := Vector2(110, 80)
+const COMPACT_FONT_SIZE := 16
+const COMPACT_ICON_WIDTH := 36
 
 ## The defender this card places. Hud assigns it when it creates the card from LevelData.defenders.
 @export var defender_type: DefenderType
+## true = narrow card, so that 6 cards fit in the top bar. Hud sets it before add_child.
+@export var compact := false
 
 ## Energy the player still needs to afford this defender. 0 = affordable.
 var missing_energy := 0
@@ -23,6 +30,12 @@ var cooldown_left := 0.0
 func _ready() -> void:
 	# The picture of the defender, next to the text (no picture if the resource has none).
 	icon = defender_type.texture
+	if compact:
+		custom_minimum_size = COMPACT_SIZE
+		add_theme_font_size_override("font_size", COMPACT_FONT_SIZE)
+		add_theme_constant_override("icon_max_width", COMPACT_ICON_WIDTH)
+	else:
+		custom_minimum_size = FULL_SIZE
 	_refresh()
 
 

@@ -4,9 +4,9 @@ extends Node
 ## memory and writes it to user://progress.cfg every time something changes.
 ##
 ##     [meta]
-##     version=2
+##     version=3
 ##     [world_1]              <- one section per world, named with WorldData.id
-##     current_level=3        <- level opened by "Continuar" (1 = first level)
+##     current_level=3        <- next level to play (1 = first level)
 ##     unlocked_level=4       <- highest level the player can enter
 ##     completed=true         <- the last level of the world was won
 ##     grade_w1_l1=10         <- best grade of each level, named with LevelData.id
@@ -17,11 +17,17 @@ extends Node
 ##     sfx_volume=1.0
 ##     vibration=true
 ##
-## A file saved by the 1.0 (it has no [meta] section) is migrated when it is read.
+## A file saved by the 1.0 (no [meta] section) or by the v1.1 (version=2)
+## is migrated when it is read (see _migrate_legacy()).
 
 const SAVE_PATH := "user://progress.cfg"
-## Version of the file format. The 1.0 had no version (it counts as 1).
-const VERSION := 2
+## Version of the file format. The 1.0 had no version (it counts as 1),
+## the v1.1 wrote 2. Version 3 (v1.2) keeps the same keys, but a finished
+## world is always marked completed and its won levels always have a grade.
+const VERSION := 3
+## Grade given to the levels won in the 1.0 (it had no grades): the minimum
+## passing grade. Winning the level again saves the real grade, which is always >= 6.
+const LEGACY_GRADE := 6
 ## Values used while the player has not changed the settings.
 const DEFAULT_SETTINGS := {"music_volume": 0.8, "sfx_volume": 1.0, "vibration": true}
 
@@ -69,6 +75,19 @@ func get_grade(world: WorldData, level_index: int) -> int:
 	return _config.get_value(world.id, _grade_key(world, level_index), 0)
 
 
+## Average of the best grades of the levels already won in this world
+## (levels never won do not count). 0.0 if no level has a grade yet.
+func get_world_average(world: WorldData) -> float:
+	var total := 0
+	var count := 0
+	for i in world.levels.size():
+		var grade := get_grade(world, i)
+		if grade > 0:
+			total += grade
+			count += 1
+	return float(total) / count if count > 0 else 0.0
+
+
 ## True once the player has won at least one level (Inicio shows "Continuar").
 func has_progress() -> bool:
 	for world in GameSession.campaign.worlds:
@@ -78,16 +97,16 @@ func has_progress() -> bool:
 
 
 ## GameSession calls this when the player wins a level.
-## Moves "Continuar" to the next level (after the last one the world is
-## completed and it goes back to level 1), unlocks the next level, keeps the
-## grade only if it is better than the saved one, and saves.
+## Moves "Continuar" to the next level, unlocks it, keeps the grade only if
+## it is better than the saved one, and saves. Winning the last level marks
+## the world completed (that opens the next world) and, unlike the 1.0,
+## does not send the progress back to level 1.
 ## Returns the result of save_progress() so Game can show the error notice.
 func complete_level(world: WorldData, level_index: int, grade: int) -> Error:
 	var level_count := world.levels.size()
-	var next_number := level_index + 2  # number of the next level (index 0 is level 1)
-	if next_number > level_count:
+	var next_number := mini(level_index + 2, level_count)  # number of the next level (index 0 is level 1)
+	if level_index + 1 >= level_count:
 		_config.set_value(world.id, "completed", true)
-		next_number = 1
 	_config.set_value(world.id, "current_level", next_number)
 	var unlocked := mini(level_index + 2, level_count)  # the next level, or the last one
 	_config.set_value(world.id, "unlocked_level", maxi(get_unlocked_level(world), unlocked))
@@ -114,8 +133,18 @@ func mark_dialogue_seen(dialogue_id: String) -> Error:
 # --- Settings ---
 
 ## Reads one of DEFAULT_SETTINGS ("music_volume", "sfx_volume" or "vibration").
+## A value of the wrong type in the file is ignored (the default is used),
+## and volumes are kept between 0.0 and 1.0.
 func get_setting(key: String) -> Variant:
-	return _config.get_value("settings", key, DEFAULT_SETTINGS[key])
+	var default: Variant = DEFAULT_SETTINGS[key]
+	var value: Variant = _config.get_value("settings", key, default)
+	if typeof(default) == TYPE_FLOAT and typeof(value) == TYPE_INT:
+		value = float(value)  # "music_volume=0" is written as a whole number
+	if typeof(value) != typeof(default):
+		return default
+	if typeof(value) == TYPE_FLOAT:
+		return clampf(value, 0.0, 1.0)
+	return value
 
 
 func set_setting(key: String, value: Variant) -> Error:
@@ -154,13 +183,17 @@ func load_progress() -> void:
 	if _config.get_sections().is_empty():
 		_reject_file("has no sections", ERR_FILE_CORRUPT)
 		return
-	var is_old_format := not _config.has_section("meta")
-	if is_old_format:
+	var file_version: Variant = _config.get_value("meta", "version", 1)  # no [meta] = 1.0
+	if typeof(file_version) != TYPE_INT or file_version > VERSION:
+		_reject_file("has an unknown version", ERR_INVALID_DATA)
+		return
+	if file_version == 1:
 		_migrate_from_v1()
 	if not _has_valid_values():
 		_reject_file("has invalid values", ERR_INVALID_DATA)
 		return
-	if is_old_format:
+	if file_version < VERSION:
+		_migrate_legacy()
 		save_progress()  # if it fails, the old file stays and is migrated again next time
 
 
@@ -185,6 +218,36 @@ func _migrate_from_v1() -> void:
 		if typeof(value) == TYPE_INT:
 			_config.set_value("world_1", key, value + 1)
 	print("%s migrated from the 1.0 format" % SAVE_PATH)
+
+
+## Files written by the 1.0 (already moved one level by _migrate_from_v1) and
+## by the v1.1 (version 2) do not mark a world finished in the 1.0 as
+## completed, and the 1.0 had no grades. Both versions only played the levels
+## in order, and "current_level" went below "unlocked_level" only after the
+## last level was won (it went back to level 1). So, in world_1:
+##   - current_level < unlocked_level  ->  the world was finished: every level
+##     is unlocked and the world is marked completed (it opens world 2).
+##   - every level from 2 that was won (all of them if finished, else those
+##     before unlocked_level) and has no grade gets LEGACY_GRADE (6).
+## "Primer día" (level 1) did not exist in the 1.0, so it gets no grade: it
+## stays open to be played. Grades saved by the v1.1 are kept.
+## Runs after the validation, so the values are whole level numbers.
+func _migrate_legacy() -> void:
+	var world: WorldData = GameSession.campaign.worlds[0]
+	if not _config.has_section(world.id):
+		return
+	var level_count := world.levels.size()
+	var current := get_current_level(world)
+	var unlocked := get_unlocked_level(world)
+	var finished := current < unlocked or is_world_completed(world)
+	if finished:
+		_config.set_value(world.id, "unlocked_level", level_count)
+		_config.set_value(world.id, "completed", true)
+	var last_won := level_count if finished else unlocked - 1  # level numbers
+	for number in range(2, last_won + 1):
+		if get_grade(world, number - 1) == 0:
+			_config.set_value(world.id, _grade_key(world, number - 1), LEGACY_GRADE)
+	print("%s migrated to version %d" % [SAVE_PATH, VERSION])
 
 
 ## Each saved world needs whole level numbers inside the world,

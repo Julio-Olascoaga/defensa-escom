@@ -79,4 +79,4 @@ custom_minimum_size = Vector2(320, 70)
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
-text = "Volver al inicio"
+text = "Selección de nivel"
