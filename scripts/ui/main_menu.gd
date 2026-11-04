@@ -1,7 +1,8 @@
 extends Control
-## Home screen. Shows the saved progress ("Primer semestre · Nivel 3") and its
-## main button says "Jugar" the first time and "Continuar" afterwards. The button
-## asks GameSession to open the saved level (the career map arrives in Block 8).
+## Home screen ("Inicio"). Shows the saved progress ("Primer semestre · Nivel 3")
+## and its main button says "Jugar" the first time and "Continuar" afterwards;
+## it opens the career map. The other buttons open Ajustes and Créditos
+## (Expediente arrives in Block 9 and is disabled until then).
 ## The Android back button asks before closing the game.
 ##
 ## Hidden debug option (debug builds only): tap the logo DEBUG_TAPS times
@@ -17,6 +18,9 @@ var _last_tap_time := 0.0
 @onready var logo: TextureRect = %Logo
 @onready var subtitle_label: Label = %Subtitle
 @onready var play_button: Button = %PlayButton
+@onready var expediente_button: Button = %ExpedienteButton
+@onready var settings_button: Button = %SettingsButton
+@onready var credits_button: Button = %CreditsButton
 @onready var load_error_label: Label = %LoadErrorLabel
 @onready var version_label: Label = $VersionLabel
 @onready var debug_panel: Control = %DebugPanel
@@ -30,6 +34,8 @@ var _last_tap_time := 0.0
 
 func _ready() -> void:
 	play_button.pressed.connect(_on_play_button_pressed)
+	settings_button.pressed.connect(_on_settings_button_pressed)
+	credits_button.pressed.connect(_on_credits_button_pressed)
 	logo.gui_input.connect(_on_logo_gui_input)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	fail_save_button.pressed.connect(_on_fail_save_button_pressed)
@@ -43,9 +49,9 @@ func _ready() -> void:
 	_show_progress()
 
 
-## Writes the progress of the world and the text of the main button.
+## Writes the progress of the latest open world and the text of the main button.
 func _show_progress() -> void:
-	var world := GameSession.campaign.worlds[0]
+	var world := GameSession.campaign.worlds[GameSession.latest_world_index()]
 	if ProgressRepository.has_progress():
 		subtitle_label.text = "%s · Nivel %d" % [world.display_name, ProgressRepository.get_current_level(world)]
 		play_button.text = "Continuar"
@@ -59,7 +65,16 @@ func _show_progress() -> void:
 
 
 func _on_play_button_pressed() -> void:
-	GameSession.continue_game()
+	GameSession.open_map()
+
+
+func _on_settings_button_pressed() -> void:
+	SceneTransition.change_scene(GameSession.SETTINGS_SCENE)
+
+
+func _on_credits_button_pressed() -> void:
+	Credits.back_scene = Credits.MAIN_MENU_SCENE
+	SceneTransition.change_scene(Credits.CREDITS_SCENE)
 
 
 # --- Hidden debug panel ---

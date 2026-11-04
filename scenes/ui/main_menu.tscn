@@ -125,6 +125,34 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_play_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_play_pressed")
 text = "Jugar"
 
+[node name="MoreButtons" type="HBoxContainer" parent="Center/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ExpedienteButton" type="Button" parent="Center/Content/MoreButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 64)
+layout_mode = 2
+tooltip_text = "Próximamente"
+focus_mode = 0
+disabled = true
+text = "Expediente"
+
+[node name="SettingsButton" type="Button" parent="Center/Content/MoreButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 64)
+layout_mode = 2
+focus_mode = 0
+text = "Ajustes"
+
+[node name="CreditsButton" type="Button" parent="Center/Content/MoreButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 64)
+layout_mode = 2
+focus_mode = 0
+text = "Créditos"
+
 [node name="LoadErrorLabel" type="Label" parent="Center/Content"]
 unique_name_in_owner = true
 visible = false
@@ -153,7 +181,7 @@ theme_override_colors/font_color = Color(0.957, 0.949, 1, 0.85)
 theme_override_colors/font_outline_color = Color(0.169, 0.106, 0.18, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 20
-text = "v1.1"
+text = "v1.2"
 horizontal_alignment = 2
 
 [node name="DebugPanel" type="Control" parent="."]
