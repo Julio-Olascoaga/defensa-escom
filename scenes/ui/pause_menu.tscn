@@ -73,4 +73,4 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 70)
 layout_mode = 2
 focus_mode = 0
-text = "Salir al inicio"
+text = "Selección de nivel"
