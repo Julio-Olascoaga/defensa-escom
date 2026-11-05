@@ -20,6 +20,7 @@ var level_buttons: Array[LevelButton] = []
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)  # it keeps playing if it already was
 	back_button.pressed.connect(_go_back)
 	var world := GameSession.current_world()
 	title_label.text = world.display_name

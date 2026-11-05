@@ -132,3 +132,4 @@ use_extraordinarios = true
 intro_dialogue = ExtResource("100_b9_intro_dialogue")
 outro_dialogue = ExtResource("102_b9_outro_dialogue")
 featured_enemy = ExtResource("11_boss")
+time_of_day = 2

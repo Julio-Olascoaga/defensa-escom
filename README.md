@@ -6,9 +6,19 @@ The player places defenders (Café, Laptop, Firewall) on a 5×9 board to stop ca
 Course project for *Desarrollo de Aplicaciones Móviles Nativas* (group 7CV4, ESCOM-IPN).
 Team: Cruz Villa Miguel Angel, Hernández Alonso Diego Raymundo, Martinez Martinez Carlos Daniel, Reyes Olascoaga Julio Cesar.
 
-## Current version: v1.4 (Block 10: Cut-out animation and progressive damage)
+## Current version: v1.5 (Block 11: IPN locations and audio)
 
-Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 10 makes every character move and shows the damage on the character (see `docs/tech-note-v1.4.md`):
+Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 11 makes each world recognizable by its place of the IPN and makes the game sound (see `docs/tech-note-v1.5.md`):
+
+- **IPN locations:** World 1 is the plaza of **ESCOM** (the concrete block with its portal and flagpoles on the left, the cobblestone explanada as the 5 lanes, the guinda gate where the enemies come in). World 2 is the plaza of the **Biblioteca Central** (red scalloped roof, grooved pillars and staircase, terracotta plaza with cream stone strips, blue gate and four-globe lamps; playable in Block 12). Each background is assembled pixel-exact from separate art pieces by `tools/art_src/compose_backgrounds.py`.
+- **Time of day:** `LevelData.time_of_day` tints the game world with a `CanvasModulate` (Scenery): morning in levels 1–2, afternoon in 3–5, night for the boss, when the lights of the scenery turn on (ESCOM's facade glows blue-violet, as the real one).
+- **Living scenery:** `WorldData.scenery` adds up to 6 animated decorations and a foreground: pigeons that peck and fly across the screen, a cloud shadow, falling leaves, flying homework sheets and night lights.
+- **Illustrated career map:** a grass field with a curved dirt road (`Curve2D`) and a thumbnail of the place of each semester (`WorldData.map_icon`).
+- **Original music and effects**, made by the team with code (`tools/audio_src/make_audio.py`, chiptune with a soft bass): menu, World 1, World 2, boss, victory and defeat, with a crossfade between songs; place, collect, shoot, hit, bite, die, Extraordinario, button and the Director's "bip" voice. The volumes are in *Ajustes*.
+- **Vibration** when a defender is lost, an Extraordinario runs or the boss arrives (if it is on in *Ajustes*).
+- **One Theme for the whole UI** (`scenes/ui/ui_theme.tres`): the free font **Nunito** and guinda/gold buttons with a pressed state.
+
+Block 10 (v1.4) cut-out animation and progressive damage, still in place:
 
 - **Cut-out puppets:** each character has a scene in `scenes/visuals/` (a `CharacterVisual`: one `Sprite2D` per piece hanging from its pivot — hip, shoulder, laptop hinge — and an `AnimationPlayer` with fixed names: enemies `idle`/`walk`/`attack`/`hit`/`die`, defenders `idle`/`action`/`hit`/`die`). `DefenderType.visual_scene` / `EnemyType.visual_scene` choose it; a type without one keeps the fixed image of the 1.0.
 - **Defenders:** the Café sways with steam and hops when it releases an orb; the Laptop has code running on its screen and recoils with a screen flash when it shoots; the Firewall's bricks breathe and it compresses when bitten. When they die, their pieces fall apart spinning.
@@ -87,7 +97,8 @@ Everything from v1.0 still works:
 - **Data separated from the engine:** each defender is a `DefenderType` Custom Resource (`data/defenders/*.tres`) with its name, cost, health, cooldown, image and the **behavior scene** it uses. Each enemy is an `EnemyType` resource (`data/enemies/*.tres`) read by the single `enemy.tscn` scene; the boss is one more `EnemyType` with `is_boss`, a bigger `sprite_size` and a summon ability. Each level is a `LevelData` resource (`data/worlds/world_N/levels/*.tres`, with a unique `id` such as `w1_l3`) whose waves are `WaveData` lists of `SpawnEvent`s. Each world is a `WorldData` (`data/worlds/world_N/world_N.tres`) with its ordered levels, and `data/campaign.tres` (`CampaignData`) holds the 8 worlds in order.
 - **Session and progress:** the `GameSession` Autoload knows which world and level are being played, which worlds and levels are open and how a level is graded. The `ProgressRepository` Autoload is the only one that reads and writes in `user://` (save format v3, migration from 1.0 and v1.1).
 - **Screens built from data:** the career map creates one `SemesterButton` per `WorldData` of the campaign and the level select one `LevelButton` per `LevelData` of the world, so new worlds and levels appear without touching scripts.
-- **Screens and sound:** the `SceneTransition` Autoload makes every scene change (fade with a Tween). The `AudioManager` Autoload owns the music and effect players on the `Music` and `SFX` buses.
+- **Screens and sound:** the `SceneTransition` Autoload makes every scene change (fade with a Tween). The `AudioManager` Autoload owns two music players (crossfade) and the effect players on the `Music` and `SFX` buses; every button clicks through `SceneTree.node_added`.
+- **Scenery as data:** a world points to its background, music, map thumbnail and decorations scene (`WorldData`); a level only chooses its `time_of_day`. `Scenery` (in `game.tscn`) applies them; decorations are small reusable scripts (`Pigeon`, drifter, sway) driven by Tweens.
 - **Behaviors by inheritance:** `Defender` (health, damage, shake, death) is the base script; `GeneratorDefender`, `ShooterDefender` and `BlockerDefender` inherit from it.
 - **Cell-based logic:** game logic works in board cells (lane, column, with decimals like column 6.4). Only `Board.cell_to_pixel()` / `Board.pixel_to_cell()` convert to and from screen pixels. Enemy speed is in cells per second, and hits are distance checks in columns.
 - **Signals:** nodes communicate through signals (`Board.cell_tapped`, `Hud.card_pressed`, `GeneratorDefender.orb_produced`, `EnergyOrb.collected`, `ShooterDefender.shot_fired`, `Enemy.reached_safe_zone`, `Enemy.damaged`, `Enemy.summon_requested`, `Defender.died`, `WaveManager.spawn_requested`, `WaveManager.wave_warning`, `WaveManager.all_waves_cleared`...). The `Game` node owns the energy and the phase of the match, applies the rules and creates every enemy, including the boss's summons.
@@ -104,7 +115,7 @@ Everything from v1.0 still works:
 
 ### Adding a world (no scripts)
 
-1. Create `data/worlds/world_N/world_N.tres` (*New Resource…* → `WorldData`) with a unique `id` (`world_N`), `display_name`, `semester`, `location_name` and `available = true`.
+1. Create `data/worlds/world_N/world_N.tres` (*New Resource…* → `WorldData`) with a unique `id` (`world_N`), `display_name`, `semester`, `location_name` and `available = true`. In *Look and sound*, set its `background` (2560 × 1440), `music`, `scenery` (a scene like `scenes/scenery/escom_scenery.tscn`) and, in *Career map*, its `map_icon`.
 2. Create its levels as above and add them to its `levels`.
 3. Add the world to `worlds` in `data/campaign.tres`, in its position (worlds 2–8 are already there as "Próximamente").
 
@@ -145,7 +156,11 @@ res://
 │   ├── characters/  part strips of the puppets, 3 frames each (placeholder in v1.4):
 │   │                cafe/, laptop/, firewall/, tarea_infinita/, examen_sorpresa/,
 │   │                diapositivas/, examen_final/
-│   ├── backgrounds/ game_bg.jpg, menu_bg.jpg
+│   ├── backgrounds/ escom_bg.jpg (World 1), biblioteca_bg.jpg (World 2), game_bg.jpg (1.0), menu_bg.jpg
+│   ├── scenery/     pigeon_stand, pigeon_fly, leaf, paper, cloud_shadow, glow, window_light,
+│   │                foreground_branch (.png, placeholder)
+│   ├── map/         map_ground.png and place_1 … place_8.png (thumbnails, placeholder)
+│   ├── fonts/       Nunito-Bold.ttf + OFL.txt (SIL Open Font License)
 │   ├── icon/        icon.png
 │   ├── director/    the Director in 6 expressions: normal, feliz, serio, sorprendido,
 │   │                preocupado, orgulloso (.png)
@@ -162,10 +177,12 @@ res://
 │   ├── visuals/     the cut-out puppets: cafe_visual, laptop_visual, firewall_visual,
 │   │                tarea_infinita_visual, examen_sorpresa_visual, diapositivas_visual,
 │   │                examen_final_visual (.tscn)
+│   ├── scenery/     escom_scenery.tscn, biblioteca_scenery.tscn (decorations of each world)
 │   ├── debug/       benchmark.tscn (30 enemies)
 │   └── fx/          spark_burst.tscn
 ├── scripts/
-│   ├── engine/      game.gd, board.gd, wave_manager.gd, extraordinario.gd, tutorial.gd
+│   ├── engine/      game.gd, board.gd, wave_manager.gd, extraordinario.gd, tutorial.gd, scenery.gd
+│   ├── scenery/     pigeon.gd, drifter.gd, sway.gd (decorations)
 │   ├── ui/          main_menu.gd, career_map.gd, semester_button.gd, level_select.gd,
 │   │                expediente.gd, dialogue_box.gd, tutorial_pointer.gd,
 │   │                level_button.gd, world_complete.gd, settings.gd, credits.gd,
@@ -188,14 +205,22 @@ res://
 │   ├── campaign.tres  the 8 worlds in order
 │   ├── dialogues/   conversations of the Director: w1_intro, w1_l1_intro … w1_outro (.tres)
 │   └── worlds/      world_1/ (world_1.tres, levels/w1_l1.tres … w1_l6.tres), world_2/ … world_8/
+├── audio/
+│   ├── music/       menu, world_1, world_2, boss, victory, defeat (.ogg)
+│   └── sfx/         place, collect, shoot, hit, bite, die, extraordinario, button, director_bip (.wav)
 ├── default_bus_layout.tres  audio buses Music and SFX
-├── tools/           cut_parts.py (cutting pipeline), make_placeholder_sheets.py, art_src/
-│                    (source sheets; .gdignore: not imported by Godot)
+├── tools/           cut_parts.py (cutting pipeline), make_placeholder_sheets.py,
+│                    art_src/ (source sheets, escom/ and biblioteca/ background pieces,
+│                    compose_backgrounds.py, make_scenery_placeholders.py),
+│                    audio_src/make_audio.py (.gdignore: not imported by Godot)
 └── docs/            technical notes and screenshots per block (.gdignore: not imported by Godot)
 ```
 
 ## Screenshots
 
+![v1.5 World 1 (ESCOM) at night](docs/img/v1.5-escom-night.png)
+![v1.5 World 1 background](docs/img/v1.5-escom-bg.png)
+![v1.5 World 2 background (Biblioteca Central)](docs/img/v1.5-biblioteca-bg.png)
 ![v1.4 combat with the animated puppets](docs/img/v1.4-combat.png)
 ![v1.4 a bitten Firewall in its critical stage](docs/img/v1.4-firewall-3.png)
 ![v1.4 boss phase 2](docs/img/v1.4-boss-phase2.png)
@@ -228,6 +253,6 @@ res://
 | 8 | v1.2 | Career map, level select, grades, Extraordinarios, settings | ✅ Done (placeholder art) |
 | 9 | v1.3 | The Director: dialogues, tutorial, Expediente | ✅ Done |
 | 10 | v1.4 | Cut-out animation and 3-stage damage | ✅ Done (placeholder art; 50 fps test on a phone pending) |
-| 11 | v1.5 | IPN locations and audio | Planned |
+| 11 | v1.5 | IPN locations and audio | ✅ Done (backgrounds final; decorations and map thumbnails placeholder) |
 | 12 | v1.6 | World 1 with 6 levels and World 2 | Planned |
 | 13 | v2.0 | Final polish and delivery | Planned |

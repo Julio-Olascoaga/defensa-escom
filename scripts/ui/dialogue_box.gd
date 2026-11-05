@@ -9,6 +9,7 @@ extends CanvasLayer
 ##     middle of the screen ("¡Nueva carta!" / "Nuevo en tu expediente").
 ## While it talks, the game is paused (get_tree().paused). This node keeps
 ## working because its process mode is "Always". It emits finished at the end.
+## Block 11: while a line is written, the Director's "bip" voice sounds.
 ##
 ## Usage from any screen that has one:
 ##     await dialogue_box.play_once(level.intro_dialogue)
@@ -20,6 +21,8 @@ signal finished
 const PORTRAIT_PATH := "res://art/director/%s.png"
 ## Seconds per letter of the typewriter effect.
 const LETTER_TIME := 0.03
+## Block 11: the Director's "bip" voice sounds once every this many letters.
+const LETTERS_PER_BIP := 3
 ## The portrait slides in from the left in this time.
 const SLIDE_TIME := 0.35
 ## X of the portrait when it is in its place (its offset_left in the scene).
@@ -35,6 +38,8 @@ var line_index := 0
 ## after a victory), so it must stay paused when it ends.
 var _was_paused := false
 var _typing_tween: Tween
+## Number of letters (of the current line) at which the next "bip" sounds.
+var _next_bip_letter := 0
 var _breath_tween: Tween
 
 @onready var dim: ColorRect = $Dim
@@ -126,11 +131,22 @@ func _show_line() -> void:
 	portrait.texture = load(PORTRAIT_PATH % line.expression)
 	text_label.text = line.text
 	text_label.visible_ratio = 0.0
+	_next_bip_letter = 0
 	continue_label.hide()
 	_typing_tween = create_tween()  # it belongs to this node, so it runs while the game is paused
-	_typing_tween.tween_property(text_label, "visible_ratio", 1.0, maxf(line.text.length() * LETTER_TIME, 0.1))
+	_typing_tween.tween_method(_type_letters, 0.0, 1.0, maxf(line.text.length() * LETTER_TIME, 0.1))
 	_typing_tween.finished.connect(_finish_typing)
 	_show_presentation(line)
+
+
+## The typewriter: shows a part of the line (0.0 = nothing, 1.0 = all) and
+## says "bip" every LETTERS_PER_BIP letters, a bit higher or lower each time.
+func _type_letters(ratio: float) -> void:
+	text_label.visible_ratio = ratio
+	var letters := int(ratio * text_label.get_parsed_text().length())
+	if letters >= _next_bip_letter:
+		AudioManager.play_sfx_varied(AudioManager.SFX_DIRECTOR_BIP, 0.9, 1.1)
+		_next_bip_letter = letters + LETTERS_PER_BIP
 
 
 func _finish_typing() -> void:

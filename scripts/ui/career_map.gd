@@ -1,14 +1,20 @@
 extends Control
 ## "Mapa de la carrera": the 8 semesters side by side in a horizontal
-## ScrollContainer, joined by a path. The buttons are created in code from
+## ScrollContainer, joined by a path. Block 11: it is an illustrated map: the
+## grass is a tile drawn under the whole track (it scrolls with it), the path
+## is a dirt road with curves, and each button shows its place of the IPN. The buttons are created in code from
 ## GameSession.campaign.worlds, so a new WorldData added to campaign.tres
 ## appears here without touching this script.
 ## A tap on an open semester opens its level select; a tap on a locked one
 ## does not enter and says why. Back (button or Android) returns to Inicio.
 
-## Color and width of the path drawn between the semesters.
-const PATH_COLOR := Color(0.957, 0.949, 1, 0.55)
-const PATH_WIDTH := 10.0
+## The road between the semesters: its border, its dirt and its widths.
+const PATH_BORDER_COLOR := Color("2b1b2e")
+const PATH_COLOR := Color("e2c48f")
+const PATH_BORDER_WIDTH := 34.0
+const PATH_WIDTH := 24.0
+## Picture of the grass, repeated along the whole map.
+const GROUND_TEXTURE := preload("res://art/map/map_ground.png")
 
 ## The buttons in campaign order (index = world index).
 var semester_buttons: Array[SemesterButton] = []
@@ -21,6 +27,7 @@ var semester_buttons: Array[SemesterButton] = []
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)  # it keeps playing if it already was
 	back_button.pressed.connect(_go_back)
 	track.draw.connect(_draw_path)
 	semesters_box.sort_children.connect(track.queue_redraw)  # the path follows the buttons
@@ -52,12 +59,19 @@ func _state_of(index: int) -> SemesterButton.State:
 	return SemesterButton.State.AVAILABLE
 
 
-## Line through the centers of the buttons, drawn on Track behind them.
+## The grass, and a curved road through the centers of the buttons,
+## drawn on Track behind them. The Curve2D bends the road: each point gets
+## horizontal "handles", so the road leaves and arrives flat.
 func _draw_path() -> void:
-	var points := PackedVector2Array()
+	track.draw_texture_rect(GROUND_TEXTURE, Rect2(Vector2.ZERO, track.size), true)  # true = tiled
+	var curve := Curve2D.new()
 	for button in semester_buttons:
-		points.append(button.position + semesters_box.position + button.size / 2.0)
-	if points.size() >= 2:
+		var center := button.position + semesters_box.position + button.size / 2.0
+		var handle := Vector2(semesters_box.get_theme_constant("separation") + button.size.x / 2.0, 0)
+		curve.add_point(center, -handle, handle)
+	if curve.point_count >= 2:
+		var points := curve.tessellate()
+		track.draw_polyline(points, PATH_BORDER_COLOR, PATH_BORDER_WIDTH, true)
 		track.draw_polyline(points, PATH_COLOR, PATH_WIDTH, true)
 
 

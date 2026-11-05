@@ -240,3 +240,4 @@ defenders = Array[ExtResource("1_bbm8a")]([ExtResource("2_6xjqd"), ExtResource("
 waves = Array[ExtResource("6_51ihj")]([SubResource("Resource_2cgyp"), SubResource("Resource_etvhk"), SubResource("Resource_w4fg0")])
 use_extraordinarios = true
 intro_dialogue = ExtResource("100_b9_intro_dialogue")
+time_of_day = 1

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/career_map.gd" id="1_map"]
-[ext_resource type="Texture2D" path="res://art/backgrounds/menu_bg.jpg" id="2_background"]
+[ext_resource type="Texture2D" path="res://art/map/map_ground.png" id="2_background"]
 [ext_resource type="PackedScene" path="res://scenes/ui/notice.tscn" id="3_notice"]
 
 [node name="CareerMap" type="Control"]
@@ -23,7 +23,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("2_background")
 expand_mode = 1
-stretch_mode = 6
+stretch_mode = 1
 
 [node name="Dim" type="ColorRect" parent="."]
 layout_mode = 1
@@ -33,7 +33,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.051, 0.039, 0.122, 0.55)
+color = Color(0.051, 0.039, 0.122, 0.45)
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 1

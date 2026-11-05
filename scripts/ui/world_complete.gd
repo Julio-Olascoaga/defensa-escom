@@ -26,6 +26,7 @@ var stamp_tween: Tween
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)  # it keeps playing if it already was
 	map_button.pressed.connect(_go_to_map)
 	var world := GameSession.current_world()
 	title_label.text = "¡%s aprobado!" % world.display_name

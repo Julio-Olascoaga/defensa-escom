@@ -8,9 +8,12 @@
 [ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l5.tres" id="6_l5"]
 [ext_resource type="Resource" path="res://data/worlds/world_1/levels/w1_l6.tres" id="7_l6"]
 [ext_resource type="Script" path="res://scripts/data/world_data.gd" id="8_world"]
-[ext_resource type="Texture2D" path="res://art/backgrounds/game_bg.jpg" id="9_background"]
 [ext_resource type="Resource" path="res://data/dialogues/w1_intro.tres" id="100_b9_intro_dialogue"]
 [ext_resource type="Resource" path="res://data/dialogues/w1_outro.tres" id="101_b9_outro_dialogue"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/escom_bg.jpg" id="200_b11_background"]
+[ext_resource type="AudioStream" path="res://audio/music/world_1.ogg" id="201_b11_music"]
+[ext_resource type="PackedScene" path="res://scenes/scenery/escom_scenery.tscn" id="202_b11_scenery"]
+[ext_resource type="Texture2D" path="res://art/map/place_1.png" id="203_b11_map_icon"]
 
 [resource]
 script = ExtResource("8_world")
@@ -19,6 +22,9 @@ display_name = "Primer semestre"
 levels = Array[ExtResource("1_level")]([ExtResource("2_l1"), ExtResource("3_l2"), ExtResource("4_l3"), ExtResource("5_l4"), ExtResource("6_l5"), ExtResource("7_l6")])
 semester = 1
 location_name = "Escuela Superior de Cómputo"
-background = ExtResource("9_background")
+background = ExtResource("200_b11_background")
 intro_dialogue = ExtResource("100_b9_intro_dialogue")
 outro_dialogue = ExtResource("101_b9_outro_dialogue")
+music = ExtResource("201_b11_music")
+scenery = ExtResource("202_b11_scenery")
+map_icon = ExtResource("203_b11_map_icon")

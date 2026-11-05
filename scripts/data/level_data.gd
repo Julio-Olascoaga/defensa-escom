@@ -5,6 +5,10 @@ extends Resource
 ## (data/worlds/world_N/levels/), created from the Inspector without touching any script.
 ## Every field added in 2.0 has a default value, so an old file still works.
 
+## Light of the scenery during the level (Block 11): the world keeps its
+## background, and the level only changes the hour (Scenery tints it).
+enum TimeOfDay { MORNING, AFTERNOON, NIGHT }
+
 ## Unique id of the level ("w1_l3"). ProgressRepository saves its best grade
 ## with this name, so do not change it once players have saved progress.
 @export var id: String = ""
@@ -20,6 +24,9 @@ extends Resource
 @export_group("Look")
 ## Optional: background only for this level. Empty = the background of its world.
 @export var background: Texture2D
+## Morning in the first levels, afternoon in the middle ones, night for the boss.
+## At night the lights of the scenery turn on.
+@export var time_of_day: TimeOfDay = TimeOfDay.MORNING
 
 @export_group("Story")
 ## Conversation shown before the first wave (Block 9).
