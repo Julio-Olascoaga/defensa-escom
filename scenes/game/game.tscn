@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/engine/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/game/board.tscn" id="2_board"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" path="res://art/backgrounds/game_bg.jpg" id="10_background"]
 [ext_resource type="PackedScene" path="res://scenes/ui/dialogue_box.tscn" id="11_dialogue"]
 [ext_resource type="PackedScene" path="res://scenes/game/tutorial.tscn" id="12_tutorial"]
+[ext_resource type="Script" path="res://scripts/engine/scenery.gd" id="13_scenery"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hint"]
 content_margin_left = 24.0
@@ -72,6 +73,11 @@ script = ExtResource("1_game")
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("10_background")
 centered = false
+
+[node name="Scenery" type="Node2D" parent="."]
+script = ExtResource("13_scenery")
+
+[node name="Daylight" type="CanvasModulate" parent="Scenery"]
 
 [node name="Camera" type="Camera2D" parent="."]
 anchor_mode = 0

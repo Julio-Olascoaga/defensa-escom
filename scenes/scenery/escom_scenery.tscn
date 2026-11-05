@@ -1,0 +1,117 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/scenery/pigeon.gd" id="1_pigeon"]
+[ext_resource type="Script" path="res://scripts/scenery/drifter.gd" id="2_drifter"]
+[ext_resource type="Script" path="res://scripts/scenery/sway.gd" id="3_sway"]
+[ext_resource type="Texture2D" path="res://art/scenery/pigeon_stand.png" id="4_stand"]
+[ext_resource type="Texture2D" path="res://art/scenery/pigeon_fly.png" id="5_fly"]
+[ext_resource type="Texture2D" path="res://art/scenery/cloud_shadow.png" id="6_cloud"]
+[ext_resource type="Texture2D" path="res://art/scenery/leaf.png" id="7_leaf"]
+[ext_resource type="Texture2D" path="res://art/scenery/paper.png" id="8_paper"]
+[ext_resource type="Texture2D" path="res://art/scenery/glow.png" id="10_glow"]
+[ext_resource type="Texture2D" path="res://art/scenery/foreground_branch.png" id="11_branch"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[node name="EscomScenery" type="Node2D"]
+
+[node name="CloudShadow" type="Sprite2D" parent="."]
+z_index = 5
+modulate = Color(1, 1, 1, 0.16)
+position = Vector2(300, 380)
+texture = ExtResource("6_cloud")
+script = ExtResource("2_drifter")
+speed = 16
+
+[node name="PigeonEntry" type="Sprite2D" parent="." groups=["day_only"]]
+z_index = 6
+position = Vector2(1240, 570)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("4_stand")
+offset = Vector2(0, -36)
+script = ExtResource("1_pigeon")
+stand_texture = ExtResource("4_stand")
+fly_texture = ExtResource("5_fly")
+fly_offset = Vector2(-1500, -140)
+
+[node name="PigeonRoof" type="Sprite2D" parent="." groups=["day_only"]]
+z_index = 6
+position = Vector2(34, 180)
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("4_stand")
+offset = Vector2(0, -36)
+script = ExtResource("1_pigeon")
+stand_texture = ExtResource("4_stand")
+fly_texture = ExtResource("5_fly")
+fly_offset = Vector2(1500, -180)
+
+[node name="Leaves" type="CPUParticles2D" parent="."]
+z_index = 5
+position = Vector2(640, 96)
+amount = 6
+lifetime = 9.0
+preprocess = 9.0
+texture = ExtResource("7_leaf")
+emission_shape = 3
+emission_rect_extents = Vector2(640, 8)
+direction = Vector2(0.3, 1)
+spread = 30.0
+gravity = Vector2(6, 12)
+initial_velocity_min = 15.0
+initial_velocity_max = 30.0
+angular_velocity_min = -90.0
+angular_velocity_max = 90.0
+scale_amount_min = 0.7
+scale_amount_max = 1.0
+
+[node name="Papers" type="CPUParticles2D" parent="."]
+z_index = 5
+position = Vector2(1310, 410)
+amount = 3
+lifetime = 11.0
+preprocess = 11.0
+texture = ExtResource("8_paper")
+emission_shape = 3
+emission_rect_extents = Vector2(8, 280)
+direction = Vector2(-1, 0)
+spread = 12.0
+gravity = Vector2(0, 5)
+initial_velocity_min = 120.0
+initial_velocity_max = 160.0
+angular_velocity_min = 80.0
+angular_velocity_max = 200.0
+scale_amount_min = 0.6
+scale_amount_max = 0.8
+
+[node name="NightLights" type="Node2D" parent="." groups=["night_only"]]
+z_index = 4
+modulate = Color(1.7, 1.5, 1.1, 1)
+
+[node name="FacadeLight1" type="Sprite2D" parent="NightLights"]
+modulate = Color(0.45, 0.5, 1.5, 1)
+material = SubResource("CanvasItemMaterial_add")
+position = Vector2(40, 200)
+scale = Vector2(1.2, 2.2)
+texture = ExtResource("10_glow")
+
+[node name="FacadeLight2" type="Sprite2D" parent="NightLights"]
+modulate = Color(0.45, 0.5, 1.5, 1)
+material = SubResource("CanvasItemMaterial_add")
+position = Vector2(40, 560)
+scale = Vector2(1.2, 2.2)
+texture = ExtResource("10_glow")
+
+[node name="PortalLight" type="Sprite2D" parent="NightLights"]
+material = SubResource("CanvasItemMaterial_add")
+position = Vector2(30, 370)
+scale = Vector2(0.9, 1.4)
+texture = ExtResource("10_glow")
+
+[node name="Foreground" type="Sprite2D" parent="."]
+z_index = 20
+position = Vector2(1300, 740)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("11_branch")
+offset = Vector2(-210, -150)
+script = ExtResource("3_sway")

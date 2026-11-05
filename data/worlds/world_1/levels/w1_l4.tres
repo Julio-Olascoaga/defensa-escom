@@ -171,3 +171,4 @@ waves = Array[ExtResource("6_qqhj4")]([SubResource("Resource_k7qkl"), SubResourc
 use_extraordinarios = true
 intro_dialogue = ExtResource("100_b9_intro_dialogue")
 featured_enemy = ExtResource("10_nnuw2")
+time_of_day = 1

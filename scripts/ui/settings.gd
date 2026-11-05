@@ -20,6 +20,7 @@ extends Control
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)  # it keeps playing if it already was
 	# The saved values first, so setting them does not count as a change.
 	music_slider.set_value_no_signal(ProgressRepository.get_setting("music_volume"))
 	sfx_slider.set_value_no_signal(ProgressRepository.get_setting("sfx_volume"))
@@ -45,6 +46,7 @@ func _on_music_changed(value: float) -> void:
 func _on_sfx_changed(value: float) -> void:
 	AudioManager.set_sfx_volume(value)
 	_show_percent(sfx_value, value)
+	AudioManager.play_sfx(AudioManager.SFX_COLLECT)  # Block 11: a sample at the new volume
 
 
 func _on_vibration_toggled(active: bool) -> void:

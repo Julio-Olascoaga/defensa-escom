@@ -11,6 +11,9 @@ extends Node2D
 ## wave he talks again (outro_dialogue) before the Victory panel.
 ## Block 10: the camera shakes when the boss enters and when it enters phase 2;
 ## energy orbs fly to the energy counter of the top bar.
+## Block 11: the music of the world (the boss brings its own song), the
+## effects of placing, shooting and losing a defender, the victory and defeat
+## jingles, the phone vibration, and the time of day of the level (Scenery).
 
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
 const EXTRAORDINARIO_SCENE := preload("res://scenes/game/extraordinario.tscn")
@@ -24,6 +27,8 @@ const BOSS_PHASE2_SHAKE := 10.0
 const BOSS_PHASE2_SHAKE_TIME := 0.5
 ## Seconds between two positions of a shake.
 const SHAKE_STEP := 0.05
+## Milliseconds the phone vibrates when the boss enters (longer than the rest).
+const BOSS_VIBRATION_MS := 400
 
 ## The player selected a card (the Tutorial listens to these three signals).
 signal card_selected(type: DefenderType)
@@ -46,6 +51,7 @@ var extraordinarios_used := 0
 var camera_tween: Tween
 
 @onready var background: Sprite2D = $Background
+@onready var scenery: Scenery = $Scenery
 @onready var board: Board = $Board
 @onready var defenders: Node2D = $Defenders
 @onready var enemies: Node2D = $Enemies
@@ -73,6 +79,8 @@ func _ready() -> void:
 	level = GameSession.current_level()
 	energy = level.start_energy
 	_apply_background()
+	scenery.setup(GameSession.current_world(), level.time_of_day)
+	AudioManager.play_music(GameSession.current_world().music)
 	hud.set_level_name(GameSession.current_level_number(), level.display_name)
 	hud.set_wave(1, level.waves.size())  # the wave that comes first, while the Director talks
 	hud.create_cards(level.defenders)  # one card per defender available in this level
@@ -231,6 +239,7 @@ func place_defender(type: DefenderType, lane: int, column: int) -> void:
 
 	board.occupy_cell(lane, column, defender)
 	spend_energy(type.cost)
+	AudioManager.play_sfx(AudioManager.SFX_PLACE)
 	_update_hint()
 	defender_placed.emit(type, lane, column)
 
@@ -266,6 +275,8 @@ func remove_defender(lane: int, column: int) -> void:
 
 func _on_defender_died(defender: Defender) -> void:
 	board.free_cell(defender.lane, defender.column)
+	AudioManager.play_sfx(AudioManager.SFX_DIE, 0.7)  # the same "poof", lower
+	AudioManager.vibrate()
 	_update_hint()
 
 
@@ -291,6 +302,7 @@ func _on_orb_produced(orb: EnergyOrb) -> void:
 func _on_shot_fired(projectile: Projectile) -> void:
 	projectile.board = board  # the projectile uses it to draw itself
 	projectiles.add_child(projectile)
+	AudioManager.play_sfx_varied(AudioManager.SFX_SHOOT)
 
 
 # --- Enemies and waves ---
@@ -311,6 +323,8 @@ func spawn_enemy(type: EnemyType, lane: int, column: float = Enemy.SPAWN_COLUMN)
 		_show_boss_bar(enemy)
 		enemy.phase_changed.connect(_on_boss_phase_changed)
 		shake_camera(BOSS_ENTRY_SHAKE, BOSS_ENTRY_SHAKE_TIME)
+		AudioManager.play_music(AudioManager.BOSS_MUSIC)
+		AudioManager.vibrate(BOSS_VIBRATION_MS)
 
 
 # --- Camera shake ---
@@ -376,6 +390,7 @@ func _on_all_waves_cleared() -> void:
 		return
 	phase = Phase.VICTORY
 	get_tree().paused = true  # freezes the board behind the panel
+	AudioManager.play_jingle(AudioManager.VICTORY_MUSIC)
 	var grade := current_grade()
 	var previous_grade := ProgressRepository.get_grade(GameSession.current_world(), GameSession.level_index)
 	# The progress moves on and is saved right away (the grade only if it is better).
@@ -407,6 +422,7 @@ func _on_enemy_reached_safe_zone(enemy: Enemy) -> void:
 		if extraordinario.state == Extraordinario.State.READY:
 			extraordinario.trigger()
 			extraordinarios_used += 1
+			AudioManager.play_sfx(AudioManager.SFX_EXTRAORDINARIO)
 			AudioManager.vibrate()
 			notice.show_message("¡Extraordinario! Calificación máxima: %d" % current_grade())
 			return
@@ -414,6 +430,7 @@ func _on_enemy_reached_safe_zone(enemy: Enemy) -> void:
 			return  # it is already running along this lane and will remove the enemy
 	phase = Phase.DEFEAT
 	get_tree().paused = true  # freezes the board behind the panel
+	AudioManager.play_jingle(AudioManager.DEFEAT_MUSIC)
 	defeat_panel.show()       # it keeps working: its mode is "When Paused"
 
 

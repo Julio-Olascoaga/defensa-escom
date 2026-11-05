@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="WorldData" format=3]
 
 [ext_resource type="Script" path="res://scripts/data/world_data.gd" id="1_world"]
+[ext_resource type="Texture2D" path="res://art/map/place_6.png" id="203_b11_map_icon"]
 
 [resource]
 script = ExtResource("1_world")
@@ -9,3 +10,4 @@ display_name = "Sexto semestre"
 semester = 6
 location_name = "Dirección General"
 available = false
+map_icon = ExtResource("203_b11_map_icon")

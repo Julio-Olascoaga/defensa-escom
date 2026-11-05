@@ -43,6 +43,7 @@ func _process(delta: float) -> void:
 	var target := _nearest_enemy_between(previous_column - HIT_DISTANCE, column + HIT_DISTANCE)
 	if target:
 		target.take_damage(damage)
+		AudioManager.play_sfx_varied(AudioManager.SFX_HIT)
 		SparkBurst.spawn(self, global_position, HIT_SPARK_COLOR, HIT_SPARKS, 160.0)
 		var bits := SparkBurst.spawn(self, global_position, HIT_BITS_COLOR, FxLimits.HIT_BITS, 120.0, CHIP_TEXTURE)
 		if bits:

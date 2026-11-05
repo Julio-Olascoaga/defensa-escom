@@ -43,6 +43,9 @@ const SWAY_TIME := 0.35
 ## Sparks when it dies. A normal enemy (110 px) gets DEATH_SPARKS; the boss, more.
 const DEATH_SPARK_COLOR := Color("f2b33d")
 const DEATH_SPARKS := 16
+## Seconds between two bite sounds while it bites a defender (Block 11).
+## Bites hurt every frame; the sound would be noise if it followed them.
+const BITE_SOUND_TIME := 0.6
 ## Paper bits when a puppet dies (Block 10).
 const PAPER_COLOR := Color("f4ecd8")
 const CHIP_TEXTURE := preload("res://art/fx/chip.png")
@@ -67,6 +70,8 @@ var speed_multiplier := 1.0
 var in_phase2 := false
 ## Seconds since the last summon. Only enemies with a summon_type use it.
 var summon_time := 0.0
+## Seconds left until the next bite sound (0 = it sounds at the first bite).
+var bite_sound_left := 0.0
 ## The Board, used to find defenders and to convert cells to pixels.
 var board: Board
 ## Animations made with Tween (created in code, they stop when the game is paused).
@@ -119,8 +124,13 @@ func _process(delta: float) -> void:
 	if defender:
 		defender.take_damage(enemy_type.damage_per_second * delta)  # bite
 		_animate(false)
+		bite_sound_left -= delta
+		if bite_sound_left <= 0.0:
+			AudioManager.play_sfx_varied(AudioManager.SFX_BITE)
+			bite_sound_left = BITE_SOUND_TIME
 	else:
 		column -= current_speed() * delta  # walk left (cells per second)
+		bite_sound_left = 0.0  # the next defender gets its first bite sound at once
 		_animate(true)
 	_update_summon(delta)
 
@@ -206,6 +216,7 @@ func take_damage(amount: float) -> void:
 				bits.scale_amount_min = 0.4
 				bits.scale_amount_max = 0.8
 			_leave_puppet()
+		AudioManager.play_sfx_varied(AudioManager.SFX_DIE)
 		died.emit(self)
 		queue_free()
 

@@ -1,6 +1,10 @@
 [gd_resource type="Resource" script_class="WorldData" format=3]
 
 [ext_resource type="Script" path="res://scripts/data/world_data.gd" id="1_world"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/biblioteca_bg.jpg" id="200_b11_background"]
+[ext_resource type="AudioStream" path="res://audio/music/world_2.ogg" id="201_b11_music"]
+[ext_resource type="PackedScene" path="res://scenes/scenery/biblioteca_scenery.tscn" id="202_b11_scenery"]
+[ext_resource type="Texture2D" path="res://art/map/place_2.png" id="203_b11_map_icon"]
 
 [resource]
 script = ExtResource("1_world")
@@ -9,3 +13,7 @@ display_name = "Segundo semestre"
 semester = 2
 location_name = "Biblioteca Central"
 available = false
+background = ExtResource("200_b11_background")
+music = ExtResource("201_b11_music")
+scenery = ExtResource("202_b11_scenery")
+map_icon = ExtResource("203_b11_map_icon")

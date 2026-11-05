@@ -23,6 +23,7 @@ const SILHOUETTE := Color(0, 0, 0, 0.85)
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)  # it keeps playing if it already was
 	back_button.pressed.connect(_go_back)
 	var cards := all_cards(GameSession.campaign)
 	var enemies := all_enemies(GameSession.campaign)

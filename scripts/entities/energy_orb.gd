@@ -79,6 +79,7 @@ func _on_pressed() -> void:
 		return
 	collecting = true
 	disabled = true  # avoids collecting the same orb twice
+	AudioManager.play_sfx(AudioManager.SFX_COLLECT)
 	life_timer.stop()  # it must not disappear in the middle of the flight
 	if fly_target == Vector2.INF:
 		_arrive()

@@ -6,11 +6,16 @@ extends Button
 ##   LOCKED    grey, with a padlock ("Bloqueado" or "Próximamente")
 ##   AVAILABLE pulses gently with a Tween ("Disponible")
 ##   PASSED    green, shows the average of the semester ("Promedio 9.2")
+## Block 11: the picture of the button is the thumbnail of the place of the
+## semester (WorldData.map_icon), faded while it is locked. A world without
+## thumbnail shows the book icon of its state, as in Block 8.
 
 enum State { LOCKED, AVAILABLE, PASSED }
 
 const BUTTON_SIZE := Vector2(210, 250)
-const ICON_WIDTH := 96
+const ICON_WIDTH := 120
+## Color of the thumbnail of a locked semester (faded).
+const LOCKED_ICON_COLOR := Color(1, 1, 1, 0.45)
 const PADLOCK_TEXTURE := preload("res://art/ui/padlock.png")
 const STATE_ICONS := {
 	State.LOCKED: preload("res://art/ui/semester_locked.png"),
@@ -43,7 +48,7 @@ func setup(world_data: WorldData, index: int, button_state: State, average: floa
 	name = "Semester%d" % (index + 1)
 	custom_minimum_size = BUTTON_SIZE
 	focus_mode = Control.FOCUS_NONE
-	icon = STATE_ICONS[state]
+	icon = world.map_icon if world.map_icon else STATE_ICONS[state]
 	expand_icon = true
 	vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 	icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -55,6 +60,8 @@ func setup(world_data: WorldData, index: int, button_state: State, average: floa
 	if state == State.LOCKED:
 		_add_padlock()
 		add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
+		for color_name in ["icon_normal_color", "icon_hover_color", "icon_pressed_color"]:
+			add_theme_color_override(color_name, LOCKED_ICON_COLOR)
 
 
 ## Last line of the button.

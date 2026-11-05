@@ -29,6 +29,10 @@ extends Resource
 @export var background: Texture2D
 ## Music played during the levels of this world (Block 11). Empty = silence.
 @export var music: AudioStream
+## Animated decorations of the world (Block 11): a scene with up to 6
+## decorations (pigeons, clouds, leaves, papers, lights) and the foreground.
+## Game puts it on top of the background. Empty = no decorations.
+@export var scenery: PackedScene
 
 @export_group("Story")
 ## Conversation shown the first time the world is entered (Block 9).

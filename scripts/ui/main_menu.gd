@@ -36,6 +36,7 @@ var _last_tap_time := 0.0
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)  # it keeps playing if it already was
 	play_button.pressed.connect(_on_play_button_pressed)
 	expediente_button.pressed.connect(_on_expediente_button_pressed)
 	settings_button.pressed.connect(_on_settings_button_pressed)

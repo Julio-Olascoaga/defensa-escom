@@ -15,6 +15,7 @@ static var back_scene := MAIN_MENU_SCENE
 
 
 func _ready() -> void:
+	AudioManager.play_music(AudioManager.MENU_MUSIC)  # it keeps playing if it already was
 	back_button.pressed.connect(_go_back)
 
 
