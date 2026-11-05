@@ -224,10 +224,10 @@ res://
 | 5 | v0.5 | Save system and error states | ✅ Done |
 | 5 | v0.5.1 | Review fixes for Block 5 | ✅ Done |
 | 6 | v1.0 | Final boss, art and polish | ✅ Done |
-| 7 | v1.1 | Foundations 2.0: campaign data, save v2, transitions, audio buses, Android behavior | ✅ Done (Play Console and signed AAB pending, in class) |
+| 7 | v1.1 | Foundations 2.0: campaign data, save v2, transitions, audio buses, Android behavior | ✅ Done |
 | 8 | v1.2 | Career map, level select, grades, Extraordinarios, settings | ✅ Done (placeholder art) |
 | 9 | v1.3 | The Director: dialogues, tutorial, Expediente | ✅ Done |
 | 10 | v1.4 | Cut-out animation and 3-stage damage | ✅ Done (placeholder art; 50 fps test on a phone pending) |
 | 11 | v1.5 | IPN locations and audio | Planned |
 | 12 | v1.6 | World 1 with 6 levels and World 2 | Planned |
-| 13 | v2.0 | Polish and closed testing | Planned |
+| 13 | v2.0 | Final polish and delivery | Planned |

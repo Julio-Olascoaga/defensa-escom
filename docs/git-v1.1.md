@@ -38,8 +38,6 @@ git push -u origin feature/v1.1-foundations
 > - `application/config/version = "1.1"`, `*.jks` in `.gitignore`.
 >
 > Details, node hierarchy and tests: `docs/tech-note-v1.1.md`.
->
-> Pending outside this PR (done in class): Play Console, signed AAB and closed testing.
 
 ## 3. Review and merge
 

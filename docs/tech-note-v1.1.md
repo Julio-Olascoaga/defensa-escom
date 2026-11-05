@@ -15,7 +15,7 @@ What the player notices:
 ![Home screen v1.1](img/v1.1-home.png)
 ![Android back button on the home screen](img/v1.1-quit.png)
 
-Out of this block on purpose (done later in class): Play Console, signed AAB, keystore and closed testing. `.gitignore` already ignores `*.keystore` and `*.jks`.
+`.gitignore` ignores `*.keystore` and `*.jks`.
 
 ## Data resources
 
