@@ -1,0 +1,27 @@
+{
+ "source": "art/defenders/firewall.png",
+ "size": [
+  256,
+  256
+ ],
+ "parts": {
+  "flames": [
+   31,
+   2,
+   223,
+   76
+  ],
+  "frame": [
+   29,
+   38,
+   227,
+   254
+  ],
+  "bricks": [
+   64,
+   68,
+   194,
+   222
+  ]
+ }
+}

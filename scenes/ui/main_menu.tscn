@@ -238,6 +238,13 @@ layout_mode = 2
 focus_mode = 0
 text = "Simular falla al guardar: No"
 
+[node name="BenchmarkButton" type="Button" parent="DebugPanel/Center/Panel/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+focus_mode = 0
+text = "Prueba de rendimiento (30 enemigos)"
+
 [node name="CloseDebugButton" type="Button" parent="DebugPanel/Center/Panel/Content"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)

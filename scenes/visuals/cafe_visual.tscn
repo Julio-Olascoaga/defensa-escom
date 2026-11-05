@@ -1,0 +1,216 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/character_visual.gd" id="1_twoiu"]
+[ext_resource type="Texture2D" path="res://art/characters/cafe/leg_l.png" id="2_gykxe"]
+[ext_resource type="Texture2D" path="res://art/characters/cafe/leg_r.png" id="3_150r4"]
+[ext_resource type="Texture2D" path="res://art/characters/cafe/body.png" id="4_enyyh"]
+[ext_resource type="Texture2D" path="res://art/characters/cafe/handle.png" id="5_sf3kp"]
+[ext_resource type="Texture2D" path="res://art/fx/puff.png" id="6_da02f"]
+
+[sub_resource type="Gradient" id="Gradient_qsu1f"]
+colors = PackedColorArray(1, 1, 1, 0.5, 1, 1, 1, 0)
+
+[sub_resource type="Animation" id="Animation_p8dm5"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Body:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Body:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 124)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_uc3wl"]
+resource_name = "action"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.08, 0.22, 0.38, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 124), Vector2(0, 128), Vector2(0, 94), Vector2(0, 124), Vector2(0, 124)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.08, 0.22, 0.38, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 0.9), Vector2(0.94, 1.08), Vector2(1.1, 0.9), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_v3p1j"]
+resource_name = "die"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.15, 0.8), Vector2(1.05, 0.9)]
+}
+
+[sub_resource type="Animation" id="Animation_1b6am"]
+resource_name = "hit"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.09, 0.195, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 0.9), Vector2(0.97, 1.03), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_mxvog"]
+resource_name = "idle"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Body:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.8, 1.2, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.05, 0.0, -0.05, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Body:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.8, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1.03), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xk025"]
+_data = {
+&"RESET": SubResource("Animation_p8dm5"),
+&"action": SubResource("Animation_uc3wl"),
+&"die": SubResource("Animation_v3p1j"),
+&"hit": SubResource("Animation_1b6am"),
+&"idle": SubResource("Animation_mxvog")
+}
+
+[node name="CafeVisual" type="Node2D" unique_id=1177066583]
+script = ExtResource("1_twoiu")
+
+[node name="Rig" type="Node2D" parent="." unique_id=1473916181]
+position = Vector2(0, 124)
+
+[node name="LegL" type="Sprite2D" parent="Rig" unique_id=550013403]
+position = Vector2(4, -17)
+texture = ExtResource("2_gykxe")
+centered = false
+offset = Vector2(-26, -6)
+hframes = 3
+
+[node name="LegR" type="Sprite2D" parent="Rig" unique_id=1144958112]
+position = Vector2(55, -17)
+texture = ExtResource("3_150r4")
+centered = false
+offset = Vector2(-25, -6)
+hframes = 3
+
+[node name="Body" type="Sprite2D" parent="Rig" unique_id=2110845082]
+position = Vector2(13, -23)
+texture = ExtResource("4_enyyh")
+centered = false
+offset = Vector2(-93, -175)
+hframes = 3
+
+[node name="Handle" type="Sprite2D" parent="Rig/Body" unique_id=659022803]
+show_behind_parent = true
+position = Vector2(-77, -80.5)
+texture = ExtResource("5_sf3kp")
+centered = false
+offset = Vector2(-42, -47.5)
+hframes = 3
+
+[node name="Steam" type="CPUParticles2D" parent="Rig/Body" unique_id=2035988514]
+show_behind_parent = true
+position = Vector2(9, -159)
+amount = 5
+texture = ExtResource("6_da02f")
+lifetime = 1.6
+emission_shape = 1
+emission_sphere_radius = 14.0
+direction = Vector2(0, -1)
+spread = 12.0
+gravity = Vector2(4, -10)
+initial_velocity_min = 30.0
+initial_velocity_max = 45.0
+scale_amount_min = 0.6
+color_ramp = SubResource("Gradient_qsu1f")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=195663811]
+libraries/ = SubResource("AnimationLibrary_xk025")
+autoplay = &"idle"

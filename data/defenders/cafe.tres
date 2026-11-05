@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="DefenderType" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="DefenderType" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_type"]
 [ext_resource type="PackedScene" path="res://scenes/entities/generator_defender.tscn" id="2_behavior"]
 [ext_resource type="Texture2D" path="res://art/defenders/cafe.png" id="3_texture"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/cafe_visual.tscn" id="9_visual"]
 
 [resource]
 script = ExtResource("1_type")
@@ -16,3 +17,4 @@ behavior_scene = ExtResource("2_behavior")
 energy_per_orb = 25
 orb_interval = 10.0
 description = "La taza favorita de Her Mosso. No ataca, pero prepara orbes de energía. Sin café no hay ingeniero."
+visual_scene = ExtResource("9_visual")

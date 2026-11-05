@@ -23,3 +23,5 @@ func _on_orb_timer_timeout() -> void:
 	# The orb appears at the top-right corner of this cell (cell units, not pixels).
 	orb.setup(defender_type.energy_per_orb, lane - 0.25, column + 0.25)
 	orb_produced.emit(orb)
+	if visual:
+		visual.play_once("action")  # a little hop when the orb comes out

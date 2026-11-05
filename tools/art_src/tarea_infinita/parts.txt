@@ -1,0 +1,4 @@
+body
+armor
+leg_l
+leg_r

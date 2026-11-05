@@ -14,6 +14,10 @@ const MAX_COLUMN := 9.5
 ## Small blue sparks where it hits.
 const HIT_SPARK_COLOR := Color("7fe3ff")
 const HIT_SPARKS := 6
+## Block 10: a short trail behind it (CPUParticles2D "Trail" in projectile.tscn,
+## FxLimits.TRAIL particles) and little "code bits" where it hits.
+const HIT_BITS_COLOR := Color("9cff8f")
+const CHIP_TEXTURE := preload("res://art/fx/chip.png")
 
 var lane := 0
 var column := 0.0
@@ -40,6 +44,10 @@ func _process(delta: float) -> void:
 	if target:
 		target.take_damage(damage)
 		SparkBurst.spawn(self, global_position, HIT_SPARK_COLOR, HIT_SPARKS, 160.0)
+		var bits := SparkBurst.spawn(self, global_position, HIT_BITS_COLOR, FxLimits.HIT_BITS, 120.0, CHIP_TEXTURE)
+		if bits:
+			bits.scale_amount_min = 0.25
+			bits.scale_amount_max = 0.4
 		queue_free()
 		return
 	if column > MAX_COLUMN:

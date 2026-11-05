@@ -7,10 +7,12 @@ extends Control
 ##
 ## Hidden debug option (debug builds only): tap the logo DEBUG_TAPS times
 ## in a row to open a panel that deletes the progress or simulates a save failure.
+## Block 10: the panel also opens the performance test (30 enemies on screen).
 
 const DEBUG_TAPS := 5
 ## Maximum seconds between two taps on the logo to keep counting.
 const DEBUG_TAP_WINDOW := 1.0
+const BENCHMARK_SCENE := "res://scenes/debug/benchmark.tscn"
 
 var _debug_taps := 0
 var _last_tap_time := 0.0
@@ -27,6 +29,7 @@ var _last_tap_time := 0.0
 @onready var reset_button: Button = %ResetButton
 @onready var fail_save_button: Button = %FailSaveButton
 @onready var close_debug_button: Button = %CloseDebugButton
+@onready var benchmark_button: Button = %BenchmarkButton
 @onready var quit_panel: Control = %QuitPanel
 @onready var quit_yes_button: Button = %QuitYesButton
 @onready var quit_no_button: Button = %QuitNoButton
@@ -41,6 +44,7 @@ func _ready() -> void:
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	fail_save_button.pressed.connect(_on_fail_save_button_pressed)
 	close_debug_button.pressed.connect(debug_panel.hide)
+	benchmark_button.pressed.connect(SceneTransition.change_scene.bind(BENCHMARK_SCENE))
 	quit_yes_button.pressed.connect(get_tree().quit)
 	quit_no_button.pressed.connect(quit_panel.hide)
 	debug_panel.hide()
