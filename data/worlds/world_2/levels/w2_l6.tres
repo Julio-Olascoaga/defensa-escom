@@ -27,71 +27,54 @@ enemy_type = ExtResource("e_tarea_infinita")
 
 [sub_resource type="Resource" id="Event_1_2"]
 script = ExtResource("4_event")
-time = 4.5
+time = 6.0
 enemy_type = ExtResource("e_bibliografia")
 
 [sub_resource type="Resource" id="Event_1_3"]
 script = ExtResource("4_event")
-time = 9.0
+time = 12.0
 lane = 4
 enemy_type = ExtResource("e_retardo")
 
 [sub_resource type="Resource" id="Event_1_4"]
 script = ExtResource("4_event")
-time = 13.5
+time = 18.0
 lane = 1
 enemy_type = ExtResource("e_proyecto_equipo")
 
 [sub_resource type="Resource" id="Event_1_5"]
 script = ExtResource("4_event")
-time = 18.0
+time = 24.0
 lane = 3
 enemy_type = ExtResource("e_examen_sorpresa")
 
 [sub_resource type="Resource" id="Event_1_6"]
 script = ExtResource("4_event")
-time = 22.5
+time = 30.0
 lane = 2
 enemy_type = ExtResource("e_tarea_infinita")
 
 [sub_resource type="Resource" id="Event_1_7"]
 script = ExtResource("4_event")
-time = 27.0
+time = 36.0
 lane = 4
 enemy_type = ExtResource("e_bibliografia")
 
 [sub_resource type="Resource" id="Event_1_8"]
 script = ExtResource("4_event")
-time = 31.5
+time = 42.0
 enemy_type = ExtResource("e_retardo")
 
 [sub_resource type="Resource" id="Event_1_9"]
 script = ExtResource("4_event")
-time = 36.0
+time = 48.0
 lane = 3
-enemy_type = ExtResource("e_proyecto_equipo")
-
-[sub_resource type="Resource" id="Event_1_10"]
-script = ExtResource("4_event")
-time = 40.5
-lane = 1
 enemy_type = ExtResource("e_diapositivas")
-
-[sub_resource type="Resource" id="Event_1_11"]
-script = ExtResource("4_event")
-time = 45.0
-lane = 2
-enemy_type = ExtResource("e_bibliografia")
-
-[sub_resource type="Resource" id="Event_1_12"]
-script = ExtResource("4_event")
-time = 49.5
-enemy_type = ExtResource("e_examen_sorpresa")
 
 [sub_resource type="Resource" id="Wave_1"]
 script = ExtResource("3_wave")
 start_delay = 40.0
-events = Array[ExtResource("4_event")]([SubResource("Event_1_1"), SubResource("Event_1_2"), SubResource("Event_1_3"), SubResource("Event_1_4"), SubResource("Event_1_5"), SubResource("Event_1_6"), SubResource("Event_1_7"), SubResource("Event_1_8"), SubResource("Event_1_9"), SubResource("Event_1_10"), SubResource("Event_1_11"), SubResource("Event_1_12")])
+events = Array[ExtResource("4_event")]([SubResource("Event_1_1"), SubResource("Event_1_2"), SubResource("Event_1_3"), SubResource("Event_1_4"), SubResource("Event_1_5"), SubResource("Event_1_6"), SubResource("Event_1_7"), SubResource("Event_1_8"), SubResource("Event_1_9")])
 
 [sub_resource type="Resource" id="Event_2_1"]
 script = ExtResource("4_event")
@@ -108,7 +91,7 @@ events = Array[ExtResource("4_event")]([SubResource("Event_2_1")])
 script = ExtResource("1_level")
 id = "w2_l6"
 display_name = "El proyecto final"
-start_energy = 200
+start_energy = 250
 defenders = Array[ExtResource("2_deftype")]([ExtResource("d_cafe"), ExtResource("d_laptop"), ExtResource("d_firewall"), ExtResource("d_calculadora"), ExtResource("d_router"), ExtResource("d_ctrl_z")])
 waves = Array[ExtResource("3_wave")]([SubResource("Wave_1"), SubResource("Wave_2")])
 time_of_day = 2
