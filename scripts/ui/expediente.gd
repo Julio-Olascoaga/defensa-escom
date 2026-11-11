@@ -147,7 +147,7 @@ static func enemy_summary(enemy: EnemyType) -> String:
 	if enemy.summon_type:
 		lines.append("Llama a: %s" % enemy.summon_type.display_name)
 	if enemy.phase2_summon_type and enemy.phase2_summon_type != enemy.summon_type:
-		lines.append("Furioso llama a: %s" % enemy.phase2_summon_type.display_name)
+		lines.append("En su fase 2 llama a: %s" % enemy.phase2_summon_type.display_name)
 	return " · ".join(lines)
 
 

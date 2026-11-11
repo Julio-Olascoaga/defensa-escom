@@ -7,7 +7,7 @@ extends Button
 ##   AVAILABLE pulses gently with a Tween ("Disponible")
 ##   PASSED    green, shows the average of the semester ("Promedio 9.2")
 ##   COMING_SOON  (Block 12) the previous semester is passed, but this world
-##             is not built yet: no padlock, a dashed gold look, "Próximamente"
+##             is not built yet: no padlock, a gold border, "Próximamente"
 ## Block 11: the picture of the button is the thumbnail of the place of the
 ## semester (WorldData.map_icon), faded while it is locked. A world without
 ## thumbnail shows the book icon of its state, as in Block 8.
