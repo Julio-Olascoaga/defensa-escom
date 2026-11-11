@@ -6,11 +6,13 @@ extends Button
 ##   LOCKED    grey, with a padlock ("Bloqueado" or "Próximamente")
 ##   AVAILABLE pulses gently with a Tween ("Disponible")
 ##   PASSED    green, shows the average of the semester ("Promedio 9.2")
+##   COMING_SOON  (Block 12) the previous semester is passed, but this world
+##             is not built yet: no padlock, a dashed gold look, "Próximamente"
 ## Block 11: the picture of the button is the thumbnail of the place of the
 ## semester (WorldData.map_icon), faded while it is locked. A world without
 ## thumbnail shows the book icon of its state, as in Block 8.
 
-enum State { LOCKED, AVAILABLE, PASSED }
+enum State { LOCKED, AVAILABLE, PASSED, COMING_SOON }
 
 const BUTTON_SIZE := Vector2(210, 250)
 const ICON_WIDTH := 120
@@ -21,12 +23,14 @@ const STATE_ICONS := {
 	State.LOCKED: preload("res://art/ui/semester_locked.png"),
 	State.AVAILABLE: preload("res://art/ui/semester_available.png"),
 	State.PASSED: preload("res://art/ui/semester_passed.png"),
+	State.COMING_SOON: preload("res://art/ui/semester_available.png"),
 }
 ## Background and border of each state.
 const STATE_COLORS := {
 	State.LOCKED: [Color("3a3846"), Color("6c6a78")],
 	State.AVAILABLE: [Color("6c1d45"), Color("f2b33d")],
 	State.PASSED: [Color("1f5a3a"), Color("39e58c")],
+	State.COMING_SOON: [Color("4a3a5c"), Color("f2b33d")],
 }
 ## Pulse of an available semester: maximum scale and seconds of each half.
 const PULSE_SCALE := 1.06
@@ -71,6 +75,8 @@ func status_text(average: float) -> String:
 			return "Promedio %.1f" % average if average > 0.0 else "Aprobado"
 		State.AVAILABLE:
 			return "Disponible"
+		State.COMING_SOON:
+			return "Próximamente"
 	return "Próximamente" if not world.available or world.levels.is_empty() else "Bloqueado"
 
 

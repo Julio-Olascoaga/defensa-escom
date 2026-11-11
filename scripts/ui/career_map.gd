@@ -52,6 +52,8 @@ func _create_buttons() -> void:
 
 
 func _state_of(index: int) -> SemesterButton.State:
+	if GameSession.is_world_coming_soon(index):
+		return SemesterButton.State.COMING_SOON  # opened, but not built yet
 	if not GameSession.is_world_unlocked(index):
 		return SemesterButton.State.LOCKED
 	if ProgressRepository.is_world_completed(GameSession.campaign.worlds[index]):

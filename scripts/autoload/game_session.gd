@@ -67,6 +67,16 @@ func is_level_unlocked(world: int, level: int) -> bool:
 	return is_world_unlocked(world) and level + 1 <= ProgressRepository.get_unlocked_level(campaign.worlds[world])
 
 
+## Block 12: the previous world is completed, but this one is not built yet
+## (available = false or no levels). The career map shows it open, without
+## padlock, saying "Próximamente" (World 3 after World 2).
+func is_world_coming_soon(index: int) -> bool:
+	var world := campaign.worlds[index]
+	if world.available and not world.levels.is_empty():
+		return false
+	return index > 0 and ProgressRepository.is_world_completed(campaign.worlds[index - 1])
+
+
 ## Why a world cannot be entered (the career map shows it). "" = it is open.
 func world_lock_reason(index: int) -> String:
 	var world := campaign.worlds[index]
