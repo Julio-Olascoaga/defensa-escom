@@ -22,19 +22,32 @@ const CHIP_TEXTURE := preload("res://art/fx/chip.png")
 var lane := 0
 var column := 0.0
 var damage := 20.0
+## Block 12 (Router lento): speed multiplier and seconds it leaves on the enemy
+## it hits. 1.0 = it does not slow down (Laptop, Calculadora).
+var slow_factor := 1.0
+var slow_time := 0.0
 ## Game assigns it before add_child(); used only to draw the node.
 var board: Board
 
 
 ## The Laptop calls this right after instantiate().
-func setup(shot_lane: int, start_column: float, shot_damage: float) -> void:
+func setup(shot_lane: int, start_column: float, shot_damage: float, shot_slow_factor := 1.0, shot_slow_time := 0.0) -> void:
 	lane = shot_lane
 	column = start_column
 	damage = shot_damage
+	slow_factor = shot_slow_factor
+	slow_time = shot_slow_time
 
 
 func _ready() -> void:
+	if slows():
+		modulate = Enemy.SLOW_TINT  # the "lag" shots are blue
 	_update_position()
+
+
+## True if it slows down the enemy it hits.
+func slows() -> bool:
+	return slow_factor < 1.0 and slow_time > 0.0
 
 
 func _process(delta: float) -> void:
@@ -42,6 +55,8 @@ func _process(delta: float) -> void:
 	column += SPEED * delta
 	var target := _nearest_enemy_between(previous_column - HIT_DISTANCE, column + HIT_DISTANCE)
 	if target:
+		if slows():
+			target.apply_slow(slow_factor, slow_time)  # before the damage: it may die
 		target.take_damage(damage)
 		AudioManager.play_sfx_varied(AudioManager.SFX_HIT)
 		SparkBurst.spawn(self, global_position, HIT_SPARK_COLOR, HIT_SPARKS, 160.0)
