@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("1_type")
 display_name = "Calculadora científica"
+card_name = "Calculadora"
 cost = 150
 health = 300.0
 cooldown = 7.5

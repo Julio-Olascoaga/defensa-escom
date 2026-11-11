@@ -66,13 +66,18 @@ func set_selected(value: bool) -> void:
 	selected_frame.visible = value
 
 
+## The name on the card: DefenderType.card_name, or display_name if it has none.
+func card_name() -> String:
+	return defender_type.card_name if defender_type.card_name != "" else defender_type.display_name
+
+
 func _refresh() -> void:
 	if is_recharging():
-		text = "%s\nespera %d s" % [defender_type.display_name, ceili(cooldown_left)]
+		text = "%s\nespera %d s" % [card_name(), ceili(cooldown_left)]
 		modulate = DIMMED
 	elif missing_energy > 0:
-		text = "%s\nfaltan %d" % [defender_type.display_name, missing_energy]
+		text = "%s\nfaltan %d" % [card_name(), missing_energy]
 		modulate = DIMMED
 	else:
-		text = "%s\n%d" % [defender_type.display_name, defender_type.cost]
+		text = "%s\n%d" % [card_name(), defender_type.cost]
 		modulate = Color.WHITE

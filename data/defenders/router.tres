@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("1_type")
 display_name = "Router lento"
+card_name = "Router"
 cost = 125
 health = 300.0
 cooldown = 7.5

@@ -7,6 +7,9 @@ extends Resource
 
 ## Name shown on the card. Its first letter is drawn on the board until the art exists.
 @export var display_name: String = ""
+## Short name for the card of the top bar (Block 12), for long names such as
+## "Calculadora científica". Empty = display_name.
+@export var card_name: String = ""
 ## Energy the player pays to place it.
 @export var cost: int = 50
 ## Health points. Enemies take it away in Block 3.
