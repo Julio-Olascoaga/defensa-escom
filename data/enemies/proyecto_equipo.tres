@@ -9,8 +9,8 @@
 script = ExtResource("1_type")
 display_name = "El Proyecto en Equipo"
 label_text = "PE"
-health = 450.0
-speed = 0.2
+health = 350.0
+speed = 0.18
 damage_per_second = 30.0
 texture = ExtResource("2_texture")
 color = Color(0.89, 0.84, 0.71, 1)

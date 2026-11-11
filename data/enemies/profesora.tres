@@ -10,7 +10,7 @@
 script = ExtResource("1_type")
 display_name = "La Profesora del Proyecto Final"
 label_text = "PF"
-health = 4000.0
+health = 3500.0
 speed = 0.1
 damage_per_second = 60.0
 texture = ExtResource("2_texture")
@@ -20,7 +20,7 @@ is_boss = true
 description = "Firma los préstamos de la biblioteca… ¿o solo los firma por alguien más? Llama a Proyectos en Equipo y, a la mitad de su vida, se acelera y llama Bibliografías."
 visual_scene = ExtResource("9_visual")
 phase2_speed_multiplier = 1.6
-summon_interval = 12.0
+summon_interval = 14.0
 summon_type = ExtResource("3_proyecto_equipo")
 phase2_summon_type = ExtResource("4_bibliografia")
 phase2_text = "¡La Profesora del Proyecto Final está furiosa!"
