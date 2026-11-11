@@ -89,7 +89,8 @@ static func card_summary(card: DefenderType) -> String:
 	return "\n".join(lines)
 
 
-## What the card does, read from its behavior scene (generator, shooter or blocker).
+## What the card does, read from its behavior scene (generator, shooter,
+## blocker or instant) and its numbers.
 static func _card_action(card: DefenderType) -> String:
 	if card.behavior_scene == null:
 		return ""
@@ -99,8 +100,18 @@ static func _card_action(card: DefenderType) -> String:
 		action = "Da %d de energía cada %d s" % [card.energy_per_orb, card.orb_interval]
 	elif behavior is ShooterDefender:
 		action = "Dispara cada %s s" % str(card.fire_interval)
+		if card.slow_factor < 1.0 and card.slow_time > 0.0:
+			action += "\nFrena al enemigo (%d %%) durante %s s" % [roundi((1.0 - card.slow_factor) * 100.0), _number(card.slow_time)]
+	elif behavior is InstantDefender:
+		var side := roundi(card.area_radius) * 2 + 1
+		action = "Borra a los enemigos de un área de %d × %d y desaparece" % [side, side]
 	behavior.free()
 	return action
+
+
+## "3" for 3.0, "0.75" for 0.75.
+static func _number(value: float) -> String:
+	return str(roundi(value)) if is_equal_approx(value, roundf(value)) else str(value)
 
 
 ## "Muy rápido · Aguanta poco · Muerde normal"
@@ -125,8 +136,16 @@ static func enemy_summary(enemy: EnemyType) -> String:
 	else:
 		lines.append("Aguanta muchísimo")
 	lines.append("Muerde muy fuerte" if enemy.damage_per_second >= 50.0 else "Muerde normal")
+	if enemy.armor_health > 0.0:
+		lines.append("Trae armadura")
+	if enemy.split_into and enemy.split_count > 0:
+		lines.append("Al caer se divide en %d" % enemy.split_count)
+	if enemy.jumps_first_defender:
+		lines.append("Salta a tu primer defensor")
 	if enemy.summon_type:
 		lines.append("Llama a: %s" % enemy.summon_type.display_name)
+	if enemy.phase2_summon_type and enemy.phase2_summon_type != enemy.summon_type:
+		lines.append("Furioso llama a: %s" % enemy.phase2_summon_type.display_name)
 	return " · ".join(lines)
 
 
