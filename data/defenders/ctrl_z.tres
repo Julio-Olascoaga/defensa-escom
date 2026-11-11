@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="DefenderType" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_type"]
+[ext_resource type="PackedScene" path="res://scenes/entities/instant_defender.tscn" id="2_behavior"]
+[ext_resource type="Texture2D" path="res://art/defenders/ctrl_z.png" id="3_texture"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/ctrl_z_visual.tscn" id="9_visual"]
+
+[resource]
+script = ExtResource("1_type")
+display_name = "Ctrl+Z"
+cost = 150
+health = 300.0
+cooldown = 30.0
+texture = ExtResource("3_texture")
+color = Color(0.75, 0.55, 1, 1)
+behavior_scene = ExtResource("2_behavior")
+area_radius = 1.0
+area_damage = 1800.0
+trigger_delay = 0.5
+description = "Deshace a todos los enemigos de un área de 3 × 3 y desaparece. Se usa una vez; ojalá funcionara igual con los correos."
+visual_scene = ExtResource("9_visual")

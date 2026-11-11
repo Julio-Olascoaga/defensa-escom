@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyType" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_type.gd" id="1_type"]
+[ext_resource type="Texture2D" path="res://art/enemies/retardo.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/retardo_visual.tscn" id="9_visual"]
+
+[resource]
+script = ExtResource("1_type")
+display_name = "El Retardo"
+label_text = "R"
+health = 260.0
+speed = 0.32
+damage_per_second = 25.0
+texture = ExtResource("2_texture")
+color = Color(0.91, 0.45, 0.23, 1)
+description = "Llega tarde a todo, menos a saltarse a tu primer defensor. Después del salto camina como cualquiera."
+visual_scene = ExtResource("9_visual")
+jumps_first_defender = true
