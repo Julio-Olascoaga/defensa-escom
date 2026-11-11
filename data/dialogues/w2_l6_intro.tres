@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="DialogueData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/enemies/profesora.tres" id="3_profesora"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Llegó la entrega del proyecto final."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "¡La Profesora del Proyecto Final! Ella autorizaba los préstamos… ¿o solo los firmaba por alguien más?"
+show_enemy = ExtResource("3_profesora")
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Llama a Proyectos en Equipo. A la mitad de su vida se acelera y empieza a llamar Bibliografías."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+text = "Guarda tu Ctrl+Z para cuando se te junten. Y no olvides los extraordinarios."
+
+[sub_resource type="Resource" id="Resource_line5"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Llegaste hasta aquí. ¡Entrega ese proyecto!"
+
+[resource]
+script = ExtResource("1_data")
+id = "w2_l6_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4"), SubResource("Resource_line5")])

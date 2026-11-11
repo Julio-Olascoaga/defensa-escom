@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="DialogueData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/defenders/ctrl_z.tres" id="3_ctrl_z"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Semana de entregas: todo para el viernes a las 23:59."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Te doy mi carta favorita: Ctrl+Z. Borra a los enemigos de un área de 3 × 3."
+show_card = ExtResource("3_ctrl_z")
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+text = "Se usa una vez y desaparece. Ojalá funcionara igual con mis correos."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Dicen que quien firmó los préstamos está esperando al final del semestre…"
+
+[resource]
+script = ExtResource("1_data")
+id = "w2_l5_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

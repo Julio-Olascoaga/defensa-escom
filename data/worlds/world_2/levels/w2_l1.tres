@@ -1,0 +1,126 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1_level"]
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="2_deftype"]
+[ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="3_wave"]
+[ext_resource type="Script" path="res://scripts/data/spawn_event.gd" id="4_event"]
+[ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="d_cafe"]
+[ext_resource type="Resource" path="res://data/defenders/laptop.tres" id="d_laptop"]
+[ext_resource type="Resource" path="res://data/defenders/firewall.tres" id="d_firewall"]
+[ext_resource type="Resource" path="res://data/defenders/usb.tres" id="d_usb"]
+[ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="e_tarea_infinita"]
+[ext_resource type="Resource" path="res://data/enemies/bibliografia.tres" id="e_bibliografia"]
+[ext_resource type="Resource" path="res://data/enemies/examen_sorpresa.tres" id="e_examen_sorpresa"]
+[ext_resource type="Resource" path="res://data/dialogues/w2_l1_intro.tres" id="100_intro"]
+
+[sub_resource type="Resource" id="Event_1_1"]
+script = ExtResource("4_event")
+lane = 2
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_1_2"]
+script = ExtResource("4_event")
+time = 9.0
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_1_3"]
+script = ExtResource("4_event")
+time = 18.0
+lane = 4
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_1_4"]
+script = ExtResource("4_event")
+time = 27.0
+lane = 1
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_1_5"]
+script = ExtResource("4_event")
+time = 36.0
+lane = 3
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_1_6"]
+script = ExtResource("4_event")
+time = 45.0
+lane = 2
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Wave_1"]
+script = ExtResource("3_wave")
+start_delay = 35.0
+events = Array[ExtResource("4_event")]([SubResource("Event_1_1"), SubResource("Event_1_2"), SubResource("Event_1_3"), SubResource("Event_1_4"), SubResource("Event_1_5"), SubResource("Event_1_6")])
+
+[sub_resource type="Resource" id="Event_2_1"]
+script = ExtResource("4_event")
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_2_2"]
+script = ExtResource("4_event")
+time = 5.0
+lane = 4
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_2_3"]
+script = ExtResource("4_event")
+time = 10.0
+lane = 1
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_2_4"]
+script = ExtResource("4_event")
+time = 15.0
+lane = 3
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_2_5"]
+script = ExtResource("4_event")
+time = 20.0
+lane = 2
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_2_6"]
+script = ExtResource("4_event")
+time = 25.0
+lane = 4
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_2_7"]
+script = ExtResource("4_event")
+time = 30.0
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_2_8"]
+script = ExtResource("4_event")
+time = 35.0
+lane = 3
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_2_9"]
+script = ExtResource("4_event")
+time = 40.0
+lane = 1
+enemy_type = ExtResource("e_examen_sorpresa")
+
+[sub_resource type="Resource" id="Event_2_10"]
+script = ExtResource("4_event")
+time = 45.0
+lane = 2
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Wave_2"]
+script = ExtResource("3_wave")
+start_delay = 25.0
+events = Array[ExtResource("4_event")]([SubResource("Event_2_1"), SubResource("Event_2_2"), SubResource("Event_2_3"), SubResource("Event_2_4"), SubResource("Event_2_5"), SubResource("Event_2_6"), SubResource("Event_2_7"), SubResource("Event_2_8"), SubResource("Event_2_9"), SubResource("Event_2_10")])
+
+[resource]
+script = ExtResource("1_level")
+id = "w2_l1"
+display_name = "Inscripciones"
+start_energy = 150
+defenders = Array[ExtResource("2_deftype")]([ExtResource("d_cafe"), ExtResource("d_laptop"), ExtResource("d_firewall"), ExtResource("d_usb")])
+waves = Array[ExtResource("3_wave")]([SubResource("Wave_1"), SubResource("Wave_2")])
+intro_dialogue = ExtResource("100_intro")
+featured_enemy = ExtResource("e_bibliografia")
+use_extraordinarios = true

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="DialogueData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "¡Segundo semestre! Seguimos la pista del sello: bienvenido a la Biblioteca Central."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+text = "Aquí todo es en equipo: proyectos, entregas, exposiciones… y gente que nunca llega."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Y mira esos estantes: faltan cientos de libros. Todos con préstamo vencido."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Si esos libros despertaron como las tareas, van a venir por ti. Prepárate."
+
+[sub_resource type="Resource" id="Resource_line5"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Te tengo cartas nuevas. Empieza por «Inscripciones»."
+
+[resource]
+script = ExtResource("1_data")
+id = "w2_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4"), SubResource("Resource_line5")])
