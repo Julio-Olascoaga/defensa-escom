@@ -50,7 +50,8 @@ static func all_cards(campaign: CampaignData) -> Array[DefenderType]:
 
 
 ## Every enemy of the campaign without repeats, in the order they appear in
-## the waves, with the enemies that a boss calls or that appear when one splits.
+## the waves, with the enemies that a boss calls (in both phases) or that appear
+## when one splits.
 static func all_enemies(campaign: CampaignData) -> Array[EnemyType]:
 	var enemies: Array[EnemyType] = []
 	for world in campaign.worlds:
@@ -67,6 +68,7 @@ static func _add_enemy(enemies: Array[EnemyType], enemy: EnemyType) -> void:
 	enemies.append(enemy)
 	_add_enemy(enemies, enemy.summon_type)
 	_add_enemy(enemies, enemy.split_into)
+	_add_enemy(enemies, enemy.phase2_summon_type)
 
 
 # --- Stats in words ---
