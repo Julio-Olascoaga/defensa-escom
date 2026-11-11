@@ -1,0 +1,27 @@
+{
+ "source": "art/defenders/router.png",
+ "size": [
+  256,
+  256
+ ],
+ "parts": {
+  "antenna_l": [
+   56,
+   19,
+   88,
+   153
+  ],
+  "antenna_r": [
+   168,
+   19,
+   200,
+   153
+  ],
+  "body": [
+   13,
+   135,
+   243,
+   243
+  ]
+ }
+}

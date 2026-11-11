@@ -1,0 +1,154 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/character_visual.gd" id="1_puw55"]
+[ext_resource type="Texture2D" path="res://art/characters/ctrl_z/key.png" id="2_g3eyl"]
+[ext_resource type="Texture2D" path="res://art/characters/ctrl_z/arrow.png" id="3_nnrjb"]
+
+[sub_resource type="Animation" id="Animation_p7r2a"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Key/Arrow:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Key:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_hwu7f"]
+resource_name = "action"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Key:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.12, 0.35, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.08, 0.82), Vector2(0.96, 1.04), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/Key/Arrow:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, -6.283185307179586]
+}
+
+[sub_resource type="Animation" id="Animation_vghba"]
+resource_name = "die"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.15, 0.8), Vector2(1.05, 0.9)]
+}
+
+[sub_resource type="Animation" id="Animation_n0ule"]
+resource_name = "hit"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.09, 0.195, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 0.9), Vector2(0.97, 1.03), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_cujb2"]
+resource_name = "idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Key/Arrow:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, -0.12, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ek20y"]
+_data = {
+&"RESET": SubResource("Animation_p7r2a"),
+&"action": SubResource("Animation_hwu7f"),
+&"die": SubResource("Animation_vghba"),
+&"hit": SubResource("Animation_n0ule"),
+&"idle": SubResource("Animation_cujb2")
+}
+
+[node name="CtrlZVisual" type="Node2D" unique_id=1573700356]
+script = ExtResource("1_puw55")
+
+[node name="Rig" type="Node2D" parent="." unique_id=1601642730]
+position = Vector2(0, 110)
+
+[node name="Key" type="Sprite2D" parent="Rig" unique_id=995544589]
+position = Vector2(0, 1)
+texture = ExtResource("2_g3eyl")
+centered = false
+offset = Vector2(-101, -190)
+hframes = 3
+
+[node name="Arrow" type="Sprite2D" parent="Rig/Key" unique_id=1679379694]
+position = Vector2(-11.5, -135)
+texture = ExtResource("3_nnrjb")
+centered = false
+offset = Vector2(-68.5, -35)
+hframes = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=421858954]
+libraries/ = SubResource("AnimationLibrary_ek20y")
+autoplay = &"idle"
