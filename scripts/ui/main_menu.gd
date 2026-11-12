@@ -8,6 +8,8 @@ extends Control
 ## Hidden debug option (debug builds only): tap the logo DEBUG_TAPS times
 ## in a row to open a panel that deletes the progress or simulates a save failure.
 ## Block 10: the panel also opens the performance test (30 enemies on screen).
+## It can also open every level for testing (GameSession.set_debug_unlock_all()):
+## nothing is saved while that is on, and it turns off when the game closes.
 
 const DEBUG_TAPS := 5
 ## Maximum seconds between two taps on the logo to keep counting.
@@ -28,6 +30,7 @@ var _last_tap_time := 0.0
 @onready var debug_panel: Control = %DebugPanel
 @onready var reset_button: Button = %ResetButton
 @onready var fail_save_button: Button = %FailSaveButton
+@onready var unlock_all_button: Button = %UnlockAllButton
 @onready var close_debug_button: Button = %CloseDebugButton
 @onready var benchmark_button: Button = %BenchmarkButton
 @onready var quit_panel: Control = %QuitPanel
@@ -44,14 +47,13 @@ func _ready() -> void:
 	logo.gui_input.connect(_on_logo_gui_input)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 	fail_save_button.pressed.connect(_on_fail_save_button_pressed)
+	unlock_all_button.pressed.connect(_on_unlock_all_button_pressed)
 	close_debug_button.pressed.connect(debug_panel.hide)
 	benchmark_button.pressed.connect(SceneTransition.change_scene.bind(BENCHMARK_SCENE))
 	quit_yes_button.pressed.connect(get_tree().quit)
 	quit_no_button.pressed.connect(quit_panel.hide)
 	debug_panel.hide()
 	quit_panel.hide()
-	# The version is written only once, in Project Settings (application/config/version).
-	version_label.text = "v%s" % ProjectSettings.get_setting("application/config/version")
 	_show_progress()
 
 
@@ -68,6 +70,11 @@ func _show_progress() -> void:
 	# the game simply starts again from zero and says so.
 	load_error_label.visible = ProgressRepository.load_error != OK
 	fail_save_button.text = "Simular falla al guardar: %s" % ("Sí" if ProgressRepository.simulate_save_error else "No")
+	unlock_all_button.text = "Desbloquear todos los niveles: %s" % ("Sí" if GameSession.debug_unlock_all else "No")
+	# The version is written only once, in Project Settings (application/config/version).
+	version_label.text = "v%s" % ProjectSettings.get_setting("application/config/version")
+	if GameSession.debug_unlock_all:
+		version_label.text += " · MODO PRUEBA: niveles abiertos, no se guarda"
 
 
 func _on_play_button_pressed() -> void:
@@ -111,6 +118,11 @@ func _on_reset_button_pressed() -> void:
 
 func _on_fail_save_button_pressed() -> void:
 	ProgressRepository.simulate_save_error = not ProgressRepository.simulate_save_error
+	_show_progress()
+
+
+func _on_unlock_all_button_pressed() -> void:
+	GameSession.set_debug_unlock_all(not GameSession.debug_unlock_all)
 	_show_progress()
 
 

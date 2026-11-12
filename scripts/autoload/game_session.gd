@@ -24,6 +24,11 @@ var campaign: CampaignData = preload("res://data/campaign.tres")
 var world_index := 0
 ## Position of the chosen level inside the world's levels (0 = level 1).
 var level_index := 0
+## Debug only ("Desbloquear todos los niveles" in the hidden panel of Inicio):
+## every world that is built and every level can be entered. It lives only in
+## memory, so it is off again every time the game starts. Change it with
+## set_debug_unlock_all(), which also stops ProgressRepository from saving.
+var debug_unlock_all := false
 
 
 ## Grade of a won level: 10 minus one point per Extraordinario used, never below 6.
@@ -58,12 +63,16 @@ func is_world_unlocked(index: int) -> bool:
 	var world := campaign.worlds[index]
 	if not world.available or world.levels.is_empty():
 		return false
+	if debug_unlock_all:
+		return true
 	return index == 0 or ProgressRepository.is_world_completed(campaign.worlds[index - 1])
 
 
 ## A level can be entered when its world is open and the level is not beyond
 ## the highest unlocked level of the world.
 func is_level_unlocked(world: int, level: int) -> bool:
+	if debug_unlock_all:
+		return is_world_unlocked(world)
 	return is_world_unlocked(world) and level + 1 <= ProgressRepository.get_unlocked_level(campaign.worlds[world])
 
 
@@ -94,6 +103,20 @@ func level_lock_reason(world: int, level: int) -> String:
 	if not is_level_unlocked(world, level):
 		return "Gana el nivel %d para abrir el nivel %d" % [level, level + 1]
 	return ""
+
+
+## Debug only: opens (or closes) every level to test the later ones without
+## playing the whole game. While it is on, ProgressRepository saves nothing,
+## so the real progress in user://progress.cfg is never changed. Turning it
+## off reads the file again, which forgets anything won during the test.
+## Does nothing in a release build.
+func set_debug_unlock_all(on: bool) -> void:
+	if not OS.is_debug_build():
+		return
+	debug_unlock_all = on
+	ProgressRepository.debug_dont_save = on
+	if not on:
+		ProgressRepository.load_progress()
 
 
 ## The last world the player can enter (the career map scrolls to it and Inicio shows it).
