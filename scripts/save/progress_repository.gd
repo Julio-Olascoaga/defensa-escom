@@ -39,6 +39,10 @@ const DEFAULT_SETTINGS := {"music_volume": 0.8, "sfx_volume": 1.0, "vibration": 
 var load_error := OK
 ## Debug only: makes save_progress() fail on purpose to test the error notice.
 var simulate_save_error := false
+## Debug only: true while "Desbloquear todos los niveles" is on. save_progress()
+## then writes nothing, so a test session never touches the real progress.
+## GameSession.set_debug_unlock_all() changes it.
+var debug_dont_save := false
 
 ## Everything that is saved, in memory. save_progress() writes it to SAVE_PATH.
 var _config := ConfigFile.new()
@@ -191,6 +195,8 @@ func set_setting(key: String, value: Variant) -> Error:
 func save_progress() -> Error:
 	if simulate_save_error:
 		return ERR_FILE_CANT_WRITE
+	if debug_dont_save:
+		return OK  # test session: the change stays in memory only
 	_config.set_value("meta", "version", VERSION)
 	var error := _config.save(SAVE_PATH)
 	if error != OK:
