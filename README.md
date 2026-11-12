@@ -1,14 +1,26 @@
 # Defensa ESCOM
 
 A lane defense game for Android (and PC) with school humor from ESCOM (IPN), built with **Godot Engine 4.x** and **GDScript**.
-The player places defenders (Café, Laptop, Firewall) on a 5×9 board to stop cartoon "teacher archetypes" before they reach the school, and faces the final boss *El examen final* at the end of World 1.
+The player places defenders (Café, Laptop, Firewall, USB, Calculadora científica, Router lento, Ctrl+Z) on a 5×9 board to stop cartoon "teacher archetypes" before they reach the school, and faces *El examen final* at the end of World 1 and *La Profesora del Proyecto Final* at the end of World 2.
 
 Course project for *Desarrollo de Aplicaciones Móviles Nativas* (group 7CV4, ESCOM-IPN).
 Team: Cruz Villa Miguel Angel, Hernández Alonso Diego Raymundo, Martinez Martinez Carlos Daniel, Reyes Olascoaga Julio Cesar.
 
-## Current version: v1.5 (Block 11: IPN locations and audio)
+## Current version: v1.6 (Block 12: World 1 with 6 levels and World 2)
 
-Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 11 makes each world recognizable by its place of the IPN and makes the game sound (see `docs/tech-note-v1.5.md`):
+Version 2.0 grows the game into a career of **8 semesters** (worlds) with 6 to 8 levels each, the Director as narrator, cut-out animation, IPN locations and a World 2. Block 12 makes the game **12 levels long** and proves that the content grows with data (see `docs/tech-note-v1.6.md`):
+
+- **World 1 with 6 levels:** *Primer día* (the guided tutorial) is level 1 and the five 1.0 levels are levels 2–6. This was already done in v1.1 (with the save migration of the 1.0: old level N is now level N + 1); v1.6 keeps it and checks it again.
+- **World 2, *Segundo semestre* (Biblioteca Central), fully playable:** *Inscripciones*, *La biblioteca a las 7 a. m.*, *Equipo de cuatro*, *Llegando tarde*, *Semana de entregas* and *El proyecto final*, with the Director's conversations of `docs/dialogues-world-2.md`. Every level, card, enemy and conversation is a `.tres` file.
+- **4 new cards:** **USB** (cheap wall), **Calculadora científica** (shoots twice as fast, weaker shots), **Router lento** (its shots slow the enemy to half speed for 3 s, "lag") and **Ctrl+Z** (after 0.5 s it erases the enemies in a 3 × 3 area and disappears). Calculadora and Router are only `.tres` files of `ShooterDefender`; Ctrl+Z uses the new `InstantDefender`.
+- **3 new enemies with abilities read from `EnemyType`:** **La Bibliografía** (a pile of books, `armor_health`, takes the damage first and falls), **El Proyecto en Equipo** (`split_into` / `split_count`: when it dies it splits into 2 *Tareas infinitas*, using the boss's summon signal) and **El Retardo** (`jumps_first_defender`: it jumps over the first defender it meets with a Tween).
+- **Boss of World 2, *La Profesora del Proyecto Final*:** calls Proyectos en Equipo; at 50 % health she gets furious, speeds up (`phase2_speed_multiplier`) and calls Bibliografías (`phase2_summon_type`).
+- **World 3 opens after World 2 and says *Próximamente*** on the career map (no padlock); worlds 4–8 stay locked.
+- **Expediente:** 7 cards and 8 enemies, with descriptions and the new abilities in words.
+- **Balance** checked with the fast and the slow bot of the 1.0 on the 12 levels (results in the tech note).
+- **The art of the 8 new characters is placeholder** (drawn by `tools/art_src/make_world2_placeholders.py` in the style of the 1.0 and cut with the same pipeline) until the real art batches arrive.
+
+Block 11 (v1.5) IPN locations and audio, still in place (see `docs/tech-note-v1.5.md`):
 
 - **IPN locations:** World 1 is the plaza of **ESCOM** (the concrete block with its portal and flagpoles on the left, the cobblestone explanada as the 5 lanes, the guinda gate where the enemies come in). World 2 is the plaza of the **Biblioteca Central** (red scalloped roof, grooved pillars and staircase, terracotta plaza with cream stone strips, blue gate and four-globe lamps; playable in Block 12). Each background is assembled pixel-exact from separate art pieces by `tools/art_src/compose_backgrounds.py`.
 - **Time of day:** `LevelData.time_of_day` tints the game world with a `CanvasModulate` (Scenery): morning in levels 1–2, afternoon in 3–5, night for the boss, when the lights of the scenery turn on (ESCOM's facade glows blue-violet, as the real one).
@@ -85,7 +97,7 @@ Everything from v1.0 still works:
 | Stretch | `canvas_items`, aspect `keep` |
 | Touch | *Emulate Mouse From Touch* enabled |
 | Back button | `quit_on_go_back = false` (handled by the game) |
-| Version | `application/config/version = "1.4"` (shown on the home screen). Android preset (not in the repo): version/name `1.4`, version/code `5`, permission *Vibrate* |
+| Version | `application/config/version = "1.6"` (shown on the home screen). Android preset (not in the repo): version/name `1.6`, version/code `7`, permission *Vibrate* |
 | Screen | `keep_screen_on = false`; the game screen keeps it on while playing |
 | Audio buses | `default_bus_layout.tres`: `Music` and `SFX` |
 | Autoloads | `GameSession`, `ProgressRepository`, `AudioManager`, `SceneTransition` (in this order) |
@@ -99,7 +111,7 @@ Everything from v1.0 still works:
 - **Screens built from data:** the career map creates one `SemesterButton` per `WorldData` of the campaign and the level select one `LevelButton` per `LevelData` of the world, so new worlds and levels appear without touching scripts.
 - **Screens and sound:** the `SceneTransition` Autoload makes every scene change (fade with a Tween). The `AudioManager` Autoload owns two music players (crossfade) and the effect players on the `Music` and `SFX` buses; every button clicks through `SceneTree.node_added`.
 - **Scenery as data:** a world points to its background, music, map thumbnail and decorations scene (`WorldData`); a level only chooses its `time_of_day`. `Scenery` (in `game.tscn`) applies them; decorations are small reusable scripts (`Pigeon`, drifter, sway) driven by Tweens.
-- **Behaviors by inheritance:** `Defender` (health, damage, shake, death) is the base script; `GeneratorDefender`, `ShooterDefender` and `BlockerDefender` inherit from it.
+- **Behaviors by inheritance:** `Defender` (health, damage, shake, death) is the base script; `GeneratorDefender`, `ShooterDefender`, `BlockerDefender` and `InstantDefender` (Block 12) inherit from it. Every number of a behavior (fire interval, damage, slow-down, area) comes from the `DefenderType`, so a new card with an existing behavior is only a `.tres` file.
 - **Cell-based logic:** game logic works in board cells (lane, column, with decimals like column 6.4). Only `Board.cell_to_pixel()` / `Board.pixel_to_cell()` convert to and from screen pixels. Enemy speed is in cells per second, and hits are distance checks in columns.
 - **Signals:** nodes communicate through signals (`Board.cell_tapped`, `Hud.card_pressed`, `GeneratorDefender.orb_produced`, `EnergyOrb.collected`, `ShooterDefender.shot_fired`, `Enemy.reached_safe_zone`, `Enemy.damaged`, `Enemy.summon_requested`, `Defender.died`, `WaveManager.spawn_requested`, `WaveManager.wave_warning`, `WaveManager.all_waves_cleared`...). The `Game` node owns the energy and the phase of the match, applies the rules and creates every enemy, including the boss's summons.
 - **Story as data:** a conversation is a `DialogueData` with `DialogueLine`s (speaker, expression, text, optional card or enemy to present). Worlds and levels point to their conversations; `DialogueBox.play_once()` shows each one once. The tutorial is a list of steps in `tutorial.gd` that waits for Game signals (`card_selected`, `defender_placed`, `orb_collected`).
@@ -125,7 +137,7 @@ Everything from v1.0 still works:
 2. Fill in the fields in the Inspector, set `behavior_scene` to one of the scenes in `scenes/entities/` and, optionally, a `texture`.
 3. Add the new resource to the `defenders` list of the levels where it should be available. Its card appears automatically.
 
-Example: `data/defenders/usb.tres` (*USB*, a cheap wall: `BlockerDefender`, cost 25, 600 health) was made this way without writing any script. No level uses it yet. The top bar fits up to 6 cards (with 4 or more they switch to a compact size).
+Examples: `data/defenders/usb.tres` (*USB*, a cheap wall: `BlockerDefender`), `calculadora.tres` (`ShooterDefender` with `fire_interval` 0.75 and `projectile_damage` 12) and `router.tres` (`ShooterDefender` with `slow_factor` 0.5 and `slow_time` 3) were made this way without writing any script. The top bar fits up to 6 cards (with 4 or more they switch to a compact size).
 
 ### Adding a conversation of the Director (no scripts)
 
@@ -135,7 +147,7 @@ Example: `data/defenders/usb.tres` (*USB*, a cheap wall: `BlockerDefender`, cost
 
 ### Adding an enemy or a boss
 
-Create an `EnemyType` in `data/enemies/` with its health, speed, damage and texture. For a boss, enable `is_boss` (health bar), raise `sprite_size` and choose a `summon_type` and `summon_interval`. Then use it in the `SpawnEvent`s of a level.
+Create an `EnemyType` in `data/enemies/` with its health, speed, damage and texture. Its abilities are fields of the group *Abilities*: `armor_health` (spent before the health), `split_into` + `split_count` (enemies that appear where it dies), `jumps_first_defender`. For a boss, enable `is_boss` (health bar), raise `sprite_size` and choose a `summon_type` and `summon_interval`; for a phase 2 at 50 % health, set `phase2_speed_multiplier`, `phase2_summon_type` and `phase2_text`. Then use it in the `SpawnEvent`s of a level.
 
 ### Animating a character (cut-out puppet)
 
@@ -149,13 +161,15 @@ Create an `EnemyType` in `data/enemies/` with its health, speed, damage and text
 ```
 res://
 ├── art/
-│   ├── defenders/   cafe, laptop, firewall (.png)
-│   ├── enemies/     tarea_infinita, examen_sorpresa, diapositivas, examen_final (.png)
+│   ├── defenders/   cafe, laptop, firewall; usb, calculadora, router, ctrl_z (placeholder) (.png)
+│   ├── enemies/     tarea_infinita, examen_sorpresa, diapositivas, examen_final;
+│   │                bibliografia, proyecto_equipo, retardo, profesora (placeholder) (.png)
 │   ├── items/       energy_orb, projectile (.png)
 │   ├── fx/          spark.png, puff.png, chip.png
 │   ├── characters/  part strips of the puppets, 3 frames each (placeholder in v1.4):
 │   │                cafe/, laptop/, firewall/, tarea_infinita/, examen_sorpresa/,
-│   │                diapositivas/, examen_final/
+│   │                diapositivas/, examen_final/, usb/, calculadora/, router/, ctrl_z/,
+│   │                bibliografia/, proyecto_equipo/, retardo/, profesora/
 │   ├── backgrounds/ escom_bg.jpg (World 1), biblioteca_bg.jpg (World 2), game_bg.jpg (1.0), menu_bg.jpg
 │   ├── scenery/     pigeon_stand, pigeon_fly, leaf, paper, cloud_shadow, glow, window_light,
 │   │                foreground_branch (.png, placeholder)
@@ -172,11 +186,13 @@ res://
 │   │                loading_screen, hud, pause_menu, defender_card, notice,
 │   │                defeat_panel, victory_panel, save_error_panel (.tscn), ui_theme.tres
 │   ├── game/        game.tscn, board.tscn, extraordinario.tscn, tutorial.tscn
-│   ├── entities/    generator_defender, shooter_defender, blocker_defender, energy_orb,
+│   ├── entities/    generator_defender, shooter_defender, blocker_defender, instant_defender, energy_orb,
 │   │                enemy, projectile (.tscn)
 │   ├── visuals/     the cut-out puppets: cafe_visual, laptop_visual, firewall_visual,
 │   │                tarea_infinita_visual, examen_sorpresa_visual, diapositivas_visual,
-│   │                examen_final_visual (.tscn)
+│   │                examen_final_visual, usb_visual, calculadora_visual, router_visual,
+│   │                ctrl_z_visual, bibliografia_visual, proyecto_equipo_visual,
+│   │                retardo_visual, profesora_visual (.tscn)
 │   ├── scenery/     escom_scenery.tscn, biblioteca_scenery.tscn (decorations of each world)
 │   ├── debug/       benchmark.tscn (30 enemies)
 │   └── fx/          spark_burst.tscn
@@ -189,7 +205,7 @@ res://
 │   │                loading_screen.gd, hud.gd, pause_menu.gd, defender_card.gd,
 │   │                notice.gd, defeat_panel.gd, victory_panel.gd, save_error_panel.gd
 │   ├── entities/    defender.gd, generator_defender.gd, shooter_defender.gd,
-│   │                blocker_defender.gd, energy_orb.gd, enemy.gd, projectile.gd,
+│   │                blocker_defender.gd, instant_defender.gd, energy_orb.gd, enemy.gd, projectile.gd,
 │   │                character_visual.gd
 │   ├── visuals/     code_screen.gd
 │   ├── debug/       benchmark.gd
@@ -200,17 +216,18 @@ res://
 │   │                dialogue_data.gd, dialogue_line.gd
 │   └── save/        progress_repository.gd (Autoload)
 ├── data/
-│   ├── defenders/   cafe.tres, laptop.tres, firewall.tres, usb.tres (test defender)
-│   ├── enemies/     tarea_infinita.tres, examen_sorpresa.tres, diapositivas.tres, examen_final.tres
+│   ├── defenders/   cafe, laptop, firewall, usb, calculadora, router, ctrl_z (.tres)
+│   ├── enemies/     tarea_infinita, examen_sorpresa, diapositivas, examen_final,
+│   │                bibliografia, proyecto_equipo, retardo, profesora (.tres)
 │   ├── campaign.tres  the 8 worlds in order
-│   ├── dialogues/   conversations of the Director: w1_intro, w1_l1_intro … w1_outro (.tres)
-│   └── worlds/      world_1/ (world_1.tres, levels/w1_l1.tres … w1_l6.tres), world_2/ … world_8/
+│   ├── dialogues/   conversations of the Director: w1_intro … w1_outro, w2_intro … w2_outro (.tres)
+│   └── worlds/      world_1/ and world_2/ (world_N.tres, levels/wN_l1.tres … wN_l6.tres), world_3/ … world_8/
 ├── audio/
 │   ├── music/       menu, world_1, world_2, boss, victory, defeat (.ogg)
 │   └── sfx/         place, collect, shoot, hit, bite, die, extraordinario, button, director_bip (.wav)
 ├── default_bus_layout.tres  audio buses Music and SFX
 ├── tools/           cut_parts.py (cutting pipeline), make_placeholder_sheets.py,
-│                    art_src/ (source sheets, escom/ and biblioteca/ background pieces,
+│                    art_src/ (source sheets, make_world2_placeholders.py, escom/ and biblioteca/ background pieces,
 │                    compose_backgrounds.py, make_scenery_placeholders.py),
 │                    audio_src/make_audio.py (.gdignore: not imported by Godot)
 └── docs/            technical notes and screenshots per block (.gdignore: not imported by Godot)
@@ -218,6 +235,11 @@ res://
 
 ## Screenshots
 
+![v1.6 World 2 level select](docs/img/v1.6-level-select-w2.png)
+![v1.6 La Bibliografía, El Proyecto en Equipo and El Retardo in combat](docs/img/v1.6-enemies.png)
+![v1.6 the new cards in combat](docs/img/v1.6-cards.png)
+![v1.6 La Profesora del Proyecto Final, phase 2](docs/img/v1.6-boss-phase2.png)
+![v1.6 World 3 Próximamente](docs/img/v1.6-world3-soon.png)
 ![v1.5 World 1 (ESCOM) at night](docs/img/v1.5-escom-night.png)
 ![v1.5 World 1 background](docs/img/v1.5-escom-bg.png)
 ![v1.5 World 2 background (Biblioteca Central)](docs/img/v1.5-biblioteca-bg.png)
@@ -254,5 +276,5 @@ res://
 | 9 | v1.3 | The Director: dialogues, tutorial, Expediente | ✅ Done |
 | 10 | v1.4 | Cut-out animation and 3-stage damage | ✅ Done (placeholder art; 50 fps test on a phone pending) |
 | 11 | v1.5 | IPN locations and audio | ✅ Done (backgrounds final; decorations and map thumbnails placeholder) |
-| 12 | v1.6 | World 1 with 6 levels and World 2 | Planned |
+| 12 | v1.6 | World 1 with 6 levels and World 2 | ✅ Done (placeholder art for the 8 new characters) |
 | 13 | v2.0 | Final polish and delivery | Planned |
