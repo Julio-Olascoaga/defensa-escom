@@ -75,7 +75,7 @@ Everything from v1.0 still works:
 
 - **Final art** for every defender, enemy, the boss, the energy orb, the projectile, the game board background, the home screen, the logo and the app icon. Each image lives in its `DefenderType` / `EnemyType` resource; a resource without an image is drawn as a letter placeholder.
 - **Final boss *El examen final*:** one more `EnemyType` file using the same enemy scene, drawn bigger, with 3000 health; every 10 s it summons two *Examen sorpresa* in the lanes above and below it. A **boss health bar** appears while it is alive. Defeating it completes the semester (**"¡Primer semestre aprobado!"** screen since v1.2).
-- **Wave warnings** ("¡Se acerca una oleada!"), **visual feedback** (hit flash, shake, sway, floating orbs, sparks), **loading screen**, **save error notice** with *Reintentar* / *Ahora no*, and the **hidden debug option** (tap the logo 5 times, debug builds only).
+- **Wave warnings** ("¡Se acerca una oleada!"), **visual feedback** (hit flash, shake, sway, floating orbs, sparks), **loading screen**, **save error notice** with *Reintentar* / *Ahora no*, and the **hidden debug option** (tap the logo 5 times, debug builds only). Its *Desbloquear todos los niveles* switch opens every level of the built worlds to test them without playing the whole game; nothing is saved while it is on, so the real progress is never touched, and it turns off when the game closes.
 - **Waves**, **defender cards** (Café 50, Laptop 100, Firewall 75), **energy orbs**, **three enemy archetypes**, **Victory**, **Defeat** and **Pause** panels, as in v1.0.
 
 ## Requirements
