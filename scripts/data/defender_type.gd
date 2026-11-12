@@ -7,6 +7,9 @@ extends Resource
 
 ## Name shown on the card. Its first letter is drawn on the board until the art exists.
 @export var display_name: String = ""
+## Short name for the card of the top bar (Block 12), for long names such as
+## "Calculadora científica". Empty = display_name.
+@export var card_name: String = ""
 ## Energy the player pays to place it.
 @export var cost: int = 50
 ## Health points. Enemies take it away in Block 3.
@@ -46,3 +49,8 @@ extends Resource
 @export_group("Instant")
 ## Radius in cells of the area it hits (1 = a 3 x 3 square). Used from Block 12 (Ctrl+Z).
 @export var area_radius: float = 1.0
+## Damage it does to every enemy inside the area (the armor takes it first).
+## Only instant defenders use it (InstantDefender, Block 12).
+@export var area_damage: float = 1800.0
+## Seconds between being placed and going off.
+@export var trigger_delay: float = 0.5

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyType" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_type.gd" id="1_type"]
+[ext_resource type="Texture2D" path="res://art/enemies/profesora.png" id="2_texture"]
+[ext_resource type="Resource" path="res://data/enemies/proyecto_equipo.tres" id="3_proyecto_equipo"]
+[ext_resource type="Resource" path="res://data/enemies/bibliografia.tres" id="4_bibliografia"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/profesora_visual.tscn" id="9_visual"]
+
+[resource]
+script = ExtResource("1_type")
+display_name = "La Profesora del Proyecto Final"
+label_text = "PF"
+health = 3000.0
+speed = 0.1
+damage_per_second = 50.0
+texture = ExtResource("2_texture")
+color = Color(0.29, 0.17, 0.42, 1)
+sprite_size = 200.0
+is_boss = true
+description = "Firma los préstamos de la biblioteca… ¿o solo los firma por alguien más? Llama a Proyectos en Equipo y, a la mitad de su vida, se acelera y llama Bibliografías."
+visual_scene = ExtResource("9_visual")
+phase2_speed_multiplier = 1.5
+summon_interval = 16.0
+summon_type = ExtResource("3_proyecto_equipo")
+phase2_summon_type = ExtResource("4_bibliografia")
+phase2_text = "¡La Profesora del Proyecto Final está furiosa!"

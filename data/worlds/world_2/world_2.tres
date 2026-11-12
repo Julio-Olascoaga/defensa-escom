@@ -1,6 +1,15 @@
 [gd_resource type="Resource" script_class="WorldData" format=3]
 
 [ext_resource type="Script" path="res://scripts/data/world_data.gd" id="1_world"]
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="2_level"]
+[ext_resource type="Resource" path="res://data/worlds/world_2/levels/w2_l1.tres" id="l1"]
+[ext_resource type="Resource" path="res://data/worlds/world_2/levels/w2_l2.tres" id="l2"]
+[ext_resource type="Resource" path="res://data/worlds/world_2/levels/w2_l3.tres" id="l3"]
+[ext_resource type="Resource" path="res://data/worlds/world_2/levels/w2_l4.tres" id="l4"]
+[ext_resource type="Resource" path="res://data/worlds/world_2/levels/w2_l5.tres" id="l5"]
+[ext_resource type="Resource" path="res://data/worlds/world_2/levels/w2_l6.tres" id="l6"]
+[ext_resource type="Resource" path="res://data/dialogues/w2_intro.tres" id="100_b9_intro_dialogue"]
+[ext_resource type="Resource" path="res://data/dialogues/w2_outro.tres" id="101_b9_outro_dialogue"]
 [ext_resource type="Texture2D" path="res://art/backgrounds/biblioteca_bg.jpg" id="200_b11_background"]
 [ext_resource type="AudioStream" path="res://audio/music/world_2.ogg" id="201_b11_music"]
 [ext_resource type="PackedScene" path="res://scenes/scenery/biblioteca_scenery.tscn" id="202_b11_scenery"]
@@ -10,10 +19,12 @@
 script = ExtResource("1_world")
 id = "world_2"
 display_name = "Segundo semestre"
+levels = Array[ExtResource("2_level")]([ExtResource("l1"), ExtResource("l2"), ExtResource("l3"), ExtResource("l4"), ExtResource("l5"), ExtResource("l6")])
 semester = 2
 location_name = "Biblioteca Central"
-available = false
 background = ExtResource("200_b11_background")
 music = ExtResource("201_b11_music")
 scenery = ExtResource("202_b11_scenery")
 map_icon = ExtResource("203_b11_map_icon")
+intro_dialogue = ExtResource("100_b9_intro_dialogue")
+outro_dialogue = ExtResource("101_b9_outro_dialogue")

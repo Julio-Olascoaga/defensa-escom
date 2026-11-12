@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyType" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_type.gd" id="1_type"]
+[ext_resource type="Texture2D" path="res://art/enemies/proyecto_equipo.png" id="2_texture"]
+[ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="3_tarea_infinita"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/proyecto_equipo_visual.tscn" id="9_visual"]
+
+[resource]
+script = ExtResource("1_type")
+display_name = "El Proyecto en Equipo"
+label_text = "PE"
+health = 350.0
+speed = 0.18
+damage_per_second = 30.0
+texture = ExtResource("2_texture")
+color = Color(0.89, 0.84, 0.71, 1)
+description = "Cuatro integrantes, un solo trabajo. Cuando lo derrotas se divide en dos: los que no trabajaron."
+visual_scene = ExtResource("9_visual")
+split_count = 2
+split_into = ExtResource("3_tarea_infinita")

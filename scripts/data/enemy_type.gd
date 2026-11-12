@@ -39,10 +39,15 @@ extends Resource
 @export var jumps_first_defender: bool = false
 ## Only bosses: speed multiplier from 50 % of health on (phase 2). 1.0 = no phase 2.
 @export var phase2_speed_multiplier: float = 1.0
+## Only bosses: enemy it calls from phase 2 on. Empty = it keeps calling summon_type.
+@export var phase2_summon_type: EnemyType
+## Only bosses: banner shown when phase 2 starts. Empty = "¡<name> está furioso!".
+@export var phase2_text: String = ""
 
 @export_group("Summon")
 ## Enemy it calls every summon_interval seconds: one in the lane above and one
 ## in the lane below, at its own column. Empty = it never summons (normal enemies).
+## (A split, split_into, uses the same signal: Enemy.summon_requested.)
 @export var summon_type: EnemyType
 ## Seconds between two summons.
 @export var summon_interval: float = 10.0

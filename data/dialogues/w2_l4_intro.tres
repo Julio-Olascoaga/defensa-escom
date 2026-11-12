@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="DialogueData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/enemies/retardo.tres" id="3_retardo"]
+[ext_resource type="Resource" path="res://data/defenders/router.tres" id="4_router"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "¡El Retardo! Llega tarde a todo… menos a saltarse a tu primer defensor."
+show_enemy = ExtResource("3_retardo")
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+text = "Para eso te doy el Router lento: su señal deja a los enemigos con lag."
+show_card = ExtResource("4_router")
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Los frena a la mitad durante tres segundos. Es el wifi de la escuela, pero a tu favor."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Pon algo barato delante, para que el Retardo salte sobre eso y no sobre tus Laptops."
+
+[resource]
+script = ExtResource("1_data")
+id = "w2_l4_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

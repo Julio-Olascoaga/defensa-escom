@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="DialogueData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "orgulloso"
+text = "¡Proyecto entregado! Y a tiempo. Eso no lo había visto nunca."
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "La Profesora dejó caer su libreta. Tiene una lista: ocho semestres, ocho nombres…"
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "Y al final, tres firmas y una palabra: «Sínodo»."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "No sé qué sea, pero nos está esperando al final de la carrera."
+
+[resource]
+script = ExtResource("1_data")
+id = "w2_l6_outro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

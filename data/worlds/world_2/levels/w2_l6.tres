@@ -1,0 +1,101 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1_level"]
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="2_deftype"]
+[ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="3_wave"]
+[ext_resource type="Script" path="res://scripts/data/spawn_event.gd" id="4_event"]
+[ext_resource type="Resource" path="res://data/defenders/cafe.tres" id="d_cafe"]
+[ext_resource type="Resource" path="res://data/defenders/laptop.tres" id="d_laptop"]
+[ext_resource type="Resource" path="res://data/defenders/firewall.tres" id="d_firewall"]
+[ext_resource type="Resource" path="res://data/defenders/calculadora.tres" id="d_calculadora"]
+[ext_resource type="Resource" path="res://data/defenders/router.tres" id="d_router"]
+[ext_resource type="Resource" path="res://data/defenders/ctrl_z.tres" id="d_ctrl_z"]
+[ext_resource type="Resource" path="res://data/enemies/tarea_infinita.tres" id="e_tarea_infinita"]
+[ext_resource type="Resource" path="res://data/enemies/bibliografia.tres" id="e_bibliografia"]
+[ext_resource type="Resource" path="res://data/enemies/retardo.tres" id="e_retardo"]
+[ext_resource type="Resource" path="res://data/enemies/proyecto_equipo.tres" id="e_proyecto_equipo"]
+[ext_resource type="Resource" path="res://data/enemies/examen_sorpresa.tres" id="e_examen_sorpresa"]
+[ext_resource type="Resource" path="res://data/enemies/diapositivas.tres" id="e_diapositivas"]
+[ext_resource type="Resource" path="res://data/enemies/profesora.tres" id="e_profesora"]
+[ext_resource type="Resource" path="res://data/dialogues/w2_l6_intro.tres" id="100_intro"]
+[ext_resource type="Resource" path="res://data/dialogues/w2_l6_outro.tres" id="101_outro"]
+
+[sub_resource type="Resource" id="Event_1_1"]
+script = ExtResource("4_event")
+lane = 2
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_1_2"]
+script = ExtResource("4_event")
+time = 6.0
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_1_3"]
+script = ExtResource("4_event")
+time = 12.0
+lane = 4
+enemy_type = ExtResource("e_retardo")
+
+[sub_resource type="Resource" id="Event_1_4"]
+script = ExtResource("4_event")
+time = 18.0
+lane = 1
+enemy_type = ExtResource("e_proyecto_equipo")
+
+[sub_resource type="Resource" id="Event_1_5"]
+script = ExtResource("4_event")
+time = 24.0
+lane = 3
+enemy_type = ExtResource("e_examen_sorpresa")
+
+[sub_resource type="Resource" id="Event_1_6"]
+script = ExtResource("4_event")
+time = 30.0
+lane = 2
+enemy_type = ExtResource("e_tarea_infinita")
+
+[sub_resource type="Resource" id="Event_1_7"]
+script = ExtResource("4_event")
+time = 36.0
+lane = 4
+enemy_type = ExtResource("e_bibliografia")
+
+[sub_resource type="Resource" id="Event_1_8"]
+script = ExtResource("4_event")
+time = 42.0
+enemy_type = ExtResource("e_retardo")
+
+[sub_resource type="Resource" id="Event_1_9"]
+script = ExtResource("4_event")
+time = 48.0
+lane = 3
+enemy_type = ExtResource("e_diapositivas")
+
+[sub_resource type="Resource" id="Wave_1"]
+script = ExtResource("3_wave")
+start_delay = 40.0
+events = Array[ExtResource("4_event")]([SubResource("Event_1_1"), SubResource("Event_1_2"), SubResource("Event_1_3"), SubResource("Event_1_4"), SubResource("Event_1_5"), SubResource("Event_1_6"), SubResource("Event_1_7"), SubResource("Event_1_8"), SubResource("Event_1_9")])
+
+[sub_resource type="Resource" id="Event_2_1"]
+script = ExtResource("4_event")
+lane = 2
+enemy_type = ExtResource("e_profesora")
+
+[sub_resource type="Resource" id="Wave_2"]
+script = ExtResource("3_wave")
+start_delay = 25.0
+warning_text = "¡Llegó la Profesora del Proyecto Final!"
+events = Array[ExtResource("4_event")]([SubResource("Event_2_1")])
+
+[resource]
+script = ExtResource("1_level")
+id = "w2_l6"
+display_name = "El proyecto final"
+start_energy = 250
+defenders = Array[ExtResource("2_deftype")]([ExtResource("d_cafe"), ExtResource("d_laptop"), ExtResource("d_firewall"), ExtResource("d_calculadora"), ExtResource("d_router"), ExtResource("d_ctrl_z")])
+waves = Array[ExtResource("3_wave")]([SubResource("Wave_1"), SubResource("Wave_2")])
+time_of_day = 2
+intro_dialogue = ExtResource("100_intro")
+outro_dialogue = ExtResource("101_outro")
+featured_enemy = ExtResource("e_profesora")
+use_extraordinarios = true

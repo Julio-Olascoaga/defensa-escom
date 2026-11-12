@@ -1,0 +1,5 @@
+body
+arm_l
+arm_r
+leg_l
+leg_r

@@ -14,6 +14,8 @@ extends Node2D
 ## Block 11: the music of the world (the boss brings its own song), the
 ## effects of placing, shooting and losing a defender, the victory and defeat
 ## jingles, the phone vibration, and the time of day of the level (Scenery).
+## Block 12: instant cards (Ctrl+Z) free their cell when they go off; a boss
+## may bring its own phase 2 banner (EnemyType.phase2_text).
 
 const ENEMY_SCENE := preload("res://scenes/entities/enemy.tscn")
 const EXTRAORDINARIO_SCENE := preload("res://scenes/game/extraordinario.tscn")
@@ -29,6 +31,9 @@ const BOSS_PHASE2_SHAKE_TIME := 0.5
 const SHAKE_STEP := 0.05
 ## Milliseconds the phone vibrates when the boss enters (longer than the rest).
 const BOSS_VIBRATION_MS := 400
+## Camera shake when an instant card (Ctrl+Z) goes off.
+const INSTANT_SHAKE := 6.0
+const INSTANT_SHAKE_TIME := 0.25
 
 ## The player selected a card (the Tutorial listens to these three signals).
 signal card_selected(type: DefenderType)
@@ -236,6 +241,8 @@ func place_defender(type: DefenderType, lane: int, column: int) -> void:
 		defender.orb_produced.connect(_on_orb_produced)
 	elif defender is ShooterDefender:
 		defender.shot_fired.connect(_on_shot_fired)
+	elif defender is InstantDefender:
+		defender.used.connect(_on_instant_used)
 
 	board.occupy_cell(lane, column, defender)
 	spend_energy(type.cost)
@@ -270,6 +277,15 @@ func remove_defender(lane: int, column: int) -> void:
 		return
 	board.free_cell(lane, column)
 	defender.queue_free()
+	_update_hint()
+
+
+## Ctrl+Z went off: its cell is free again (it is not a loss: no vibration).
+func _on_instant_used(defender: InstantDefender, _hits: int) -> void:
+	if board.get_defender(defender.lane, defender.column) == defender:
+		board.free_cell(defender.lane, defender.column)
+	AudioManager.play_sfx(AudioManager.SFX_EXTRAORDINARIO, 1.3)
+	shake_camera(INSTANT_SHAKE, INSTANT_SHAKE_TIME)
 	_update_hint()
 
 
@@ -377,7 +393,10 @@ func _on_boss_damaged(boss: Enemy) -> void:
 ## the screen says it, with a shake.
 func _on_boss_phase_changed(boss: Enemy) -> void:
 	shake_camera(BOSS_PHASE2_SHAKE, BOSS_PHASE2_SHAKE_TIME)
-	wave_banner.show_message("¡%s está furioso!" % boss.enemy_type.display_name)
+	var text := boss.enemy_type.phase2_text
+	if text == "":
+		text = "¡%s está furioso!" % boss.enemy_type.display_name
+	wave_banner.show_message(text)
 
 
 func _on_boss_died(_boss: Enemy) -> void:

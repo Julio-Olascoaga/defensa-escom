@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="DialogueData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/enemies/proyecto_equipo.tres" id="3_proyecto_equipo"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+expression = "preocupado"
+text = "Ay, no. El Proyecto en Equipo."
+show_enemy = ExtResource("3_proyecto_equipo")
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+text = "Cuando lo derrotas, se divide en dos: los que no trabajaron."
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+expression = "serio"
+text = "No te confíes al verlo caer: todavía faltan dos, y ninguno trae su parte."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Tranquilo, aquí tú sí vas a hacer tu parte. Y la de ellos, como siempre."
+
+[resource]
+script = ExtResource("1_data")
+id = "w2_l3_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])

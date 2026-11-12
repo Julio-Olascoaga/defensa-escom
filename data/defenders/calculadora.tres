@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="DefenderType" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defender_type.gd" id="1_type"]
+[ext_resource type="PackedScene" path="res://scenes/entities/shooter_defender.tscn" id="2_behavior"]
+[ext_resource type="Texture2D" path="res://art/defenders/calculadora.png" id="3_texture"]
+[ext_resource type="PackedScene" path="res://scenes/visuals/calculadora_visual.tscn" id="9_visual"]
+
+[resource]
+script = ExtResource("1_type")
+display_name = "Calculadora científica"
+card_name = "Calculadora"
+cost = 150
+health = 300.0
+cooldown = 7.5
+texture = ExtResource("3_texture")
+color = Color(0.42, 0.45, 0.53, 1)
+behavior_scene = ExtResource("2_behavior")
+fire_interval = 0.75
+projectile_damage = 12.0
+description = "Resuelve integrales mientras tú buscas el botón de encendido. Dispara el doble de rápido que la Laptop, pero cada tiro hace menos daño."
+visual_scene = ExtResource("9_visual")

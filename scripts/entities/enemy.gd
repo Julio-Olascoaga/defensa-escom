@@ -9,6 +9,13 @@ extends Node2D
 ## (CharacterVisual) is created inside the Visual node and plays walk / attack /
 ## hit / die (the legs move faster when it walks faster); otherwise the fixed
 ## image of the 1.0 sways as before. The white hit flash is the same for both.
+##
+## Block 12 abilities, all read from the EnemyType: armor (armor_health is
+## spent before the health), split (when it dies, split_count enemies of
+## split_into appear in its column, asked for with summon_requested like the
+## boss's summons), jump (the first defender it meets is jumped over: one
+## column forward, with a Tween), a boss's phase 2 summon (phase2_summon_type)
+## and the "lag" of the Router lento (apply_slow()).
 
 ## Emitted when health reaches 0.
 signal died(enemy: Enemy)
@@ -18,11 +25,14 @@ signal reached_safe_zone(enemy: Enemy)
 signal damaged(enemy: Enemy)
 ## The boss asks for a new enemy in a lane, at a column. Game creates it
 ## (the same way WaveManager asks for enemies with spawn_requested).
+## A splitting enemy uses it too when it dies (Block 12).
 signal summon_requested(enemy_type: EnemyType, lane: int, column: float)
 ## Its armor (EnemyType.armor_health) has just run out: the armor piece falls.
 signal armor_broken(enemy: Enemy)
 ## Only bosses: the health went down to PHASE2_HEALTH_RATIO (phase 2).
 signal phase_changed(enemy: Enemy)
+## It jumped over a defender (EnemyType.jumps_first_defender, Block 12).
+signal jumped(enemy: Enemy, over: Defender)
 
 ## Column where enemies appear: just right of the board, in the entry area.
 const SPAWN_COLUMN := 9.0
@@ -56,6 +66,15 @@ const PHASE2_TINT := Color(1.35, 0.8, 0.8)
 const PHASE2_SCALE := 1.12
 ## Name of the puppet piece that falls when the armor runs out.
 const ARMOR_PIECE := "Armor"
+## Jump over the first defender: columns forward (to the left), seconds in the
+## air and how high it goes, in pixels.
+const JUMP_COLUMNS := 1.0
+const JUMP_TIME := 0.5
+const JUMP_HEIGHT := 70.0
+## The halves of a split appear this many columns apart, so they do not overlap.
+const SPLIT_SPACING := 0.35
+## While slowed down by the Router lento ("lag") the enemy is tinted blue.
+const SLOW_TINT := Color(0.6, 0.8, 1.35)
 
 var enemy_type: EnemyType
 var lane := 0
@@ -68,6 +87,13 @@ var armor := 0.0
 var speed_multiplier := 1.0
 ## true once a boss has entered phase 2.
 var in_phase2 := false
+## Router lento (Block 12): speed multiplier of the "lag" and seconds left.
+## It does not add up: a new hit only refreshes the time (and keeps the slowest).
+var slow_multiplier := 1.0
+var slow_left := 0.0
+## true once it used its jump (jumps_first_defender), and while it is in the air.
+var has_jumped := false
+var jumping := false
 ## Seconds since the last summon. Only enemies with a summon_type use it.
 var summon_time := 0.0
 ## Seconds left until the next bite sound (0 = it sounds at the first bite).
@@ -120,7 +146,16 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_update_slow(delta)
+	if jumping:
+		_update_summon(delta)
+		_update_position()
+		return  # the jump Tween moves it; it does not bite in the air
 	var defender := _defender_in_front()
+	if defender and enemy_type.jumps_first_defender and not has_jumped:
+		_jump_over(defender)
+		_update_position()
+		return
 	if defender:
 		defender.take_damage(enemy_type.damage_per_second * delta)  # bite
 		_animate(false)
@@ -142,7 +177,51 @@ func _process(delta: float) -> void:
 
 ## Cells per second it walks now.
 func current_speed() -> float:
-	return enemy_type.speed * speed_multiplier
+	return enemy_type.speed * speed_multiplier * slow_multiplier
+
+
+## Router lento: walks at factor of its speed for seconds. Hits do not add up:
+## the slowest factor is kept and the time starts again.
+func apply_slow(factor: float, seconds: float) -> void:
+	if health <= 0.0 or seconds <= 0.0 or factor >= 1.0:
+		return
+	slow_multiplier = minf(slow_multiplier, factor) if slow_left > 0.0 else factor
+	slow_left = seconds
+	visual_root.modulate = SLOW_TINT  # the puppet or the image (and the box of a placeholder)
+	sprite.modulate = SLOW_TINT
+
+
+func is_slowed() -> bool:
+	return slow_left > 0.0
+
+
+func _update_slow(delta: float) -> void:
+	if slow_left <= 0.0:
+		return
+	slow_left -= delta
+	if slow_left <= 0.0:
+		slow_left = 0.0
+		slow_multiplier = 1.0
+		visual_root.modulate = Color.WHITE
+		sprite.modulate = Color.WHITE
+
+
+## El Retardo: the first defender it meets is jumped over. It lands one
+## column further (on the far side of the defender) and walks on; the next
+## defender it meets is bitten as usual.
+func _jump_over(defender: Defender) -> void:
+	has_jumped = true
+	jumping = true
+	var landing := defender.column - JUMP_COLUMNS
+	var tween := create_tween()
+	tween.tween_property(self, "column", landing, JUMP_TIME).set_trans(Tween.TRANS_SINE)
+	var arc := create_tween()
+	arc.tween_property(visual_root, "position:y", -JUMP_HEIGHT, JUMP_TIME / 2.0).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	arc.tween_property(visual_root, "position:y", 0.0, JUMP_TIME / 2.0).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	tween.finished.connect(func() -> void: jumping = false)
+	if visual:
+		visual.play_once("jump")  # a puppet without "jump" keeps walking
+	jumped.emit(self, defender)
 
 
 ## Walking or biting. The puppet's walk cycle runs at walk_speed_scale(), so a
@@ -184,7 +263,24 @@ func _update_summon(delta: float) -> void:
 	summon_time = 0.0
 	for summon_lane in [lane - 1, lane + 1]:
 		if summon_lane >= 0 and summon_lane < Board.LANES:
-			summon_requested.emit(enemy_type.summon_type, summon_lane, column)
+			summon_requested.emit(current_summon_type(), summon_lane, column)
+
+
+## What it calls now: phase2_summon_type from phase 2 on, if it has one.
+func current_summon_type() -> EnemyType:
+	if in_phase2 and enemy_type.phase2_summon_type:
+		return enemy_type.phase2_summon_type
+	return enemy_type.summon_type
+
+
+## Split: split_count enemies of split_into appear in its column ("los que no
+## trabajaron"), a little apart, asked for with the summon signal of the boss.
+func _split() -> void:
+	if enemy_type.split_into == null or enemy_type.split_count <= 0:
+		return
+	for i in enemy_type.split_count:
+		var offset := (i - (enemy_type.split_count - 1) / 2.0) * SPLIT_SPACING
+		summon_requested.emit(enemy_type.split_into, lane, maxf(column + offset, SAFE_ZONE_COLUMN + 0.1))
 
 
 ## Laptop projectiles call this.
@@ -217,6 +313,7 @@ func take_damage(amount: float) -> void:
 				bits.scale_amount_max = 0.8
 			_leave_puppet()
 		AudioManager.play_sfx_varied(AudioManager.SFX_DIE)
+		_split()  # before it leaves, so the wave never looks empty
 		died.emit(self)
 		queue_free()
 

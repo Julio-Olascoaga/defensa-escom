@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="DialogueData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/dialogue_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://scripts/data/dialogue_line.gd" id="2_line"]
+[ext_resource type="Resource" path="res://data/defenders/calculadora.tres" id="3_calculadora"]
+
+[sub_resource type="Resource" id="Resource_line1"]
+script = ExtResource("2_line")
+text = "Siete de la mañana y ya no hay mesas. ¿A qué hora llega esta gente?"
+
+[sub_resource type="Resource" id="Resource_line2"]
+script = ExtResource("2_line")
+expression = "feliz"
+text = "Te presento la Calculadora científica: dispara el doble de rápido."
+show_card = ExtResource("3_calculadora")
+
+[sub_resource type="Resource" id="Resource_line3"]
+script = ExtResource("2_line")
+text = "Cada tiro hace menos daño, pero no se cansa. Como tú en época de exámenes."
+
+[sub_resource type="Resource" id="Resource_line4"]
+script = ExtResource("2_line")
+expression = "sorprendido"
+text = "Encontré otro sello en un libro: «Préstamo autorizado por… S.». Solo una letra."
+
+[resource]
+script = ExtResource("1_data")
+id = "w2_l2_intro"
+lines = Array[ExtResource("2_line")]([SubResource("Resource_line1"), SubResource("Resource_line2"), SubResource("Resource_line3"), SubResource("Resource_line4")])
